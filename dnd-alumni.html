@@ -186,25 +186,48 @@
     .hamburger svg { display: block; }
 
     #mobile-menu {
-      display: none; flex-direction: column; gap: 2px;
+      position: fixed; top: 60px; left: 0; right: 0; z-index: 99;
+      flex-direction: column; gap: 0;
       background: rgba(4, 13, 30, 0.98);
-      backdrop-filter: blur(20px);
-      border-top: 1px solid rgba(212,150,42,0.12);
-      padding: 16px 24px 24px;
+      backdrop-filter: blur(24px);
+      border-top: 1px solid rgba(212,150,42,0.15);
+      border-bottom: 1px solid rgba(212,150,42,0.1);
+      max-height: 0; overflow: hidden;
+      transition: max-height 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+                  opacity 0.3s ease;
+      opacity: 0;
+      display: flex;
     }
-    #mobile-menu.open { display: flex; }
+    #mobile-menu.open {
+      max-height: 420px;
+      opacity: 1;
+    }
+    #mobile-menu .mobile-links-inner {
+      padding: 12px 24px 28px;
+      display: flex; flex-direction: column; gap: 0;
+      width: 100%;
+    }
     .mobile-link {
-      font-size: .9rem; color: var(--text-mid); padding: 12px 0;
-      border-bottom: 1px solid rgba(126,168,204,0.08);
-      transition: color .2s; font-weight: 500;
+      font-family: var(--font-body);
+      font-size: .95rem; color: var(--text-mid); padding: 13px 0;
+      border-bottom: 1px solid rgba(126,168,204,0.07);
+      transition: color .2s, padding-left .2s; font-weight: 500;
+      display: block;
     }
     .mobile-link:last-child { border-bottom: none; }
-    .mobile-link:hover { color: var(--gold-400); }
+    .mobile-link:hover { color: var(--gold-400); padding-left: 6px; }
+    .mobile-link.cta-link {
+      color: var(--gold-400); font-weight: 700;
+      margin-top: 6px; border-bottom: none;
+    }
 
     @media (max-width: 900px) {
       #navbar { padding: 0 24px; }
       .nav-links, .nav-cta { display: none; }
       .hamburger { display: block; }
+    }
+    @media (min-width: 901px) {
+      #mobile-menu { display: none !important; }
     }
 
     /* ═══════════ SECTION UTILITIES ═══════════ */
@@ -308,8 +331,8 @@
     .hero-title .italic { font-style: italic; }
 
     .hero-acronym {
-      font-family: var(--font-heading); font-size: 1.15rem; font-weight: 600;
-      color: var(--steel-300); letter-spacing: .12em;
+      font-family: var(--font-display); font-size: 1.15rem; font-weight: 700;
+      color: var(--steel-300); letter-spacing: .1em;
       margin-bottom: 28px;
       animation: fadeSlideDown .8s .3s var(--ease-out) both;
     }
@@ -618,10 +641,12 @@
     .step-num {
       width: 36px; height: 36px; border-radius: 50%;
       background: linear-gradient(135deg, var(--gold-400), var(--gold-500));
-      color: var(--navy-900); font-family: var(--font-heading); font-size: .9rem; font-weight: 800;
+      color: var(--navy-900); font-family: var(--font-body); font-size: .95rem; font-weight: 700;
       display: flex; align-items: center; justify-content: center;
       margin-bottom: 16px; flex-shrink: 0;
       box-shadow: 0 4px 16px rgba(212,150,42,0.3);
+      line-height: 1;
+      letter-spacing: 0;
     }
     .step-card h4 {
       font-family: var(--font-heading); font-size: .95rem; font-weight: 700;
@@ -771,13 +796,15 @@
       <rect y="18" width="22" height="2" rx="1" fill="currentColor"/>
     </svg>
   </button>
-  <div id="mobile-menu" role="navigation">
-    <a href="#bearers"  class="mobile-link" onclick="closeMobile()">Office Bearers</a>
-    <a href="#benefits" class="mobile-link" onclick="closeMobile()">Benefits</a>
-    <a href="#support"  class="mobile-link" onclick="closeMobile()">Support Students</a>
-    <a href="#join"     class="mobile-link" onclick="closeMobile()">How to Join</a>
-    <a href="#contact"  class="mobile-link" onclick="closeMobile()">Contact</a>
-    <a href="#join"     class="mobile-link" onclick="closeMobile()" style="color:var(--gold-400);font-weight:700;">→ Join DND</a>
+  <div id="mobile-menu" role="navigation" aria-label="Mobile navigation">
+    <div class="mobile-links-inner">
+      <a href="#bearers"  class="mobile-link" onclick="closeMobile()">Office Bearers</a>
+      <a href="#benefits" class="mobile-link" onclick="closeMobile()">Benefits</a>
+      <a href="#support"  class="mobile-link" onclick="closeMobile()">Support Students</a>
+      <a href="#join"     class="mobile-link" onclick="closeMobile()">How to Join</a>
+      <a href="#contact"  class="mobile-link" onclick="closeMobile()">Contact</a>
+      <a href="#join"     class="mobile-link cta-link" onclick="closeMobile()">→ Join DND</a>
+    </div>
   </div>
 </nav>
 
@@ -1256,11 +1283,29 @@
   /* ── Mobile menu ── */
   const burger  = document.getElementById('burger');
   const mMenu   = document.getElementById('mobile-menu');
-  burger.addEventListener('click', () => {
+
+  burger.addEventListener('click', (e) => {
+    e.stopPropagation();
     const isOpen = mMenu.classList.toggle('open');
     burger.setAttribute('aria-expanded', isOpen);
+    // swap hamburger icon to X when open
+    burger.innerHTML = isOpen
+      ? `<svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M2 2l18 18M20 2L2 20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`
+      : `<svg width="22" height="20" viewBox="0 0 22 20" fill="none"><rect y="0" width="22" height="2" rx="1" fill="currentColor"/><rect y="9" width="22" height="2" rx="1" fill="currentColor"/><rect y="18" width="22" height="2" rx="1" fill="currentColor"/></svg>`;
   });
-  function closeMobile() { mMenu.classList.remove('open'); burger.setAttribute('aria-expanded', 'false'); }
+
+  // Close on outside click
+  document.addEventListener('click', (e) => {
+    if (mMenu.classList.contains('open') && !navbar.contains(e.target)) {
+      closeMobile();
+    }
+  });
+
+  function closeMobile() {
+    mMenu.classList.remove('open');
+    burger.setAttribute('aria-expanded', 'false');
+    burger.innerHTML = `<svg width="22" height="20" viewBox="0 0 22 20" fill="none"><rect y="0" width="22" height="2" rx="1" fill="currentColor"/><rect y="9" width="22" height="2" rx="1" fill="currentColor"/><rect y="18" width="22" height="2" rx="1" fill="currentColor"/></svg>`;
+  }
 
   /* ── Scroll reveal ── */
   const revealEls = document.querySelectorAll('.reveal');
