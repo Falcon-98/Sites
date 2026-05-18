@@ -44,8 +44,8 @@
     html { scroll-behavior: smooth; }
     body { 
       font-family: 'DM Sans', sans-serif; 
-      background: linear-gradient(135deg, #0f172a 0%, #1a1f35 50%, #0d1427 100%);
-      color: #f1f5f9; 
+      background: linear-gradient(135deg, #f5f3f0 0%, #faf8f5 50%, #f0ebe5 100%);
+      color: #374151; 
       overflow-x: hidden;
       min-height: 100vh;
       transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
@@ -58,7 +58,7 @@
       right: -50%;
       width: 100%;
       height: 100%;
-      background: radial-gradient(circle, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.02) 1px, transparent 1px);
       background-size: 50px 50px;
       pointer-events: none;
       z-index: 0;
@@ -72,20 +72,20 @@
     /* ───── NAV ───── */
     #navbar {
       transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      background: rgba(15, 23, 42, 0.7) !important;
+      background: rgba(255, 255, 255, 0.85) !important;
       backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+      border-bottom: 1px solid rgba(209, 213, 219, 0.5);
     }
     #navbar.scrolled {
-      background: rgba(15, 23, 42, 0.95) !important;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      background: rgba(255, 255, 255, 0.95) !important;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
       border-bottom-color: rgba(59, 130, 246, 0.2);
     }
     .nav-link {
       position: relative;
       font-weight: 500;
       letter-spacing: .02em;
-      color: rgba(241, 245, 249, 0.8);
+      color: rgba(55, 65, 81, 0.8);
       transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .nav-link::after {
@@ -96,14 +96,14 @@
       background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan));
       transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .nav-link:hover { color: #f1f5f9; }
+    .nav-link:hover { color: #1f2937; }
     .nav-link:hover::after { width: 100%; }
 
     /* ───── HERO ───── */
     #hero {
       background:
-        linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.8) 60%, rgba(59, 130, 246, 0.15) 100%),
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Cdefs%3E%3CradialGradient id='rg' cx='50%25' cy='50%25' r='50%25'%3E%3Cstop offset='0%25' stop-color='%233b82f6' stop-opacity='0.1'/%3E%3Cstop offset='100%25' stop-color='%238b5cf6' stop-opacity='0'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect width='600' height='600' fill='%230f172a'/%3E%3Ccircle cx='300' cy='300' r='300' fill='url(%23rg)'/%3E%3C/svg%3E") center/cover;
+        linear-gradient(135deg, rgba(245, 243, 240, 0.9) 0%, rgba(250, 248, 245, 0.8) 60%, rgba(59, 130, 246, 0.08) 100%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Cdefs%3E%3CradialGradient id='rg' cx='50%25' cy='50%25' r='50%25'%3E%3Cstop offset='0%25' stop-color='%233b82f6' stop-opacity='0.05'/%3E%3Cstop offset='100%25' stop-color='%238b5cf6' stop-opacity='0'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect width='600' height='600' fill='%23faf8f5'/%3E%3Ccircle cx='300' cy='300' r='300' fill='url(%23rg)'/%3E%3C/svg%3E") center/cover;
       min-height: 100vh;
       display: flex; align-items: center;
       position: relative;
@@ -113,42 +113,42 @@
       content: '';
       position: absolute; inset: 0;
       background-image:
-        radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.12) 0%, transparent 45%);
+        radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.06) 0%, transparent 45%);
       pointer-events: none;
     }
     .leaf-pattern {
       position: absolute; inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpath d='M40 10 Q60 30 40 60 Q20 30 40 10Z' fill='none' stroke='rgba(59,130,246,0.05)' stroke-width='1'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpath d='M40 10 Q60 30 40 60 Q20 30 40 10Z' fill='none' stroke='rgba(55,65,81,0.03)' stroke-width='1'/%3E%3C/svg%3E");
       background-size: 80px 80px;
       pointer-events: none;
     }
     .hero-badge {
       display: inline-flex; align-items: center; gap: 8px;
-      background: rgba(59, 130, 246, 0.15);
+      background: rgba(59, 130, 246, 0.1);
       backdrop-filter: blur(10px);
       border: 1px solid rgba(59, 130, 246, 0.3);
       border-radius: 999px;
       padding: 8px 20px;
       font-size: .75rem; letter-spacing: .12em; text-transform: uppercase;
-      color: #06b6d4; font-weight: 600;
+      color: #0369a1; font-weight: 600;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .hero-badge:hover {
-      background: rgba(59, 130, 246, 0.25);
-      border-color: rgba(6, 182, 212, 0.5);
+      background: rgba(59, 130, 246, 0.15);
+      border-color: rgba(59, 130, 246, 0.5);
       transform: translateY(-2px);
     }
 
     /* ───── SECTION TITLES ───── */
     .section-tag {
       display: inline-block;
-      background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
-      color: #06b6d4;
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+      color: #0369a1;
       font-size: .72rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase;
       padding: 6px 16px; border-radius: 999px;
       margin-bottom: 12px;
-      border: 1px solid rgba(6, 182, 212, 0.3);
+      border: 1px solid rgba(59, 130, 246, 0.3);
       backdrop-filter: blur(10px);
     }
     .section-divider {
@@ -161,14 +161,14 @@
 
     /* ───── OFFICE BEARERS ───── */
     #bearers {
-      background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 41, 59, 0.6) 50%, rgba(59, 130, 246, 0.08) 100%);
+      background: linear-gradient(135deg, rgba(245, 243, 240, 0.8) 0%, rgba(250, 248, 245, 0.6) 50%, rgba(59, 130, 246, 0.05) 100%);
       position: relative; overflow: hidden;
       backdrop-filter: blur(10px);
     }
     #bearers::before {
       content: '';
       position: absolute; inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='none' stroke='rgba(59,130,246,0.05)' stroke-width='1'/%3E%3Ccircle cx='50' cy='50' r='20' fill='none' stroke='rgba(139,92,246,0.04)' stroke-width='1'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='none' stroke='rgba(59,130,246,0.03)' stroke-width='1'/%3E%3Ccircle cx='50' cy='50' r='20' fill='none' stroke='rgba(139,92,246,0.02)' stroke-width='1'/%3E%3C/svg%3E");
       background-size: 100px 100px;
     }
     .bearer-card {
@@ -197,10 +197,10 @@
       width: 100%; height: 100%;
       border-radius: 50%;
       overflow: hidden;
-      background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.1));
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.05));
       display: flex; align-items: center; justify-content: center;
       font-family: 'Playfair Display', serif;
-      font-size: 2rem; font-weight: 700; color: #f1f5f9;
+      font-size: 2rem; font-weight: 700; color: #1f2937;
       backdrop-filter: blur(10px);
     }
     .avatar-ring.sm .avatar-inner { font-size: 1.5rem; }
@@ -218,14 +218,14 @@
 
     /* ───── BENEFIT CARDS ───── */
     .benefit-card {
-      background: rgba(30, 41, 59, 0.5);
+      background: rgba(255, 255, 255, 0.7);
       backdrop-filter: blur(10px);
-      border: 1px solid rgba(59, 130, 246, 0.2);
+      border: 1px solid rgba(209, 213, 219, 0.4);
       border-radius: 16px;
       padding: 28px;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative; overflow: hidden;
-      color: #f1f5f9;
+      color: #374151;
     }
     .benefit-card::before {
       content: '';
@@ -238,23 +238,23 @@
     }
     .benefit-card:hover {
       transform: translateY(-8px);
-      box-shadow: 0 20px 50px rgba(59, 130, 246, 0.15);
-      border-color: rgba(59, 130, 246, 0.5);
-      background: rgba(30, 41, 59, 0.7);
+      box-shadow: 0 20px 50px rgba(59, 130, 246, 0.1);
+      border-color: rgba(59, 130, 246, 0.3);
+      background: rgba(255, 255, 255, 0.85);
     }
     .benefit-card:hover::before { transform: scaleX(1); }
     .benefit-icon {
       width: 52px; height: 52px; border-radius: 14px;
-      background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.15));
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.1));
       display: flex; align-items: center; justify-content: center;
       font-size: 1.5rem; margin-bottom: 16px;
       backdrop-filter: blur(10px);
     }
     .benefit-card h3 {
-      color: #f1f5f9;
+      color: #1f2937;
     }
     .benefit-card ul li {
-      color: rgba(241, 245, 249, 0.75);
+      color: rgba(55, 65, 81, 0.85);
     }
     .benefit-card ul li::before {
       content: '→';
@@ -264,43 +264,43 @@
 
     /* ───── JOIN SECTION ───── */
     #join {
-      background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 41, 59, 0.6) 100%);
+      background: linear-gradient(135deg, rgba(245, 243, 240, 0.8) 0%, rgba(250, 248, 245, 0.6) 100%);
       backdrop-filter: blur(10px);
       position: relative;
     }
     #join::before {
       content: '';
       position: absolute; inset: 0;
-      background-image: radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
-                        radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.08) 0%, transparent 50%);
+      background-image: radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.03) 0%, transparent 50%);
       pointer-events: none;
     }
     .step-card {
-      background: rgba(30, 41, 59, 0.5);
+      background: rgba(255, 255, 255, 0.7);
       backdrop-filter: blur(10px);
-      border: 1px solid rgba(59, 130, 246, 0.2);
+      border: 1px solid rgba(209, 213, 219, 0.4);
       border-radius: 16px;
       padding: 24px;
       position: relative;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      color: #f1f5f9;
+      color: #374151;
     }
     .step-card:hover {
       transform: translateY(-6px);
-      box-shadow: 0 20px 40px rgba(59, 130, 246, 0.15);
-      border-color: rgba(59, 130, 246, 0.4);
-      background: rgba(30, 41, 59, 0.7);
+      box-shadow: 0 20px 40px rgba(59, 130, 246, 0.1);
+      border-color: rgba(59, 130, 246, 0.3);
+      background: rgba(255, 255, 255, 0.85);
     }
     .step-num {
       width: 36px; height: 36px; border-radius: 50%;
       background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
-      color: #f1f5f9; font-weight: 700; font-size: .9rem;
+      color: #ffffff; font-weight: 700; font-size: .9rem;
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0;
       box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
     }
     .step-card h4, .step-card p {
-      color: #f1f5f9;
+      color: #1f2937;
     }
 
     /* ───── BTN ───── */
@@ -323,17 +323,17 @@
     }
     .btn-outline {
       display: inline-flex; align-items: center; gap: 8px;
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.5);
       backdrop-filter: blur(10px);
-      border: 2px solid rgba(241, 245, 249, 0.3);
-      color: #f1f5f9; font-weight: 600; letter-spacing: .02em;
+      border: 2px solid rgba(59, 130, 246, 0.3);
+      color: #374151; font-weight: 600; letter-spacing: .02em;
       padding: 13px 30px; border-radius: 999px;
       transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
       cursor: pointer; font-family: 'DM Sans', sans-serif;
       font-size: .95rem;
     }
     .btn-outline:hover {
-      background: rgba(59, 130, 246, 0.1);
+      background: rgba(59, 130, 246, 0.15);
       border-color: var(--accent-cyan);
       box-shadow: 0 8px 24px rgba(59, 130, 246, 0.2);
       transform: translateY(-2px);
@@ -343,7 +343,7 @@
     #mobile-menu {
       transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s;
       max-height: 0; opacity: 0; overflow: hidden;
-      background: rgba(15, 23, 42, 0.95) !important;
+      background: rgba(255, 255, 255, 0.95) !important;
       backdrop-filter: blur(10px);
     }
     #mobile-menu.open { max-height: 400px; opacity: 1; }
@@ -358,47 +358,47 @@
 
     /* ───── SUPPORT SECTION ───── */
     #support {
-      background: linear-gradient(135deg, rgba(15, 23, 42, 0.7) 0%, rgba(30, 41, 59, 0.5) 100%);
+      background: linear-gradient(135deg, rgba(245, 243, 240, 0.7) 0%, rgba(250, 248, 245, 0.5) 100%);
       backdrop-filter: blur(10px);
       position: relative;
     }
     .support-item {
       display: flex; gap: 16px; align-items: flex-start;
       padding: 20px; border-radius: 14px;
-      background: rgba(59, 130, 246, 0.08);
-      border: 1px solid rgba(59, 130, 246, 0.15);
+      background: rgba(59, 130, 246, 0.06);
+      border: 1px solid rgba(209, 213, 219, 0.4);
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      color: #f1f5f9;
+      color: #374151;
     }
     .support-item:hover { 
-      background: rgba(59, 130, 246, 0.15);
+      background: rgba(59, 130, 246, 0.12);
       border-color: rgba(59, 130, 246, 0.3);
       transform: translateX(4px);
-      box-shadow: 0 10px 30px rgba(59, 130, 246, 0.1);
+      box-shadow: 0 10px 30px rgba(59, 130, 246, 0.08);
     }
     .support-icon {
       width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
       background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
-      color: #f1f5f9; display: flex; align-items: center; justify-content: center; 
+      color: #ffffff; display: flex; align-items: center; justify-content: center; 
       font-size: 1.2rem;
       box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
     }
     .support-item h4 {
-      color: #f1f5f9;
+      color: #1f2937;
     }
     .support-item p {
-      color: rgba(241, 245, 249, 0.7);
+      color: rgba(55, 65, 81, 0.75);
     }
 
     /* ───── FOOTER ───── */
     footer {
-      background: linear-gradient(180deg, rgba(15, 23, 42, 0.8) 0%, rgba(15, 23, 42, 0.95) 100%);
-      color: rgba(241, 245, 249, 0.75);
+      background: linear-gradient(180deg, rgba(245, 243, 240, 0.8) 0%, rgba(245, 243, 240, 0.95) 100%);
+      color: rgba(55, 65, 81, 0.75);
       backdrop-filter: blur(10px);
-      border-top: 1px solid rgba(59, 130, 246, 0.1);
+      border-top: 1px solid rgba(209, 213, 219, 0.3);
     }
     footer a { 
-      color: rgba(241, 245, 249, 0.7);
+      color: rgba(55, 65, 81, 0.7);
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
     footer a:hover { 
@@ -410,7 +410,7 @@
     }
 
     ::-webkit-scrollbar-track {
-      background: rgba(15, 23, 42, 0.5);
+      background: rgba(245, 243, 240, 0.5);
     }
 
     ::-webkit-scrollbar-thumb {
@@ -425,7 +425,7 @@
     /* Selection styling */
     ::selection {
       background: rgba(59, 130, 246, 0.3);
-      color: #f1f5f9;
+      color: #1f2937;
     }
 
     /* Smooth transitions */
@@ -466,13 +466,13 @@
       50% { opacity: 0.5; }
     }
 
-    /* Text refinement for dark theme */
+    /* Text refinement for light theme */
     h1, h2, h3, h4, h5, h6 {
-      color: #f1f5f9;
+      color: #1f2937;
     }
 
     p {
-      color: rgba(241, 245, 249, 0.85);
+      color: rgba(55, 65, 81, 0.85);
     }
 
     /* Link styling */
@@ -939,7 +939,7 @@
 ═══════════════════════════════════════════════════════════════ -->
 <footer id="contact">
   <!-- Contact area -->
-  <div class="py-20 border-b border-slate-700">
+  <div class="py-20 border-b border-gray-300">
     <div class="max-w-6xl mx-auto px-6">
       <div class="grid md:grid-cols-3 gap-12">
 
@@ -948,16 +948,16 @@
           <div class="flex items-center gap-3 mb-6">
             <div class="w-11 h-11 rounded-full bg-gradient-to-br from-blue-400 to-cyan-400 flex items-center justify-center text-slate-900 font-display font-black text-lg">A</div>
             <div>
-              <div class="font-display font-bold text-white text-base">DND</div>
-              <div class="text-cyan-400 text-xs">Alumni Association</div>
+              <div class="font-display font-bold text-gray-900 text-base">DND</div>
+              <div class="text-blue-600 text-xs">Alumni Association</div>
             </div>
           </div>
-          <p class="text-slate-400 text-sm leading-relaxed mb-5">Alumni Association of the Department of Nutrition &amp; Dietetics, committed to connecting and empowering nutrition professionals across Sri Lanka and beyond.</p>
+          <p class="text-gray-600 text-sm leading-relaxed mb-5">Alumni Association of the Department of Nutrition &amp; Dietetics, committed to connecting and empowering nutrition professionals across Sri Lanka and beyond.</p>
           <div class="flex gap-3">
-            <a href="#" title="Facebook" class="w-9 h-9 rounded-full border border-slate-600 flex items-center justify-center text-slate-400 hover:text-cyan-400 hover:border-cyan-400 transition-colors">
+            <a href="#" title="Facebook" class="w-9 h-9 rounded-full border border-gray-400 flex items-center justify-center text-gray-600 hover:text-cyan-600 hover:border-cyan-600 transition-colors">
               <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
             </a>
-            <a href="https://www.wyb.ac.lk" target="_blank" title="University website" class="w-9 h-9 rounded-full border border-slate-600 flex items-center justify-center text-slate-400 hover:text-cyan-400 hover:border-cyan-400 transition-colors">
+            <a href="https://www.wyb.ac.lk" target="_blank" title="University website" class="w-9 h-9 rounded-full border border-gray-400 flex items-center justify-center text-gray-600 hover:text-cyan-600 hover:border-cyan-600 transition-colors">
               <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10A15.3 15.3 0 0 1 12 2z" stroke="currentColor" stroke-width="2"/></svg>
             </a>
           </div>
@@ -965,30 +965,30 @@
 
         <!-- Quick links -->
         <div>
-          <h4 class="font-display font-bold text-white text-lg mb-6">Quick Links</h4>
+          <h4 class="font-display font-bold text-gray-900 text-lg mb-6">Quick Links</h4>
           <ul class="space-y-3 text-sm">
-            <li><a href="#bearers"  class="text-slate-400 hover:text-cyan-400 transition-colors flex items-center gap-2"><span class="text-slate-600">›</span> Office Bearers</a></li>
-            <li><a href="#benefits" class="text-slate-400 hover:text-cyan-400 transition-colors flex items-center gap-2"><span class="text-slate-600">›</span> Alumni Benefits</a></li>
-            <li><a href="#support"  class="text-slate-400 hover:text-cyan-400 transition-colors flex items-center gap-2"><span class="text-slate-600">›</span> Support Students</a></li>
-            <li><a href="#join"     class="text-slate-400 hover:text-cyan-400 transition-colors flex items-center gap-2"><span class="text-slate-600">›</span> Membership Application</a></li>
-            <li><a href="https://www.wyb.ac.lk" target="_blank" class="text-slate-400 hover:text-cyan-400 transition-colors flex items-center gap-2"><span class="text-slate-600">›</span> Wayamba University</a></li>
-            <li><a href="#" class="text-slate-400 hover:text-cyan-400 transition-colors flex items-center gap-2"><span class="text-slate-600">›</span> Department of Nutrition &amp; Dietetics</a></li>
+            <li><a href="#bearers"  class="text-gray-600 hover:text-cyan-600 transition-colors flex items-center gap-2"><span class="text-gray-400">›</span> Office Bearers</a></li>
+            <li><a href="#benefits" class="text-gray-600 hover:text-cyan-600 transition-colors flex items-center gap-2"><span class="text-gray-400">›</span> Alumni Benefits</a></li>
+            <li><a href="#support"  class="text-gray-600 hover:text-cyan-600 transition-colors flex items-center gap-2"><span class="text-gray-400">›</span> Support Students</a></li>
+            <li><a href="#join"     class="text-gray-600 hover:text-cyan-600 transition-colors flex items-center gap-2"><span class="text-gray-400">›</span> Membership Application</a></li>
+            <li><a href="https://www.wyb.ac.lk" target="_blank" class="text-gray-600 hover:text-cyan-600 transition-colors flex items-center gap-2"><span class="text-gray-400">›</span> Wayamba University</a></li>
+            <li><a href="#" class="text-gray-600 hover:text-cyan-600 transition-colors flex items-center gap-2"><span class="text-gray-400">›</span> Department of Nutrition &amp; Dietetics</a></li>
           </ul>
         </div>
 
         <!-- Contact details -->
         <div>
-          <h4 class="font-display font-bold text-white text-lg mb-6">Contact Us</h4>
+          <h4 class="font-display font-bold text-gray-900 text-lg mb-6">Contact Us</h4>
           <ul class="space-y-4 text-sm">
-            <li class="flex gap-3 items-start text-slate-400">
+            <li class="flex gap-3 items-start text-gray-600">
               <svg class="shrink-0 mt-0.5" width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="10" r="3" stroke="currentColor" stroke-width="2"/></svg>
               <span>Department of Nutrition &amp; Dietetics,<br/>Faculty of Livestock, Fisheries &amp; Nutrition,<br/>Wayamba University of Sri Lanka,<br/>Makandura, Gonawila (NWP) 60170,<br/>Sri Lanka</span>
             </li>
-            <li class="flex gap-3 items-center text-slate-400">
+            <li class="flex gap-3 items-center text-gray-600">
               <svg class="shrink-0" width="16" height="16" fill="none" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2" stroke="currentColor" stroke-width="2"/><path d="M2 8l10 6 10-6" stroke="currentColor" stroke-width="2"/></svg>
-              <a href="mailto:aluminidan@wyab.ac.lk" class="hover:text-cyan-400 transition-colors">aluminidan@wyab.ac.lk</a>
+              <a href="mailto:aluminidan@wyab.ac.lk" class="hover:text-cyan-600 transition-colors">aluminidan@wyab.ac.lk</a>
             </li>
-            <li class="flex gap-3 items-center text-slate-400">
+            <li class="flex gap-3 items-center text-gray-600">
               <svg class="shrink-0" width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.57 3.21 2 2 0 0 1 3.55 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.52a16 16 0 0 0 6 6l.86-.86a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" stroke="currentColor" stroke-width="2"/></svg>
               <span>+94 (0)37 2 282 922 (General Enquiries)</span>
             </li>
@@ -999,16 +999,10 @@
   </div>
 
   <!-- Bottom bar -->
-  <div class="py-5 bg-slate-950">
-    <div class="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+  <div class="py-5 bg-gray-100">
+    <div class="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-500">
       <span>© 2024 DND – Alumni Association of the Department of Nutrition &amp; Dietetics. All rights reserved.</span>
       <span class="flex items-center gap-1">
-        Wayamba University of Sri Lanka
-        <svg width="12" height="12" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/></svg>
-      </span>
-    </div>
-  </div>
-</footer>
         Wayamba University of Sri Lanka
         <svg width="12" height="12" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/></svg>
       </span>
@@ -1032,10 +1026,10 @@
     navbar.classList.toggle('scrolled', scrolled);
 
     navLinks.forEach(l => {
-      l.style.color = scrolled ? 'rgba(241, 245, 249, 0.9)' : 'rgba(241, 245, 249, 0.8)';
+      l.style.color = scrolled ? 'rgba(31, 41, 55, 0.9)' : 'rgba(55, 65, 81, 0.8)';
     });
-    navMain.style.color = scrolled ? '#f1f5f9' : '';
-    navSub.style.color  = scrolled ? '#06b6d4' : '';
+    navMain.style.color = scrolled ? '#1f2937' : '';
+    navSub.style.color  = scrolled ? '#0369a1' : '';
   });
 
   // Hamburger
