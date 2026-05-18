@@ -44,8 +44,8 @@
     html { scroll-behavior: smooth; }
     body { 
       font-family: 'DM Sans', sans-serif; 
-      background: linear-gradient(135deg, #0f172a 0%, #1a1f35 50%, #0d1427 100%);
-      color: #f1f5f9; 
+      background: linear-gradient(135deg, #f5f3f0 0%, #faf8f5 50%, #f0ebe5 100%);
+      color: #374151; 
       overflow-x: hidden;
       min-height: 100vh;
       transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
@@ -58,7 +58,7 @@
       right: -50%;
       width: 100%;
       height: 100%;
-      background: radial-gradient(circle, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.02) 1px, transparent 1px);
       background-size: 50px 50px;
       pointer-events: none;
       z-index: 0;
@@ -72,20 +72,20 @@
     /* ───── NAV ───── */
     #navbar {
       transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      background: rgba(15, 23, 42, 0.7) !important;
+      background: rgba(255, 255, 255, 0.85) !important;
       backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+      border-bottom: 1px solid rgba(209, 213, 219, 0.5);
     }
     #navbar.scrolled {
-      background: rgba(15, 23, 42, 0.95) !important;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      background: rgba(255, 255, 255, 0.95) !important;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
       border-bottom-color: rgba(59, 130, 246, 0.2);
     }
     .nav-link {
       position: relative;
       font-weight: 500;
       letter-spacing: .02em;
-      color: rgba(241, 245, 249, 0.8);
+      color: rgba(55, 65, 81, 0.8);
       transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .nav-link::after {
@@ -96,14 +96,14 @@
       background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan));
       transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .nav-link:hover { color: #f1f5f9; }
+    .nav-link:hover { color: #1f2937; }
     .nav-link:hover::after { width: 100%; }
 
     /* ───── HERO ───── */
     #hero {
       background:
-        linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.8) 60%, rgba(59, 130, 246, 0.15) 100%),
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Cdefs%3E%3CradialGradient id='rg' cx='50%25' cy='50%25' r='50%25'%3E%3Cstop offset='0%25' stop-color='%233b82f6' stop-opacity='0.1'/%3E%3Cstop offset='100%25' stop-color='%238b5cf6' stop-opacity='0'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect width='600' height='600' fill='%230f172a'/%3E%3Ccircle cx='300' cy='300' r='300' fill='url(%23rg)'/%3E%3C/svg%3E") center/cover;
+        linear-gradient(135deg, rgba(245, 243, 240, 0.9) 0%, rgba(250, 248, 245, 0.8) 60%, rgba(59, 130, 246, 0.08) 100%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Cdefs%3E%3CradialGradient id='rg' cx='50%25' cy='50%25' r='50%25'%3E%3Cstop offset='0%25' stop-color='%233b82f6' stop-opacity='0.05'/%3E%3Cstop offset='100%25' stop-color='%238b5cf6' stop-opacity='0'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect width='600' height='600' fill='%23faf8f5'/%3E%3Ccircle cx='300' cy='300' r='300' fill='url(%23rg)'/%3E%3C/svg%3E") center/cover;
       min-height: 100vh;
       display: flex; align-items: center;
       position: relative;
@@ -113,42 +113,42 @@
       content: '';
       position: absolute; inset: 0;
       background-image:
-        radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.12) 0%, transparent 45%);
+        radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.06) 0%, transparent 45%);
       pointer-events: none;
     }
     .leaf-pattern {
       position: absolute; inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpath d='M40 10 Q60 30 40 60 Q20 30 40 10Z' fill='none' stroke='rgba(59,130,246,0.05)' stroke-width='1'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpath d='M40 10 Q60 30 40 60 Q20 30 40 10Z' fill='none' stroke='rgba(55,65,81,0.03)' stroke-width='1'/%3E%3C/svg%3E");
       background-size: 80px 80px;
       pointer-events: none;
     }
     .hero-badge {
       display: inline-flex; align-items: center; gap: 8px;
-      background: rgba(59, 130, 246, 0.15);
+      background: rgba(59, 130, 246, 0.1);
       backdrop-filter: blur(10px);
       border: 1px solid rgba(59, 130, 246, 0.3);
       border-radius: 999px;
       padding: 8px 20px;
       font-size: .75rem; letter-spacing: .12em; text-transform: uppercase;
-      color: #06b6d4; font-weight: 600;
+      color: #0369a1; font-weight: 600;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .hero-badge:hover {
-      background: rgba(59, 130, 246, 0.25);
-      border-color: rgba(6, 182, 212, 0.5);
+      background: rgba(59, 130, 246, 0.15);
+      border-color: rgba(59, 130, 246, 0.5);
       transform: translateY(-2px);
     }
 
     /* ───── SECTION TITLES ───── */
     .section-tag {
       display: inline-block;
-      background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
-      color: #06b6d4;
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+      color: #0369a1;
       font-size: .72rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase;
       padding: 6px 16px; border-radius: 999px;
       margin-bottom: 12px;
-      border: 1px solid rgba(6, 182, 212, 0.3);
+      border: 1px solid rgba(59, 130, 246, 0.3);
       backdrop-filter: blur(10px);
     }
     .section-divider {
@@ -161,14 +161,14 @@
 
     /* ───── OFFICE BEARERS ───── */
     #bearers {
-      background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 41, 59, 0.6) 50%, rgba(59, 130, 246, 0.08) 100%);
+      background: linear-gradient(135deg, rgba(245, 243, 240, 0.8) 0%, rgba(250, 248, 245, 0.6) 50%, rgba(59, 130, 246, 0.05) 100%);
       position: relative; overflow: hidden;
       backdrop-filter: blur(10px);
     }
     #bearers::before {
       content: '';
       position: absolute; inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='none' stroke='rgba(59,130,246,0.05)' stroke-width='1'/%3E%3Ccircle cx='50' cy='50' r='20' fill='none' stroke='rgba(139,92,246,0.04)' stroke-width='1'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='none' stroke='rgba(59,130,246,0.03)' stroke-width='1'/%3E%3Ccircle cx='50' cy='50' r='20' fill='none' stroke='rgba(139,92,246,0.02)' stroke-width='1'/%3E%3C/svg%3E");
       background-size: 100px 100px;
     }
     .bearer-card {
@@ -197,10 +197,10 @@
       width: 100%; height: 100%;
       border-radius: 50%;
       overflow: hidden;
-      background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.1));
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.05));
       display: flex; align-items: center; justify-content: center;
       font-family: 'Playfair Display', serif;
-      font-size: 2rem; font-weight: 700; color: #f1f5f9;
+      font-size: 2rem; font-weight: 700; color: #1f2937;
       backdrop-filter: blur(10px);
     }
     .avatar-ring.sm .avatar-inner { font-size: 1.5rem; }
@@ -218,14 +218,14 @@
 
     /* ───── BENEFIT CARDS ───── */
     .benefit-card {
-      background: rgba(30, 41, 59, 0.5);
+      background: rgba(255, 255, 255, 0.7);
       backdrop-filter: blur(10px);
-      border: 1px solid rgba(59, 130, 246, 0.2);
+      border: 1px solid rgba(209, 213, 219, 0.4);
       border-radius: 16px;
       padding: 28px;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative; overflow: hidden;
-      color: #f1f5f9;
+      color: #374151;
     }
     .benefit-card::before {
       content: '';
@@ -238,23 +238,23 @@
     }
     .benefit-card:hover {
       transform: translateY(-8px);
-      box-shadow: 0 20px 50px rgba(59, 130, 246, 0.15);
-      border-color: rgba(59, 130, 246, 0.5);
-      background: rgba(30, 41, 59, 0.7);
+      box-shadow: 0 20px 50px rgba(59, 130, 246, 0.1);
+      border-color: rgba(59, 130, 246, 0.3);
+      background: rgba(255, 255, 255, 0.85);
     }
     .benefit-card:hover::before { transform: scaleX(1); }
     .benefit-icon {
       width: 52px; height: 52px; border-radius: 14px;
-      background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.15));
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.1));
       display: flex; align-items: center; justify-content: center;
       font-size: 1.5rem; margin-bottom: 16px;
       backdrop-filter: blur(10px);
     }
     .benefit-card h3 {
-      color: #f1f5f9;
+      color: #1f2937;
     }
     .benefit-card ul li {
-      color: rgba(241, 245, 249, 0.75);
+      color: rgba(55, 65, 81, 0.85);
     }
     .benefit-card ul li::before {
       content: '→';
@@ -264,43 +264,43 @@
 
     /* ───── JOIN SECTION ───── */
     #join {
-      background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 41, 59, 0.6) 100%);
+      background: linear-gradient(135deg, rgba(245, 243, 240, 0.8) 0%, rgba(250, 248, 245, 0.6) 100%);
       backdrop-filter: blur(10px);
       position: relative;
     }
     #join::before {
       content: '';
       position: absolute; inset: 0;
-      background-image: radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
-                        radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.08) 0%, transparent 50%);
+      background-image: radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.03) 0%, transparent 50%);
       pointer-events: none;
     }
     .step-card {
-      background: rgba(30, 41, 59, 0.5);
+      background: rgba(255, 255, 255, 0.7);
       backdrop-filter: blur(10px);
-      border: 1px solid rgba(59, 130, 246, 0.2);
+      border: 1px solid rgba(209, 213, 219, 0.4);
       border-radius: 16px;
       padding: 24px;
       position: relative;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      color: #f1f5f9;
+      color: #374151;
     }
     .step-card:hover {
       transform: translateY(-6px);
-      box-shadow: 0 20px 40px rgba(59, 130, 246, 0.15);
-      border-color: rgba(59, 130, 246, 0.4);
-      background: rgba(30, 41, 59, 0.7);
+      box-shadow: 0 20px 40px rgba(59, 130, 246, 0.1);
+      border-color: rgba(59, 130, 246, 0.3);
+      background: rgba(255, 255, 255, 0.85);
     }
     .step-num {
       width: 36px; height: 36px; border-radius: 50%;
       background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
-      color: #f1f5f9; font-weight: 700; font-size: .9rem;
+      color: #ffffff; font-weight: 700; font-size: .9rem;
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0;
       box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
     }
     .step-card h4, .step-card p {
-      color: #f1f5f9;
+      color: #1f2937;
     }
 
     /* ───── BTN ───── */
@@ -323,17 +323,17 @@
     }
     .btn-outline {
       display: inline-flex; align-items: center; gap: 8px;
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.5);
       backdrop-filter: blur(10px);
-      border: 2px solid rgba(241, 245, 249, 0.3);
-      color: #f1f5f9; font-weight: 600; letter-spacing: .02em;
+      border: 2px solid rgba(59, 130, 246, 0.3);
+      color: #374151; font-weight: 600; letter-spacing: .02em;
       padding: 13px 30px; border-radius: 999px;
       transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
       cursor: pointer; font-family: 'DM Sans', sans-serif;
       font-size: .95rem;
     }
     .btn-outline:hover {
-      background: rgba(59, 130, 246, 0.1);
+      background: rgba(59, 130, 246, 0.15);
       border-color: var(--accent-cyan);
       box-shadow: 0 8px 24px rgba(59, 130, 246, 0.2);
       transform: translateY(-2px);
@@ -343,7 +343,7 @@
     #mobile-menu {
       transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s;
       max-height: 0; opacity: 0; overflow: hidden;
-      background: rgba(15, 23, 42, 0.95) !important;
+      background: rgba(255, 255, 255, 0.95) !important;
       backdrop-filter: blur(10px);
     }
     #mobile-menu.open { max-height: 400px; opacity: 1; }
@@ -358,47 +358,47 @@
 
     /* ───── SUPPORT SECTION ───── */
     #support {
-      background: linear-gradient(135deg, rgba(15, 23, 42, 0.7) 0%, rgba(30, 41, 59, 0.5) 100%);
+      background: linear-gradient(135deg, rgba(245, 243, 240, 0.7) 0%, rgba(250, 248, 245, 0.5) 100%);
       backdrop-filter: blur(10px);
       position: relative;
     }
     .support-item {
       display: flex; gap: 16px; align-items: flex-start;
       padding: 20px; border-radius: 14px;
-      background: rgba(59, 130, 246, 0.08);
-      border: 1px solid rgba(59, 130, 246, 0.15);
+      background: rgba(59, 130, 246, 0.06);
+      border: 1px solid rgba(209, 213, 219, 0.4);
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      color: #f1f5f9;
+      color: #374151;
     }
     .support-item:hover { 
-      background: rgba(59, 130, 246, 0.15);
+      background: rgba(59, 130, 246, 0.12);
       border-color: rgba(59, 130, 246, 0.3);
       transform: translateX(4px);
-      box-shadow: 0 10px 30px rgba(59, 130, 246, 0.1);
+      box-shadow: 0 10px 30px rgba(59, 130, 246, 0.08);
     }
     .support-icon {
       width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
       background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
-      color: #f1f5f9; display: flex; align-items: center; justify-content: center; 
+      color: #ffffff; display: flex; align-items: center; justify-content: center; 
       font-size: 1.2rem;
       box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
     }
     .support-item h4 {
-      color: #f1f5f9;
+      color: #1f2937;
     }
     .support-item p {
-      color: rgba(241, 245, 249, 0.7);
+      color: rgba(55, 65, 81, 0.75);
     }
 
     /* ───── FOOTER ───── */
     footer {
-      background: linear-gradient(180deg, rgba(15, 23, 42, 0.8) 0%, rgba(15, 23, 42, 0.95) 100%);
-      color: rgba(241, 245, 249, 0.75);
+      background: linear-gradient(180deg, rgba(245, 243, 240, 0.8) 0%, rgba(245, 243, 240, 0.95) 100%);
+      color: rgba(55, 65, 81, 0.75);
       backdrop-filter: blur(10px);
-      border-top: 1px solid rgba(59, 130, 246, 0.1);
+      border-top: 1px solid rgba(209, 213, 219, 0.3);
     }
     footer a { 
-      color: rgba(241, 245, 249, 0.7);
+      color: rgba(55, 65, 81, 0.7);
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
     footer a:hover { 
@@ -410,7 +410,7 @@
     }
 
     ::-webkit-scrollbar-track {
-      background: rgba(15, 23, 42, 0.5);
+      background: rgba(245, 243, 240, 0.5);
     }
 
     ::-webkit-scrollbar-thumb {
@@ -425,7 +425,7 @@
     /* Selection styling */
     ::selection {
       background: rgba(59, 130, 246, 0.3);
-      color: #f1f5f9;
+      color: #1f2937;
     }
 
     /* Smooth transitions */
@@ -466,13 +466,13 @@
       50% { opacity: 0.5; }
     }
 
-    /* Text refinement for dark theme */
+    /* Text refinement for light theme */
     h1, h2, h3, h4, h5, h6 {
-      color: #f1f5f9;
+      color: #1f2937;
     }
 
     p {
-      color: rgba(241, 245, 249, 0.85);
+      color: rgba(55, 65, 81, 0.85);
     }
 
     /* Link styling */
@@ -500,23 +500,23 @@
     <a href="#hero" class="flex items-center gap-3">
       <div class="w-10 h-10 rounded-full bg-gradient-to-br from-amber to-amber-light flex items-center justify-center text-forest font-display font-black text-lg shadow-md">A</div>
       <div class="leading-tight">
-        <div class="font-display font-bold text-white text-sm" id="nav-brand-main">DND</div>
+        <div class="font-display font-bold text-gray-900 text-sm" id="nav-brand-main">DND</div>
         <div class="text-xs text-sage" id="nav-brand-sub">Alumni Association</div>
       </div>
     </a>
 
     <!-- Desktop links -->
     <div class="hidden md:flex items-center gap-8" id="desktop-nav">
-      <a href="#bearers"  class="nav-link text-white/90 hover:text-white text-sm">Office Bearers</a>
-      <a href="#benefits" class="nav-link text-white/90 hover:text-white text-sm">Benefits</a>
-      <a href="#support"  class="nav-link text-white/90 hover:text-white text-sm">Support Students</a>
-      <a href="#join"     class="nav-link text-white/90 hover:text-white text-sm">Join</a>
-      <a href="#contact"  class="nav-link text-white/90 hover:text-white text-sm">Contact</a>
+      <a href="#bearers"  class="nav-link text-gray-800 hover:text-gray-900 text-sm">Office Bearers</a>
+      <a href="#benefits" class="nav-link text-gray-800 hover:text-gray-900 text-sm">Benefits</a>
+      <a href="#support"  class="nav-link text-gray-800 hover:text-gray-900 text-sm">Support Students</a>
+      <a href="#join"     class="nav-link text-gray-800 hover:text-gray-900 text-sm">Join</a>
+      <a href="#contact"  class="nav-link text-gray-800 hover:text-gray-900 text-sm">Contact</a>
       <a href="#join" class="btn-primary text-sm py-2 px-5">Join DND</a>
     </div>
 
     <!-- Hamburger -->
-    <button id="burger" class="md:hidden text-white p-2 rounded-lg hover:bg-white/10 transition-colors" aria-label="Open menu">
+    <button id="burger" class="md:hidden text-gray-900 p-2 rounded-lg hover:bg-gray-200 transition-colors" aria-label="Open menu">
       <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect y="3" width="22" height="2" rx="1" fill="currentColor"/><rect y="10" width="22" height="2" rx="1" fill="currentColor"/><rect y="17" width="22" height="2" rx="1" fill="currentColor"/></svg>
     </button>
   </div>
@@ -524,11 +524,11 @@
   <!-- Mobile menu -->
   <div id="mobile-menu" class="md:hidden px-5 pb-4" style="background:rgba(0,11,31,0.97)">
     <div class="flex flex-col gap-3 pt-2">
-      <a href="#bearers"  class="text-white/90 py-2 text-sm font-medium border-b border-white/10" onclick="closeMobile()">Office Bearers</a>
-      <a href="#benefits" class="text-white/90 py-2 text-sm font-medium border-b border-white/10" onclick="closeMobile()">Benefits</a>
-      <a href="#support"  class="text-white/90 py-2 text-sm font-medium border-b border-white/10" onclick="closeMobile()">Support Students</a>
-      <a href="#join"     class="text-white/90 py-2 text-sm font-medium border-b border-white/10" onclick="closeMobile()">Join</a>
-      <a href="#contact"  class="text-white/90 py-2 text-sm font-medium" onclick="closeMobile()">Contact</a>
+      <a href="#bearers"  class="text-gray-800 py-2 text-sm font-medium border-b border-gray-200" onclick="closeMobile()">Office Bearers</a>
+      <a href="#benefits" class="text-gray-800 py-2 text-sm font-medium border-b border-gray-200" onclick="closeMobile()">Benefits</a>
+      <a href="#support"  class="text-gray-800 py-2 text-sm font-medium border-b border-gray-200" onclick="closeMobile()">Support Students</a>
+      <a href="#join"     class="text-gray-800 py-2 text-sm font-medium border-b border-gray-200" onclick="closeMobile()">Join</a>
+      <a href="#contact"  class="text-gray-800 py-2 text-sm font-medium" onclick="closeMobile()">Contact</a>
       <a href="#join" class="btn-primary text-sm text-center justify-center mt-2" onclick="closeMobile()">Join DND</a>
     </div>
   </div>
@@ -545,14 +545,14 @@
       <span>●</span>
       Wayamba University of Sri Lanka
     </div>
-    <div class="text-white font-body text-sm tracking-widest uppercase mb-4">Faculty of Livestock, Fisheries &amp; Nutrition</div>
-    <h1 class="font-display text-white text-4xl sm:text-5xl lg:text-6xl font-black leading-tight mb-6">
+    <div class="text-gray-900 font-body text-sm tracking-widest uppercase mb-4">Faculty of Livestock, Fisheries &amp; Nutrition</div>
+    <h1 class="font-display text-gray-900 text-4xl sm:text-5xl lg:text-6xl font-black leading-tight mb-6">
       Alumni Association of the<br/>
       <span class="text-amber">Department of Nutrition &amp;</span><br/>
       <span class="text-amber">Dietetics</span>
       <span class="text-sage font-semibold text-3xl sm:text-4xl lg:text-5xl ml-2">(DND)</span>
     </h1>
-    <p class="font-body text-white/75 text-lg sm:text-xl max-w-2xl mx-auto mb-12 leading-relaxed">
+    <p class="font-body text-gray-700 text-lg sm:text-xl max-w-2xl mx-auto mb-12 leading-relaxed">
       Connecting Past, Present &amp; Future Nutrition &amp; Dietetics Professionals — Building a community that nourishes careers, knowledge, and lifelong bonds.
     </p>
     <div class="flex flex-wrap gap-4 justify-center">
@@ -570,21 +570,21 @@
     <div class="mt-20 grid grid-cols-3 gap-4 max-w-lg mx-auto">
       <div class="text-center">
         <div class="font-display text-3xl font-black text-amber">DND</div>
-        <div class="text-white/55 text-xs mt-1 uppercase tracking-wide">Department</div>
+        <div class="text-gray-500 text-xs mt-1 uppercase tracking-wide">Department</div>
       </div>
-      <div class="text-center border-x border-white/15">
+      <div class="text-center border-x border-gray-300">
         <div class="font-display text-3xl font-black text-amber">WUSL</div>
-        <div class="text-white/55 text-xs mt-1 uppercase tracking-wide">University</div>
+        <div class="text-gray-500 text-xs mt-1 uppercase tracking-wide">University</div>
       </div>
       <div class="text-center">
         <div class="font-display text-3xl font-black text-amber">LFN</div>
-        <div class="text-white/55 text-xs mt-1 uppercase tracking-wide">Faculty</div>
+        <div class="text-gray-500 text-xs mt-1 uppercase tracking-wide">Faculty</div>
       </div>
     </div>
   </div>
 
   <!-- Scroll indicator -->
-  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce text-white/40">
+  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce text-gray-400">
     <span class="text-xs tracking-widest uppercase">Scroll</span>
     <svg width="16" height="20" viewBox="0 0 16 20" fill="none"><path d="M8 1v14M2 10l6 7 6-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
   </div>
@@ -604,10 +604,10 @@
         <span class="text-amber text-xs font-bold tracking-widest uppercase">2024–2025 Appointment</span>
         <div class="w-8 h-px bg-amber"></div>
       </div>
-      <h2 class="font-display text-4xl sm:text-5xl font-black text-white mb-4">
+      <h2 class="font-display text-4xl sm:text-5xl font-black text-gray-900 mb-4">
         Newly Appointed<br/><span class="congrats-banner">Office Bearers</span>
       </h2>
-      <p class="text-white text-base max-w-xl mx-auto">
+      <p class="text-gray-900 text-base max-w-xl mx-auto">
         🎉 <strong class="text-amber">CONGRATULATIONS</strong> to our newly elected Executive Board — your leadership will guide DND to new heights!
       </p>
     </div>
@@ -625,7 +625,7 @@
           <div class="avatar-inner">GD</div>
         </div>
         <div>
-          <div class="font-display font-bold text-white text-base leading-snug">Ms. Gayathri<br/>Dissanayaka</div>
+          <div class="font-display font-bold text-gray-900 text-base leading-snug">Ms. Gayathri<br/>Dissanayaka</div>
           <div class="mt-2 text-xs font-bold tracking-wider uppercase text-amber bg-amber/15 rounded-full px-3 py-1 inline-block">President</div>
         </div>
       </div>
@@ -635,7 +635,7 @@
           <div class="avatar-inner">AV</div>
         </div>
         <div>
-          <div class="font-display font-bold text-white text-base leading-snug">Mr. Ashen<br/>Viduranga</div>
+          <div class="font-display font-bold text-gray-900 text-base leading-snug">Mr. Ashen<br/>Viduranga</div>
           <div class="mt-2 text-xs font-bold tracking-wider uppercase text-sage bg-sage/15 rounded-full px-3 py-1 inline-block">Vice President</div>
         </div>
       </div>
@@ -645,7 +645,7 @@
           <div class="avatar-inner">AB</div>
         </div>
         <div>
-          <div class="font-display font-bold text-white text-base leading-snug">Ms. Amasha<br/>Bandara</div>
+          <div class="font-display font-bold text-gray-900 text-base leading-snug">Ms. Amasha<br/>Bandara</div>
           <div class="mt-2 text-xs font-bold tracking-wider uppercase text-sage bg-sage/15 rounded-full px-3 py-1 inline-block">Secretary</div>
         </div>
       </div>
@@ -655,7 +655,7 @@
           <div class="avatar-inner">TK</div>
         </div>
         <div>
-          <div class="font-display font-bold text-white text-base leading-snug">Mr. Tharaka<br/>Karunarathna</div>
+          <div class="font-display font-bold text-gray-900 text-base leading-snug">Mr. Tharaka<br/>Karunarathna</div>
           <div class="mt-2 text-xs font-bold tracking-wider uppercase text-amber bg-amber/15 rounded-full px-3 py-1 inline-block">Treasurer</div>
         </div>
       </div>
@@ -665,7 +665,7 @@
           <div class="avatar-inner">YU</div>
         </div>
         <div>
-          <div class="font-display font-bold text-white text-base leading-snug">Ms. Yamini<br/>Umapathi</div>
+          <div class="font-display font-bold text-gray-900 text-base leading-snug">Ms. Yamini<br/>Umapathi</div>
           <div class="mt-2 text-xs font-bold tracking-wider uppercase text-sage bg-sage/15 rounded-full px-3 py-1 inline-block">Editor</div>
         </div>
       </div>
@@ -673,43 +673,43 @@
 
     <!-- Committee Members -->
     <div class="text-center mb-8 reveal">
-      <span class="text-white/60 text-xs font-bold tracking-[.25em] uppercase border border-white/20 px-5 py-2 rounded-full">Committee Members</span>
+      <span class="text-gray-500 text-xs font-bold tracking-[.25em] uppercase border border-gray-300 px-5 py-2 rounded-full">Committee Members</span>
     </div>
     <div class="grid grid-cols-3 gap-6 max-w-lg mx-auto mb-16 reveal">
       <div class="bearer-card text-center">
         <div class="avatar-ring sm mx-auto"><div class="avatar-inner">KT</div></div>
-        <div class="font-body text-white/90 text-sm leading-snug font-medium">Ms. Kiruthajiny<br/>Thevarajah</div>
-        <div class="text-white/40 text-xs mt-1">Committee Member</div>
+        <div class="font-body text-gray-800 text-sm leading-snug font-medium">Ms. Kiruthajiny<br/>Thevarajah</div>
+        <div class="text-gray-400 text-xs mt-1">Committee Member</div>
       </div>
       <div class="bearer-card text-center">
         <div class="avatar-ring sm mx-auto"><div class="avatar-inner">TH</div></div>
-        <div class="font-body text-white/90 text-sm leading-snug font-medium">Ms. Thilini<br/>Hirumuthugodage</div>
-        <div class="text-white/40 text-xs mt-1">Committee Member</div>
+        <div class="font-body text-gray-800 text-sm leading-snug font-medium">Ms. Thilini<br/>Hirumuthugodage</div>
+        <div class="text-gray-400 text-xs mt-1">Committee Member</div>
       </div>
       <div class="bearer-card text-center">
         <div class="avatar-ring sm mx-auto"><div class="avatar-inner">YA</div></div>
-        <div class="font-body text-white/90 text-sm leading-snug font-medium">Mr.<br/>Yashodaran</div>
-        <div class="text-white/40 text-xs mt-1">Committee Member</div>
+        <div class="font-body text-gray-800 text-sm leading-snug font-medium">Mr.<br/>Yashodaran</div>
+        <div class="text-gray-400 text-xs mt-1">Committee Member</div>
       </div>
     </div>
 
     <!-- Patron & Liaison -->
     <div class="text-center mb-8 reveal">
-      <span class="text-white/60 text-xs font-bold tracking-[.25em] uppercase border border-white/20 px-5 py-2 rounded-full">Leadership &amp; Advisory</span>
+      <span class="text-gray-500 text-xs font-bold tracking-[.25em] uppercase border border-gray-300 px-5 py-2 rounded-full">Leadership &amp; Advisory</span>
     </div>
     <div class="grid grid-cols-2 gap-8 max-w-md mx-auto reveal">
       <div class="bearer-card text-center">
         <div class="avatar-ring mx-auto" style="background: linear-gradient(135deg, #f4c573, #e9a43e)">
           <div class="avatar-inner" style="background: linear-gradient(135deg, #000b1f,#001f3f)">HG</div>
         </div>
-        <div class="font-display font-bold text-white text-base leading-snug">Dr. Harshi<br/>Gunawardena</div>
+        <div class="font-display font-bold text-gray-900 text-base leading-snug">Dr. Harshi<br/>Gunawardena</div>
         <div class="mt-2 text-xs font-bold tracking-wider uppercase text-amber bg-amber/15 rounded-full px-3 py-1 inline-block">Alumni Liaison Officer</div>
       </div>
       <div class="bearer-card text-center">
         <div class="avatar-ring mx-auto" style="background: linear-gradient(135deg, #f4c573, #e9a43e)">
           <div class="avatar-inner" style="background: linear-gradient(135deg, #000b1f,#001f3f)">TR</div>
         </div>
-        <div class="font-display font-bold text-white text-base leading-snug">Dr. Thilanka<br/>Ranathunge</div>
+        <div class="font-display font-bold text-gray-900 text-base leading-snug">Dr. Thilanka<br/>Ranathunge</div>
         <div class="mt-2 text-xs font-bold tracking-wider uppercase text-amber bg-amber/15 rounded-full px-3 py-1 inline-block">Patron</div>
       </div>
     </div>
@@ -725,7 +725,7 @@
   <div class="max-w-7xl mx-auto px-6">
     <div class="text-center mb-16 reveal">
       <span class="section-tag">Why Join</span>
-      <h2 class="font-display text-4xl sm:text-5xl font-black text-white mt-2">Alumni Benefits</h2>
+      <h2 class="font-display text-4xl sm:text-5xl font-black text-gray-900 mt-2">Alumni Benefits</h2>
       <p class="text-slate-300 mt-4 max-w-xl mx-auto">Membership in DND connects you to a rich ecosystem of professional support, community, and lifelong growth.</p>
       <div class="section-divider"></div>
     </div>
@@ -735,7 +735,7 @@
       <!-- 1 Career Development -->
       <div class="benefit-card reveal">
         <div class="benefit-icon">🚀</div>
-        <h3 class="font-display font-bold text-white text-xl mb-3">Career Development</h3>
+        <h3 class="font-display font-bold text-gray-900 text-xl mb-3">Career Development</h3>
         <ul class="space-y-2 text-sm text-slate-300 font-body">
           <li class="flex gap-2"><span class="text-cyan-400 font-bold shrink-0">→</span>Job placement support and referrals within the nutrition sector</li>
           <li class="flex gap-2"><span class="text-cyan-400 font-bold shrink-0">→</span>Professional mentoring from experienced alumni</li>
@@ -748,7 +748,7 @@
       <!-- 2 Further Studies -->
       <div class="benefit-card reveal">
         <div class="benefit-icon">🎓</div>
-        <h3 class="font-display font-bold text-white text-xl mb-3">Assistance in Further Studies</h3>
+        <h3 class="font-display font-bold text-gray-900 text-xl mb-3">Assistance in Further Studies</h3>
         <ul class="space-y-2 text-sm text-slate-300 font-body">
           <li class="flex gap-2"><span class="text-cyan-400 font-bold shrink-0">→</span>Guidance on postgraduate opportunities locally and abroad</li>
           <li class="flex gap-2"><span class="text-cyan-400 font-bold shrink-0">→</span>Scholarship and bursary information sharing among members</li>
@@ -760,7 +760,7 @@
       <!-- 3 Access Facilities -->
       <div class="benefit-card reveal">
         <div class="benefit-icon">🏛️</div>
-        <h3 class="font-display font-bold text-white text-xl mb-3">Access Facilities in the Department</h3>
+        <h3 class="font-display font-bold text-gray-900 text-xl mb-3">Access Facilities in the Department</h3>
         <ul class="space-y-2 text-sm text-slate-300 font-body">
           <li class="flex gap-2"><span class="text-cyan-400 font-bold shrink-0">→</span>Use of departmental laboratories for professional development</li>
           <li class="flex gap-2"><span class="text-cyan-400 font-bold shrink-0">→</span>Library access and e-resource subscriptions</li>
@@ -772,7 +772,7 @@
       <!-- 4 Documents & References -->
       <div class="benefit-card reveal">
         <div class="benefit-icon">📄</div>
-        <h3 class="font-display font-bold text-white text-xl mb-3">Copy of Documents &amp; References</h3>
+        <h3 class="font-display font-bold text-gray-900 text-xl mb-3">Copy of Documents &amp; References</h3>
         <ul class="space-y-2 text-sm text-slate-300 font-body">
           <li class="flex gap-2"><span class="text-cyan-400 font-bold shrink-0">→</span>Assistance in obtaining academic transcripts and certificates</li>
           <li class="flex gap-2"><span class="text-cyan-400 font-bold shrink-0">→</span>Reference letters supported by the department and DND</li>
@@ -784,7 +784,7 @@
       <!-- 5 Lifelong Learning -->
       <div class="benefit-card reveal">
         <div class="benefit-icon">📚</div>
-        <h3 class="font-display font-bold text-white text-xl mb-3">Support Lifelong Learning</h3>
+        <h3 class="font-display font-bold text-gray-900 text-xl mb-3">Support Lifelong Learning</h3>
         <ul class="space-y-2 text-sm text-slate-300 font-body">
           <li class="flex gap-2"><span class="text-cyan-400 font-bold shrink-0">→</span>Continuous professional development workshops and webinars</li>
           <li class="flex gap-2"><span class="text-cyan-400 font-bold shrink-0">→</span>Access to a curated digital learning resource library</li>
@@ -796,7 +796,7 @@
       <!-- 6 Network -->
       <div class="benefit-card reveal">
         <div class="benefit-icon">🌐</div>
-        <h3 class="font-display font-bold text-white text-xl mb-3">Network with the DAN Community</h3>
+        <h3 class="font-display font-bold text-gray-900 text-xl mb-3">Network with the DAN Community</h3>
         <ul class="space-y-2 text-sm text-slate-300 font-body">
           <li class="flex gap-2"><span class="text-cyan-400 font-bold shrink-0">→</span>Exclusive alumni directory connecting graduates across generations</li>
           <li class="flex gap-2"><span class="text-cyan-400 font-bold shrink-0">→</span>Annual reunions, felicitations, and social gatherings</li>
@@ -817,7 +817,7 @@
   <div class="max-w-6xl mx-auto px-6">
     <div class="text-center mb-16 reveal">
       <span class="section-tag">Give Back</span>
-      <h2 class="font-display text-4xl sm:text-5xl font-black text-white mt-2">Support Current Students</h2>
+      <h2 class="font-display text-4xl sm:text-5xl font-black text-gray-900 mt-2">Support Current Students</h2>
       <p class="text-slate-300 mt-4 max-w-2xl mx-auto">Alumni and donors play a vital role in shaping the next generation of nutrition professionals. Your contribution — big or small — creates a lasting impact.</p>
       <div class="section-divider"></div>
     </div>
@@ -826,42 +826,42 @@
       <div class="support-item">
         <div class="support-icon">💻</div>
         <div>
-          <h4 class="font-display font-bold text-white text-base mb-1">Computer &amp; Technology Donations</h4>
+          <h4 class="font-display font-bold text-gray-900 text-base mb-1">Computer &amp; Technology Donations</h4>
           <p class="text-sm text-slate-300">Donate computers, tablets, and IT equipment to help students access digital learning resources and conduct modern nutritional research.</p>
         </div>
       </div>
       <div class="support-item">
         <div class="support-icon">💰</div>
         <div>
-          <h4 class="font-display font-bold text-white text-base mb-1">Financial Sponsorships</h4>
+          <h4 class="font-display font-bold text-gray-900 text-base mb-1">Financial Sponsorships</h4>
           <p class="text-sm text-slate-300">Sponsor deserving students through bursaries, scholarship top-ups, or direct financial assistance to cover tuition, accommodation, or study materials.</p>
         </div>
       </div>
       <div class="support-item">
         <div class="support-icon">🏥</div>
         <div>
-          <h4 class="font-display font-bold text-white text-base mb-1">Medical &amp; Health Facilities</h4>
+          <h4 class="font-display font-bold text-gray-900 text-base mb-1">Medical &amp; Health Facilities</h4>
           <p class="text-sm text-slate-300">Contribute to improving on-campus medical facilities, first-aid resources, and student wellness programmes within the faculty.</p>
         </div>
       </div>
       <div class="support-item">
         <div class="support-icon">🔬</div>
         <div>
-          <h4 class="font-display font-bold text-white text-base mb-1">Laboratory &amp; Research Equipment</h4>
+          <h4 class="font-display font-bold text-gray-900 text-base mb-1">Laboratory &amp; Research Equipment</h4>
           <p class="text-sm text-slate-300">Fund the procurement of scientific equipment that enhances the quality of nutrition research and practical training in the department.</p>
         </div>
       </div>
       <div class="support-item">
         <div class="support-icon">📖</div>
         <div>
-          <h4 class="font-display font-bold text-white text-base mb-1">Library &amp; Study Resources</h4>
+          <h4 class="font-display font-bold text-gray-900 text-base mb-1">Library &amp; Study Resources</h4>
           <p class="text-sm text-slate-300">Donate textbooks, journal subscriptions, and e-learning licences to keep the departmental library current and accessible to all students.</p>
         </div>
       </div>
       <div class="support-item">
         <div class="support-icon">🌱</div>
         <div>
-          <h4 class="font-display font-bold text-white text-base mb-1">Mentorship &amp; Internship Placement</h4>
+          <h4 class="font-display font-bold text-gray-900 text-base mb-1">Mentorship &amp; Internship Placement</h4>
           <p class="text-sm text-slate-300">Offer your expertise by mentoring students or providing internship opportunities in your organisation, bridging academia with industry practice.</p>
         </div>
       </div>
@@ -884,7 +884,7 @@
   <div class="max-w-5xl mx-auto px-6 relative z-10">
     <div class="text-center mb-16 reveal">
       <span class="section-tag">Membership</span>
-      <h2 class="font-display text-4xl sm:text-5xl font-black text-white mt-2">How to Join DND</h2>
+      <h2 class="font-display text-4xl sm:text-5xl font-black text-gray-900 mt-2">How to Join DND</h2>
       <p class="text-slate-300 mt-4 max-w-xl mx-auto">Becoming a member is simple. Follow the steps below to join the DND community and start enjoying all the benefits of membership.</p>
       <div class="section-divider"></div>
     </div>
@@ -893,28 +893,28 @@
       <div class="step-card">
         <div class="flex items-center gap-3 mb-3">
           <div class="step-num">1</div>
-          <h4 class="font-display font-bold text-white text-base">Download Form</h4>
+          <h4 class="font-display font-bold text-gray-900 text-base">Download Form</h4>
         </div>
         <p class="text-sm text-slate-300">Download the official Membership Application Form from the DND website or collect it from the Department of Nutrition &amp; Dietetics.</p>
       </div>
       <div class="step-card">
         <div class="flex items-center gap-3 mb-3">
           <div class="step-num">2</div>
-          <h4 class="font-display font-bold text-white text-base">Read Constitution</h4>
+          <h4 class="font-display font-bold text-gray-900 text-base">Read Constitution</h4>
         </div>
         <p class="text-sm text-slate-300">Review the DND Constitution to understand the rights, responsibilities, and code of conduct expected of all members.</p>
       </div>
       <div class="step-card">
         <div class="flex items-center gap-3 mb-3">
           <div class="step-num">3</div>
-          <h4 class="font-display font-bold text-white text-base">Make Payment</h4>
+          <h4 class="font-display font-bold text-gray-900 text-base">Make Payment</h4>
         </div>
         <p class="text-sm text-slate-300">Pay the membership fee via bank transfer and obtain a bank slip as proof of payment. Details will be provided with the application form.</p>
       </div>
       <div class="step-card">
         <div class="flex items-center gap-3 mb-3">
           <div class="step-num">4</div>
-          <h4 class="font-display font-bold text-white text-base">Submit Application</h4>
+          <h4 class="font-display font-bold text-gray-900 text-base">Submit Application</h4>
         </div>
         <p class="text-sm text-slate-300">Email your completed form along with the scanned bank slip to <a href="mailto:aluminidan@wyab.ac.lk" class="text-cyan-400 font-semibold hover:text-cyan-300 transition-colors">aluminidan@wyab.ac.lk</a></p>
       </div>
@@ -923,7 +923,7 @@
     <!-- Contact card -->
     <div class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-8 text-center reveal border border-slate-700">
       <div class="text-cyan-400 text-xs uppercase tracking-widest mb-3 font-bold">Membership Enquiries</div>
-      <h3 class="font-display text-white text-2xl font-bold mb-2">Ready to Join?</h3>
+      <h3 class="font-display text-gray-900 text-2xl font-bold mb-2">Ready to Join?</h3>
       <p class="text-slate-300 text-sm mb-6">Send us an email and our team will guide you through the process.</p>
       <a href="mailto:aluminidan@wyab.ac.lk" class="btn-primary text-base">
         <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2" stroke="currentColor" stroke-width="2"/><path d="M2 8l10 6 10-6" stroke="currentColor" stroke-width="2"/></svg>
@@ -939,7 +939,7 @@
 ═══════════════════════════════════════════════════════════════ -->
 <footer id="contact">
   <!-- Contact area -->
-  <div class="py-20 border-b border-slate-700">
+  <div class="py-20 border-b border-gray-300">
     <div class="max-w-6xl mx-auto px-6">
       <div class="grid md:grid-cols-3 gap-12">
 
@@ -948,16 +948,16 @@
           <div class="flex items-center gap-3 mb-6">
             <div class="w-11 h-11 rounded-full bg-gradient-to-br from-blue-400 to-cyan-400 flex items-center justify-center text-slate-900 font-display font-black text-lg">A</div>
             <div>
-              <div class="font-display font-bold text-white text-base">DND</div>
-              <div class="text-cyan-400 text-xs">Alumni Association</div>
+              <div class="font-display font-bold text-gray-900 text-base">DND</div>
+              <div class="text-blue-600 text-xs">Alumni Association</div>
             </div>
           </div>
-          <p class="text-slate-400 text-sm leading-relaxed mb-5">Alumni Association of the Department of Nutrition &amp; Dietetics, committed to connecting and empowering nutrition professionals across Sri Lanka and beyond.</p>
+          <p class="text-gray-600 text-sm leading-relaxed mb-5">Alumni Association of the Department of Nutrition &amp; Dietetics, committed to connecting and empowering nutrition professionals across Sri Lanka and beyond.</p>
           <div class="flex gap-3">
-            <a href="#" title="Facebook" class="w-9 h-9 rounded-full border border-slate-600 flex items-center justify-center text-slate-400 hover:text-cyan-400 hover:border-cyan-400 transition-colors">
+            <a href="#" title="Facebook" class="w-9 h-9 rounded-full border border-gray-400 flex items-center justify-center text-gray-600 hover:text-cyan-600 hover:border-cyan-600 transition-colors">
               <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
             </a>
-            <a href="https://www.wyb.ac.lk" target="_blank" title="University website" class="w-9 h-9 rounded-full border border-slate-600 flex items-center justify-center text-slate-400 hover:text-cyan-400 hover:border-cyan-400 transition-colors">
+            <a href="https://www.wyb.ac.lk" target="_blank" title="University website" class="w-9 h-9 rounded-full border border-gray-400 flex items-center justify-center text-gray-600 hover:text-cyan-600 hover:border-cyan-600 transition-colors">
               <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10A15.3 15.3 0 0 1 12 2z" stroke="currentColor" stroke-width="2"/></svg>
             </a>
           </div>
@@ -965,30 +965,30 @@
 
         <!-- Quick links -->
         <div>
-          <h4 class="font-display font-bold text-white text-lg mb-6">Quick Links</h4>
+          <h4 class="font-display font-bold text-gray-900 text-lg mb-6">Quick Links</h4>
           <ul class="space-y-3 text-sm">
-            <li><a href="#bearers"  class="text-slate-400 hover:text-cyan-400 transition-colors flex items-center gap-2"><span class="text-slate-600">›</span> Office Bearers</a></li>
-            <li><a href="#benefits" class="text-slate-400 hover:text-cyan-400 transition-colors flex items-center gap-2"><span class="text-slate-600">›</span> Alumni Benefits</a></li>
-            <li><a href="#support"  class="text-slate-400 hover:text-cyan-400 transition-colors flex items-center gap-2"><span class="text-slate-600">›</span> Support Students</a></li>
-            <li><a href="#join"     class="text-slate-400 hover:text-cyan-400 transition-colors flex items-center gap-2"><span class="text-slate-600">›</span> Membership Application</a></li>
-            <li><a href="https://www.wyb.ac.lk" target="_blank" class="text-slate-400 hover:text-cyan-400 transition-colors flex items-center gap-2"><span class="text-slate-600">›</span> Wayamba University</a></li>
-            <li><a href="#" class="text-slate-400 hover:text-cyan-400 transition-colors flex items-center gap-2"><span class="text-slate-600">›</span> Department of Nutrition &amp; Dietetics</a></li>
+            <li><a href="#bearers"  class="text-gray-600 hover:text-cyan-600 transition-colors flex items-center gap-2"><span class="text-gray-400">›</span> Office Bearers</a></li>
+            <li><a href="#benefits" class="text-gray-600 hover:text-cyan-600 transition-colors flex items-center gap-2"><span class="text-gray-400">›</span> Alumni Benefits</a></li>
+            <li><a href="#support"  class="text-gray-600 hover:text-cyan-600 transition-colors flex items-center gap-2"><span class="text-gray-400">›</span> Support Students</a></li>
+            <li><a href="#join"     class="text-gray-600 hover:text-cyan-600 transition-colors flex items-center gap-2"><span class="text-gray-400">›</span> Membership Application</a></li>
+            <li><a href="https://www.wyb.ac.lk" target="_blank" class="text-gray-600 hover:text-cyan-600 transition-colors flex items-center gap-2"><span class="text-gray-400">›</span> Wayamba University</a></li>
+            <li><a href="#" class="text-gray-600 hover:text-cyan-600 transition-colors flex items-center gap-2"><span class="text-gray-400">›</span> Department of Nutrition &amp; Dietetics</a></li>
           </ul>
         </div>
 
         <!-- Contact details -->
         <div>
-          <h4 class="font-display font-bold text-white text-lg mb-6">Contact Us</h4>
+          <h4 class="font-display font-bold text-gray-900 text-lg mb-6">Contact Us</h4>
           <ul class="space-y-4 text-sm">
-            <li class="flex gap-3 items-start text-slate-400">
+            <li class="flex gap-3 items-start text-gray-600">
               <svg class="shrink-0 mt-0.5" width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="10" r="3" stroke="currentColor" stroke-width="2"/></svg>
               <span>Department of Nutrition &amp; Dietetics,<br/>Faculty of Livestock, Fisheries &amp; Nutrition,<br/>Wayamba University of Sri Lanka,<br/>Makandura, Gonawila (NWP) 60170,<br/>Sri Lanka</span>
             </li>
-            <li class="flex gap-3 items-center text-slate-400">
+            <li class="flex gap-3 items-center text-gray-600">
               <svg class="shrink-0" width="16" height="16" fill="none" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2" stroke="currentColor" stroke-width="2"/><path d="M2 8l10 6 10-6" stroke="currentColor" stroke-width="2"/></svg>
-              <a href="mailto:aluminidan@wyab.ac.lk" class="hover:text-cyan-400 transition-colors">aluminidan@wyab.ac.lk</a>
+              <a href="mailto:aluminidan@wyab.ac.lk" class="hover:text-cyan-600 transition-colors">aluminidan@wyab.ac.lk</a>
             </li>
-            <li class="flex gap-3 items-center text-slate-400">
+            <li class="flex gap-3 items-center text-gray-600">
               <svg class="shrink-0" width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.57 3.21 2 2 0 0 1 3.55 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.52a16 16 0 0 0 6 6l.86-.86a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" stroke="currentColor" stroke-width="2"/></svg>
               <span>+94 (0)37 2 282 922 (General Enquiries)</span>
             </li>
@@ -999,16 +999,10 @@
   </div>
 
   <!-- Bottom bar -->
-  <div class="py-5 bg-slate-950">
-    <div class="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+  <div class="py-5 bg-gray-100">
+    <div class="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-500">
       <span>© 2024 DND – Alumni Association of the Department of Nutrition &amp; Dietetics. All rights reserved.</span>
       <span class="flex items-center gap-1">
-        Wayamba University of Sri Lanka
-        <svg width="12" height="12" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/></svg>
-      </span>
-    </div>
-  </div>
-</footer>
         Wayamba University of Sri Lanka
         <svg width="12" height="12" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/></svg>
       </span>
@@ -1032,10 +1026,10 @@
     navbar.classList.toggle('scrolled', scrolled);
 
     navLinks.forEach(l => {
-      l.style.color = scrolled ? 'rgba(241, 245, 249, 0.9)' : 'rgba(241, 245, 249, 0.8)';
+      l.style.color = scrolled ? 'rgba(31, 41, 55, 0.9)' : 'rgba(55, 65, 81, 0.8)';
     });
-    navMain.style.color = scrolled ? '#f1f5f9' : '';
-    navSub.style.color  = scrolled ? '#06b6d4' : '';
+    navMain.style.color = scrolled ? '#1f2937' : '';
+    navSub.style.color  = scrolled ? '#0369a1' : '';
   });
 
   // Hamburger
