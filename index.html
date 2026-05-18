@@ -49,115 +49,318 @@
   }
   </script>
   <style>
+    /* Modern sophisticated color scheme */
+    :root {
+      --primary-dark: #0f172a;
+      --primary-light: #1e293b;
+      --accent-blue: #3b82f6;
+      --accent-purple: #8b5cf6;
+      --accent-cyan: #06b6d4;
+      --success: #10b981;
+    }
+
     body {
-      background: radial-gradient(ellipse at top left, #1e293b 40%, #111827 100%);
+      background: linear-gradient(135deg, #0f172a 0%, #1a1f35 50%, #0d1427 100%);
       min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
     }
-    /* WhatsApp FAB animation */
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: -50%;
+      right: -50%;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    main {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Header styling */
+    header {
+      margin-bottom: 3rem;
+    }
+
+    h1 {
+      font-size: clamp(2.25rem, 8vw, 3.75rem);
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 50%, #8b5cf6 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: gradientShift 6s ease infinite;
+    }
+
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% center; }
+      50% { background-position: 100% center; }
+    }
+
+    /* Enhanced WhatsApp FAB */
     .wa-fab {
-      animation: bounceInUp 1s both;
-      transition: box-shadow 0.2s, background 0.2s;
+      animation: slideInUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       z-index: 50;
+      box-shadow: 0 10px 30px rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.2);
     }
-    .wa-fab:hover, .wa-fab:focus {
-      box-shadow: 0 0 40px 8px #25d36633;
-      background: #22c55e;
+
+    .wa-fab:hover {
+      box-shadow: 0 20px 50px rgba(16, 185, 129, 0.3);
+      transform: scale(1.1) translateY(-4px);
+      background: #059669;
     }
-    /* Animate new items in list */
-    .site-list-item {
-      animation: fadeInUp 0.6s;
+
+    .wa-fab:focus {
+      outline: none;
+      ring: 2px solid rgba(16, 185, 129, 0.4);
     }
+
     /* Tooltip styling */
     .wa-tooltip {
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.2s;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       position: absolute;
-      bottom: 60px;
+      bottom: 70px;
       left: 50%;
-      transform: translateX(-50%);
-      background: #334155;
+      transform: translateX(-50%) translateY(8px);
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(10px);
       color: #f1f5f9;
-      font-size: 0.95rem;
-      padding: 0.4em 1em;
-      border-radius: 0.5em;
+      font-size: 0.875rem;
+      padding: 0.6em 1.2em;
+      border-radius: 0.75em;
+      border: 1px solid rgba(59, 130, 246, 0.3);
       white-space: nowrap;
+      font-weight: 500;
     }
+
     .wa-fab:hover .wa-tooltip,
     .wa-fab:focus .wa-tooltip {
       opacity: 1;
+      transform: translateX(-50%) translateY(0);
     }
-    /* FadeInUp keyframes for site list */
-    @keyframes fadeInUp {
-      from { opacity:0; transform: translateY(48px);}
-      to { opacity: 1; transform: none;}
+
+    /* Animate new items in list */
+    .site-list-item {
+      animation: slideInUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
-    /* BounceInUp for FAB */
-    @keyframes bounceInUp {
-      from,
-      60%,
-      75%,
-      90%,
-      to {
-        animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
-      }
+
+    /* Refined section styling */
+    section {
+      background: rgba(30, 41, 59, 0.5);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(148, 163, 184, 0.1);
+      border-radius: 1.5rem;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+      overflow: hidden;
+    }
+
+    section:hover {
+      border-color: rgba(59, 130, 246, 0.2);
+      box-shadow: 0 30px 60px rgba(59, 130, 246, 0.1);
+    }
+
+    /* Section header */
+    section > div:first-child {
+      background: linear-gradient(90deg, rgba(59, 130, 246, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+      backdrop-filter: blur(10px);
+    }
+
+    /* Site list items */
+    #site-list a {
+      background: rgba(15, 23, 42, 0.3);
+      border: 1px solid rgba(148, 163, 184, 0.1);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      backdrop-filter: blur(4px);
+    }
+
+    #site-list a:hover {
+      background: rgba(59, 130, 246, 0.08);
+      border-color: rgba(59, 130, 246, 0.3);
+      transform: translateY(-2px);
+      box-shadow: 0 15px 35px rgba(59, 130, 246, 0.1);
+    }
+
+    #site-list a:focus-visible {
+      outline: 2px solid rgba(59, 130, 246, 0.5);
+      outline-offset: 2px;
+    }
+
+    /* Loading spinner enhancement */
+    #status {
+      color: #cbd5e1;
+      font-weight: 500;
+    }
+
+    #status svg {
+      color: #3b82f6;
+    }
+
+    /* Footer styling */
+    footer {
+      background: linear-gradient(180deg, transparent 0%, rgba(15, 23, 42, 0.3) 100%);
+      margin-top: 4rem;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(148, 163, 184, 0.1);
+    }
+
+    footer a {
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    footer a::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: currentColor;
+      transition: width 0.3s ease;
+    }
+
+    footer a:hover::after {
+      width: 100%;
+    }
+
+    /* Animations */
+    @keyframes slideInUp {
       from {
         opacity: 0;
-        transform: translate3d(0, 3000px, 0);
-      }
-      60% {
-        opacity: 1;
-        transform: translate3d(0, -20px, 0);
-      }
-      75% {
-        transform: translate3d(0, 10px, 0);
-      }
-      90% {
-        transform: translate3d(0, -5px, 0);
+        transform: translateY(30px);
       }
       to {
-        transform: none;
+        opacity: 1;
+        transform: translateY(0);
       }
+    }
+
+    @keyframes slideInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* Smooth transitions */
+    * {
+      transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Selection styling */
+    ::selection {
+      background: rgba(59, 130, 246, 0.3);
+      color: #f1f5f9;
+    }
+
+    /* Scrollbar styling */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.5);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(59, 130, 246, 0.4);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(59, 130, 246, 0.6);
     }
   </style>
 </head>
 <body class="min-h-screen text-slate-100 font-sans selection:bg-sky-700/60">
   <!-- WhatsApp Quick Action FAB -->
-  <a href="https://wa.me/94784464128" class="wa-fab fixed bottom-6 right-6 bg-green-500 hover:bg-green-400 focus:bg-green-500 shadow-lg rounded-full w-16 h-16 flex items-center justify-center outline-none focus:ring-4 focus:ring-green-300 animate__animated" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp" title="Message Ashen Wijesingha via WhatsApp">
+  <a href="https://wa.me/94784464128" class="wa-fab fixed bottom-8 right-8 bg-green-500 hover:bg-green-600 focus:bg-green-500 rounded-full w-16 h-16 flex items-center justify-center outline-none focus:ring-4 focus:ring-green-300/50" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp" title="Message Ashen Wijesingha via WhatsApp">
     <span class="wa-tooltip">Chat with Ashen on WhatsApp</span>
-    <i class="fa-brands fa-whatsapp fa-2x"></i>
+    <i class="fa-brands fa-whatsapp fa-2x text-white"></i>
   </a>
 
-  <main class="mx-auto max-w-4xl px-6 py-12 animate__animated animate__fadeIn">
-    <header class="mb-10 text-center animate__animated animate__fadeInDown">
-      <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight bg-gradient-to-tr from-sky-400 via-green-400 to-indigo-400 bg-clip-text text-transparent inline-block animate__animated animate__pulse animate__slower">
-        Falcon 98 🦅 — Demo Pages
-      </h1>
-      <p class="mt-4 text-slate-300 text-lg">Beautiful demo web pages developed by <a href="https://github.com/AshenWijesingha" class="text-sky-300 underline decoration-sky-500 hover:text-green-300 font-bold transition">Ashen Wijesingha</a>
-      <span class="ml-2 inline-block align-middle bg-slate-800 rounded-full px-2 py-1 text-xs font-mono text-sky-300 shadow">GitHub: @AshenWijesingha</span></p>
-      <div class="mt-4 flex items-center justify-center gap-4 text-lg">
-        <a href="https://github.com/AshenWijesingha" class="hover:text-sky-400 transition" aria-label="GitHub Profile"><i class="fa-brands fa-github fa-lg"></i></a>
-        <a href="https://wa.me/94784464128" class="hover:text-green-400 transition" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp fa-lg"></i></a>
+  <main class="mx-auto max-w-5xl px-4 sm:px-6 py-16 sm:py-20">
+    <header class="mb-16 text-center">
+      <div class="inline-block">
+        <h1 class="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tighter mb-2">
+          Falcon 98 🦅
+        </h1>
+        <p class="text-xl sm:text-2xl font-light text-slate-300">Demo Pages Collection</p>
+      </div>
+      
+      <p class="mt-8 text-slate-400 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
+        Beautifully crafted demo web pages developed by 
+        <a href="https://github.com/AshenWijesingha" class="font-semibold text-blue-400 hover:text-blue-300 transition">Ashen Wijesingha</a>, 
+        showcasing modern design and functionality.
+      </p>
+      
+      <div class="mt-8 flex flex-wrap items-center justify-center gap-6 text-lg">
+        <a href="https://github.com/AshenWijesingha" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800/40 border border-slate-700 hover:border-blue-500/50 hover:bg-slate-800/60 transition text-slate-300 hover:text-blue-300" aria-label="GitHub Profile">
+          <i class="fa-brands fa-github"></i>
+          <span class="text-sm font-medium">GitHub</span>
+        </a>
+        <a href="https://wa.me/94784464128" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-green-500/10 border border-green-500/30 hover:border-green-400 hover:bg-green-500/20 transition text-green-400 hover:text-green-300" aria-label="WhatsApp Contact">
+          <i class="fa-brands fa-whatsapp"></i>
+          <span class="text-sm font-medium">WhatsApp</span>
+        </a>
+      </div>
+
+      <div class="mt-6 inline-block">
+        <span class="text-xs font-mono text-blue-400/60 bg-blue-400/5 px-3 py-1 rounded-full border border-blue-400/20">
+          @AshenWijesingha
+        </span>
       </div>
     </header>
 
-    <section class="rounded-3xl border border-slate-800 bg-slate-900/70 shadow-2xl overflow-hidden animate__animated animate__fadeInUp">
-      <div class="border-b border-slate-800 px-6 py-5 bg-gradient-to-r from-slate-800/80 to-slate-900/40 backdrop-blur-sm">
-        <h2 class="text-xl font-semibold tracking-wide flex items-center gap-2 text-sky-300">
-          <i class="fa-solid fa-sitemap"></i>
-          Website Sitemap
-        </h2>
+    <section class="animate-fadeIn">
+      <div class="px-6 sm:px-8 py-6 sm:py-7 flex items-center gap-3">
+        <i class="fa-solid fa-sitemap text-blue-400"></i>
+        <h2 class="text-2xl font-bold text-slate-100">Website Sitemap</h2>
       </div>
-      <div id="status" class="px-6 py-4 text-slate-300 flex items-center gap-2">
-        <svg class="animate-spin h-5 w-5 text-sky-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-40" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-80" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg>
-        Loading pages…
+      
+      <div id="status" class="px-6 sm:px-8 py-5 text-slate-300 flex items-center gap-3 font-medium">
+        <svg class="animate-spin h-5 w-5 text-blue-400 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-40" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-80" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg>
+        <span>Loading pages…</span>
       </div>
-      <ul id="site-list" class="divide-y divide-slate-800"></ul>
+      
+      <ul id="site-list" class="divide-y divide-slate-800/50"></ul>
     </section>
-    <footer class="mt-12 text-slate-500 text-center text-sm tracking-wide animate__animated animate__fadeInUp">
-      &copy; <span id="current-year"></span> — <a href="https://github.com/AshenWijesingha" class="text-sky-300 underline hover:text-green-400 font-semibold transition">Ashen Wijesingha</a>
-      <span class="mx-2">|</span> Built with 💙 by Falcon 98
-      <span class="mx-2">|</span> <a href="https://wa.me/94784464128" class="text-green-400 underline hover:text-sky-400 transition">WhatsApp</a>
+
+    <footer class="mt-16 sm:mt-20 pt-8 text-slate-400 text-center text-sm tracking-wide border-t border-slate-800/50">
+      <p class="mb-2">
+        &copy; <span id="current-year"></span> — 
+        <a href="https://github.com/AshenWijesingha" class="text-blue-400 hover:text-blue-300 font-semibold transition">Ashen Wijesingha</a>
+        <span class="mx-2 text-slate-600">•</span>
+        Built with 💙 by 
+        <span class="font-semibold text-slate-300">Falcon 98</span>
+      </p>
+      <p>
+        <a href="https://wa.me/94784464128" class="text-green-400 hover:text-green-300 font-medium transition">Get in touch via WhatsApp</a>
+      </p>
     </footer>
   </main>
 
@@ -198,20 +401,27 @@
           statusEl.innerHTML = '<i class="fa-regular fa-circle-info mr-2"></i> No additional HTML pages found.';
           return;
         }
-        statusEl.innerHTML = `<i class="fa-solid fa-check-circle mr-2 text-green-400"></i> Found ${paths.length} page${paths.length > 1 ? "s" : ""}.`;
+        statusEl.innerHTML = `<i class="fa-solid fa-check-circle mr-2 text-green-400"></i> <span>Found <strong>${paths.length}</strong> page${paths.length > 1 ? "s" : ""}</span>`;
         paths.forEach((path, i) => {
           const li = document.createElement("li");
-          li.className = "px-6 py-4 site-list-item";
-          li.style.animationDelay = (i * 0.10) + "s"; // Staggered animation
+          li.className = "px-6 sm:px-8 py-5 site-list-item border-slate-800/50";
+          li.style.animationDelay = (i * 0.08) + "s"; // Staggered animation
 
           const name = formatName(path);
           const url = toUrl(path);
 
           li.innerHTML = `
-            <a class="group block rounded-xl p-4 transition-all bg-slate-800/50 hover:bg-slate-800/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 shadow-sm hover:shadow-lg animate__animated animate__fadeInUp animate__faster"
+            <a class="group block rounded-lg p-4 transition-all bg-slate-800/20 hover:bg-blue-500/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 border border-slate-700/50 hover:border-blue-500/40"
               href="${url}" target="_blank" rel="noopener" aria-label="${name} page">
-              <p class="text-lg font-bold text-slate-100 group-hover:text-sky-300 transition">${name}</p>
-              <p class="mt-1 break-all text-sm text-slate-400 group-hover:text-slate-300 transition">${url}</p>
+              <div class="flex items-start justify-between gap-4">
+                <div class="flex-1 min-w-0">
+                  <p class="text-lg font-semibold text-slate-100 group-hover:text-blue-300 transition leading-tight">${name}</p>
+                  <p class="mt-2 break-all text-sm text-slate-500 group-hover:text-slate-400 transition">${url}</p>
+                </div>
+                <div class="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity text-blue-400">
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                </div>
+              </div>
             </a>
           `;
           listEl.appendChild(li);
@@ -233,7 +443,7 @@
             .sort((a, b) => a.localeCompare(b));
           renderList(paths);
         } catch (err) {
-          statusEl.innerHTML = '<i class="fa-regular fa-triangle-exclamation mr-2"></i> Could not load page list automatically.<br /><span class="text-rose-400 text-xs">Check repository visibility, branch name, or GitHub API rate limits.</span>';
+          statusEl.innerHTML = '<div class="flex items-start gap-3"><div><i class="fa-solid fa-triangle-exclamation text-amber-400"></i></div><div><p class="font-semibold">Could not load page list automatically.</p><p class="text-xs text-slate-500 mt-1">Check repository visibility, branch name, or GitHub API rate limits.</p></div></div>';
         }
       };
 
