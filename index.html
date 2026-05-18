@@ -2,27 +2,172 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <title>Falcon 98 — Demo Web Pages by Ashen Wijesingha</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sites Directory</title>
+
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Falcon 98's directory of demo web pages. Created by Ashen Wijesingha (@AshenWijesingha). Modern, animated showcase with instant WhatsApp contact.">
+  <meta name="keywords" content="Falcon 98, Demo Pages, Web Development, Ashen Wijesingha, GitHub, Portfolio, HTML, Sites">
+  <link rel="canonical" href="https://falcon-98.github.io/Sites/">
+  <meta name="author" content="Ashen Wijesingha">
+  <meta name="robots" content="index, follow">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:title" content="Falcon 98 — Demo Web Pages">
+  <meta property="og:description" content="Directory of demo pages by Ashen Wijesingha (@AshenWijesingha). Explore, get inspired, and contact via WhatsApp.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://falcon-98.github.io/Sites/">
+  <meta property="og:image" content="https://avatars.githubusercontent.com/u/93072190?v=4">
+
+  <!-- Twitter -->
+  <meta name="twitter:title" content="Falcon 98 — Demo Web Pages">
+  <meta name="twitter:description" content="Demo pages developed by @AshenWijesingha. Discover, connect, and get inspired.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:creator" content="@AshenWijesingha">
+  <meta name="twitter:image" content="https://avatars.githubusercontent.com/u/93072190?v=4">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f985.svg">
+
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Animate.css for animations -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  <!-- Heroicons for WhatsApp FAB -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <!-- Structured Data for SEO -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Ashen Wijesingha",
+    "url": "https://github.com/AshenWijesingha",
+    "sameAs": [
+      "https://github.com/AshenWijesingha",
+      "https://wa.me/94784464128"
+    ]
+  }
+  </script>
+  <style>
+    body {
+      background: radial-gradient(ellipse at top left, #1e293b 40%, #111827 100%);
+      min-height: 100vh;
+    }
+    /* WhatsApp FAB animation */
+    .wa-fab {
+      animation: bounceInUp 1s both;
+      transition: box-shadow 0.2s, background 0.2s;
+      z-index: 50;
+    }
+    .wa-fab:hover, .wa-fab:focus {
+      box-shadow: 0 0 40px 8px #25d36633;
+      background: #22c55e;
+    }
+    /* Animate new items in list */
+    .site-list-item {
+      animation: fadeInUp 0.6s;
+    }
+    /* Tooltip styling */
+    .wa-tooltip {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+      position: absolute;
+      bottom: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #334155;
+      color: #f1f5f9;
+      font-size: 0.95rem;
+      padding: 0.4em 1em;
+      border-radius: 0.5em;
+      white-space: nowrap;
+    }
+    .wa-fab:hover .wa-tooltip,
+    .wa-fab:focus .wa-tooltip {
+      opacity: 1;
+    }
+    /* FadeInUp keyframes for site list */
+    @keyframes fadeInUp {
+      from { opacity:0; transform: translateY(48px);}
+      to { opacity: 1; transform: none;}
+    }
+    /* BounceInUp for FAB */
+    @keyframes bounceInUp {
+      from,
+      60%,
+      75%,
+      90%,
+      to {
+        animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+      }
+      from {
+        opacity: 0;
+        transform: translate3d(0, 3000px, 0);
+      }
+      60% {
+        opacity: 1;
+        transform: translate3d(0, -20px, 0);
+      }
+      75% {
+        transform: translate3d(0, 10px, 0);
+      }
+      90% {
+        transform: translate3d(0, -5px, 0);
+      }
+      to {
+        transform: none;
+      }
+    }
+  </style>
 </head>
-<body class="min-h-screen bg-slate-950 text-slate-100">
-  <main class="mx-auto max-w-4xl px-6 py-12">
-    <header class="mb-10">
-      <h1 class="text-3xl font-bold tracking-tight sm:text-4xl">Falcon 98 🦅 - Demo Pages</h1>
-      <p class="mt-3 text-slate-300">Demo Web Pages Developed by Falcon 98 by Ashen Wijesingha</p>
+<body class="min-h-screen text-slate-100 font-sans selection:bg-sky-700/60">
+  <!-- WhatsApp Quick Action FAB -->
+  <a href="https://wa.me/94784464128" class="wa-fab fixed bottom-6 right-6 bg-green-500 hover:bg-green-400 focus:bg-green-500 shadow-lg rounded-full w-16 h-16 flex items-center justify-center outline-none focus:ring-4 focus:ring-green-300 animate__animated" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp" title="Message Ashen Wijesingha via WhatsApp">
+    <span class="wa-tooltip">Chat with Ashen on WhatsApp</span>
+    <i class="fa-brands fa-whatsapp fa-2x"></i>
+  </a>
+
+  <main class="mx-auto max-w-4xl px-6 py-12 animate__animated animate__fadeIn">
+    <header class="mb-10 text-center animate__animated animate__fadeInDown">
+      <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight bg-gradient-to-tr from-sky-400 via-green-400 to-indigo-400 bg-clip-text text-transparent inline-block animate__animated animate__pulse animate__slower">
+        Falcon 98 🦅 — Demo Pages
+      </h1>
+      <p class="mt-4 text-slate-300 text-lg">Beautiful demo web pages developed by <a href="https://github.com/AshenWijesingha" class="text-sky-300 underline decoration-sky-500 hover:text-green-300 font-bold transition">Ashen Wijesingha</a>
+      <span class="ml-2 inline-block align-middle bg-slate-800 rounded-full px-2 py-1 text-xs font-mono text-sky-300 shadow">GitHub: @AshenWijesingha</span></p>
+      <div class="mt-4 flex items-center justify-center gap-4 text-lg">
+        <a href="https://github.com/AshenWijesingha" class="hover:text-sky-400 transition" aria-label="GitHub Profile"><i class="fa-brands fa-github fa-lg"></i></a>
+        <a href="https://wa.me/94784464128" class="hover:text-green-400 transition" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp fa-lg"></i></a>
+      </div>
     </header>
 
-    <section class="rounded-2xl border border-slate-800 bg-slate-900/60 shadow-xl">
-      <div class="border-b border-slate-800 px-6 py-4">
-        <h2 class="text-lg font-semibold">Website Sitemap</h2>
+    <section class="rounded-3xl border border-slate-800 bg-slate-900/70 shadow-2xl overflow-hidden animate__animated animate__fadeInUp">
+      <div class="border-b border-slate-800 px-6 py-5 bg-gradient-to-r from-slate-800/80 to-slate-900/40 backdrop-blur-sm">
+        <h2 class="text-xl font-semibold tracking-wide flex items-center gap-2 text-sky-300">
+          <i class="fa-solid fa-sitemap"></i>
+          Website Sitemap
+        </h2>
       </div>
-      <div id="status" class="px-6 py-4 text-slate-300">Loading pages…</div>
+      <div id="status" class="px-6 py-4 text-slate-300 flex items-center gap-2">
+        <svg class="animate-spin h-5 w-5 text-sky-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-40" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-80" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg>
+        Loading pages…
+      </div>
       <ul id="site-list" class="divide-y divide-slate-800"></ul>
     </section>
+    <footer class="mt-12 text-slate-500 text-center text-sm tracking-wide animate__animated animate__fadeInUp">
+      &copy; <span id="current-year"></span> — <a href="https://github.com/AshenWijesingha" class="text-sky-300 underline hover:text-green-400 font-semibold transition">Ashen Wijesingha</a>
+      <span class="mx-2">|</span> Built with 💙 by Falcon 98
+      <span class="mx-2">|</span> <a href="https://wa.me/94784464128" class="text-green-400 underline hover:text-sky-400 transition">WhatsApp</a>
+    </footer>
   </main>
 
   <script>
+    // Set dynamic year
+    document.addEventListener("DOMContentLoaded", function() {
+      document.getElementById("current-year").textContent = new Date().getFullYear();
+    });
+
+    // Main app function
     (() => {
       const owner = "Falcon-98";
       const repo = "Sites";
@@ -35,37 +180,38 @@
 
       const formatName = (path) =>
         path
-          .replace(/\.html$/i, "")
-          .split("/")
-          .pop()
-          .replace(/[-_]+/g, " ")
-          .replace(/\b\w/g, (m) => m.toUpperCase());
+            .replace(/\.html$/i, "")
+            .split("/")
+            .pop()
+            .replace(/[-_]+/g, " ")
+            .replace(/\b\w/g, (m) => m.toUpperCase());
 
       const toUrl = (path) =>
         `${pagesBase}/${path
-          .split("/")
-          .map((segment) => encodeURIComponent(segment))
-          .join("/")}`;
+        .split("/")
+        .map((segment) => encodeURIComponent(segment))
+        .join("/")}`;
 
       const renderList = (paths) => {
         listEl.innerHTML = "";
         if (!paths.length) {
-          statusEl.textContent = "No other HTML pages found.";
+          statusEl.innerHTML = '<i class="fa-regular fa-circle-info mr-2"></i> No additional HTML pages found.';
           return;
         }
-
-        statusEl.textContent = `Found ${paths.length} page${paths.length > 1 ? "s" : ""}.`;
-        paths.forEach((path) => {
+        statusEl.innerHTML = `<i class="fa-solid fa-check-circle mr-2 text-green-400"></i> Found ${paths.length} page${paths.length > 1 ? "s" : ""}.`;
+        paths.forEach((path, i) => {
           const li = document.createElement("li");
-          li.className = "px-6 py-4";
+          li.className = "px-6 py-4 site-list-item";
+          li.style.animationDelay = (i * 0.10) + "s"; // Staggered animation
 
           const name = formatName(path);
           const url = toUrl(path);
 
           li.innerHTML = `
-            <a class="group block rounded-lg p-3 transition hover:bg-slate-800/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400" href="${url}" target="_blank" rel="noopener noreferrer">
-              <p class="text-base font-medium text-slate-100 group-hover:text-sky-300">${name}</p>
-              <p class="mt-1 break-all text-sm text-slate-400 group-hover:text-slate-300">${url}</p>
+            <a class="group block rounded-xl p-4 transition-all bg-slate-800/50 hover:bg-slate-800/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 shadow-sm hover:shadow-lg animate__animated animate__fadeInUp animate__faster"
+              href="${url}" target="_blank" rel="noopener" aria-label="${name} page">
+              <p class="text-lg font-bold text-slate-100 group-hover:text-sky-300 transition">${name}</p>
+              <p class="mt-1 break-all text-sm text-slate-400 group-hover:text-slate-300 transition">${url}</p>
             </a>
           `;
           listEl.appendChild(li);
@@ -78,7 +224,6 @@
           if (!res.ok) {
             throw new Error(`GitHub API request failed: ${res.status}`);
           }
-
           const data = await res.json();
           const paths = (data.tree || [])
             .filter((entry) => entry.type === "blob")
@@ -86,12 +231,17 @@
             .filter((path) => /\.html$/i.test(path))
             .filter((path) => path.toLowerCase() !== "index.html")
             .sort((a, b) => a.localeCompare(b));
-
           renderList(paths);
         } catch (err) {
-          statusEl.textContent = "Could not load page list automatically.";
-          const hint = document.createElement("p");
-          hint.className = "mt-2 text-sm text-rose-300";
+          statusEl.innerHTML = '<i class="fa-regular fa-triangle-exclamation mr-2"></i> Could not load page list automatically.<br /><span class="text-rose-400 text-xs">Check repository visibility, branch name, or GitHub API rate limits.</span>';
+        }
+      };
+
+      loadPages();
+    })();
+  </script>
+</body>
+</html>          hint.className = "mt-2 text-sm text-rose-300";
           hint.textContent = "Please check repository visibility, branch name, or API rate limits.";
           statusEl.appendChild(hint);
         }
