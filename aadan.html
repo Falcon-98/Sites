@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AADAN – Alumni Association of the Department of Applied Nutrition</title>
-  <meta name="description" content="Alumni Association of the Department of Applied Nutrition (AADAN), Faculty of Livestock, Fisheries and Nutrition, Wayamba University of Sri Lanka." />
+  <title>DND – Alumni Association of the Department of Nutrition &amp; Dietetics</title>
+  <meta name="description" content="Alumni Association of the Department of Nutrition &amp; Dietetics (DND), Faculty of Livestock, Fisheries and Nutrition, Wayamba University of Sri Lanka." />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -12,8 +12,8 @@
       theme: {
         extend: {
           colors: {
-            forest:  { DEFAULT: '#2d6a4f', light: '#40916c', dark: '#1b4332' },
-            sage:    { DEFAULT: '#74b49b', light: '#a8d5ba', pale: '#d8f3dc' },
+            forest:  { DEFAULT: '#001f3f', light: '#003d7a', dark: '#000b1f' },
+            sage:    { DEFAULT: '#1a4d8f', light: '#2a6db3', pale: '#e8f1f8' },
             amber:   { DEFAULT: '#e9a43e', light: '#f4c573', dark: '#c77a10' },
             cream:   { DEFAULT: '#faf6f0', dark: '#f0e8d8' },
             earth:   { DEFAULT: '#8b5e3c', light: '#b07d5b' },
@@ -28,8 +28,8 @@
   </script>
   <style>
     :root {
-      --forest: #2d6a4f;
-      --sage:   #74b49b;
+      --forest: #001f3f;
+      --sage:   #1a4d8f;
       --amber:  #e9a43e;
       --cream:  #faf6f0;
       --earth:  #8b5e3c;
@@ -45,7 +45,7 @@
     }
     #navbar.scrolled {
       background: rgba(250,246,240,0.97) !important;
-      box-shadow: 0 2px 24px rgba(45,106,79,.12);
+      box-shadow: 0 2px 24px rgba(0,31,63,.12);
     }
     .nav-link {
       position: relative;
@@ -65,8 +65,8 @@
     /* ───── HERO ───── */
     #hero {
       background:
-        linear-gradient(135deg, rgba(27,67,50,.88) 0%, rgba(45,106,79,.72) 60%, rgba(116,180,155,.5) 100%),
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Cdefs%3E%3CradialGradient id='rg' cx='50%25' cy='50%25' r='50%25'%3E%3Cstop offset='0%25' stop-color='%2340916c' stop-opacity='0.3'/%3E%3Cstop offset='100%25' stop-color='%231b4332' stop-opacity='0'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect width='600' height='600' fill='%231b4332'/%3E%3Ccircle cx='300' cy='300' r='300' fill='url(%23rg)'/%3E%3C/svg%3E") center/cover;
+        linear-gradient(135deg, rgba(0,11,31,.88) 0%, rgba(0,31,63,.72) 60%, rgba(26,77,143,.5) 100%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Cdefs%3E%3CradialGradient id='rg' cx='50%25' cy='50%25' r='50%25'%3E%3Cstop offset='0%25' stop-color='%232a6db3' stop-opacity='0.3'/%3E%3Cstop offset='100%25' stop-color='%23000b1f' stop-opacity='0'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect width='600' height='600' fill='%23000b1f'/%3E%3Ccircle cx='300' cy='300' r='300' fill='url(%23rg)'/%3E%3C/svg%3E") center/cover;
       min-height: 100vh;
       display: flex; align-items: center;
       position: relative;
@@ -76,13 +76,13 @@
       content: '';
       position: absolute; inset: 0;
       background-image:
-        radial-gradient(circle at 20% 80%, rgba(116,180,155,.18) 0%, transparent 50%),
+        radial-gradient(circle at 20% 80%, rgba(26,77,143,.18) 0%, transparent 50%),
         radial-gradient(circle at 80% 20%, rgba(233,164,62,.12) 0%, transparent 45%);
       pointer-events: none;
     }
     .leaf-pattern {
       position: absolute; inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpath d='M40 10 Q60 30 40 60 Q20 30 40 10Z' fill='none' stroke='rgba(116,180,155,0.08)' stroke-width='1'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpath d='M40 10 Q60 30 40 60 Q20 30 40 10Z' fill='none' stroke='rgba(26,77,143,0.08)' stroke-width='1'/%3E%3C/svg%3E");
       background-size: 80px 80px;
       pointer-events: none;
     }
@@ -114,7 +114,7 @@
 
     /* ───── OFFICE BEARERS ───── */
     #bearers {
-      background: linear-gradient(135deg, #1b4332 0%, #2d6a4f 50%, #40916c 100%);
+      background: linear-gradient(135deg, #000b1f 0%, #001f3f 50%, #2a6db3 100%);
       position: relative; overflow: hidden;
     }
     #bearers::before {
@@ -133,7 +133,7 @@
       width: 120px; height: 120px;
       border-radius: 50%;
       padding: 3px;
-      background: linear-gradient(135deg, var(--amber), #74b49b);
+      background: linear-gradient(135deg, var(--amber), #1a4d8f);
       flex-shrink: 0;
     }
     .avatar-ring.sm { width: 96px; height: 96px; }
@@ -141,7 +141,7 @@
       width: 100%; height: 100%;
       border-radius: 50%;
       overflow: hidden;
-      background: linear-gradient(135deg, #40916c, #2d6a4f);
+      background: linear-gradient(135deg, #2a6db3, #001f3f);
       display: flex; align-items: center; justify-content: center;
       font-family: 'Playfair Display', serif;
       font-size: 2rem; font-weight: 700; color: rgba(255,255,255,.9);
@@ -162,7 +162,7 @@
     /* ───── BENEFIT CARDS ───── */
     .benefit-card {
       background: #fff;
-      border: 1px solid rgba(116,180,155,.2);
+      border: 1px solid rgba(26,77,143,.2);
       border-radius: 16px;
       padding: 28px;
       transition: transform .3s, box-shadow .3s, border-color .3s;
@@ -179,13 +179,13 @@
     }
     .benefit-card:hover {
       transform: translateY(-4px);
-      box-shadow: 0 16px 48px rgba(45,106,79,.12);
-      border-color: rgba(116,180,155,.5);
+      box-shadow: 0 16px 48px rgba(0,31,63,.12);
+      border-color: rgba(26,77,143,.5);
     }
     .benefit-card:hover::before { transform: scaleX(1); }
     .benefit-icon {
       width: 52px; height: 52px; border-radius: 14px;
-      background: linear-gradient(135deg, #d8f3dc, #b7e4c7);
+      background: linear-gradient(135deg, #e8f1f8, #b3d9f2);
       display: flex; align-items: center; justify-content: center;
       font-size: 1.5rem; margin-bottom: 16px;
     }
@@ -204,13 +204,13 @@
       background: #fff;
       border-radius: 16px;
       padding: 24px;
-      border: 1px solid rgba(139,94,60,.15);
+      border: 1px solid rgba(0,31,63,.15);
       position: relative;
       transition: transform .3s, box-shadow .3s;
     }
     .step-card:hover {
       transform: translateY(-3px);
-      box-shadow: 0 12px 32px rgba(139,94,60,.1);
+      box-shadow: 0 12px 32px rgba(0,31,63,.1);
     }
     .step-num {
       width: 36px; height: 36px; border-radius: 50%;
@@ -295,7 +295,7 @@
     <a href="#hero" class="flex items-center gap-3">
       <div class="w-10 h-10 rounded-full bg-gradient-to-br from-amber to-amber-light flex items-center justify-center text-forest font-display font-black text-lg shadow-md">A</div>
       <div class="leading-tight">
-        <div class="font-display font-bold text-white text-sm" id="nav-brand-main">AADAN</div>
+        <div class="font-display font-bold text-white text-sm" id="nav-brand-main">DND</div>
         <div class="text-xs text-sage" id="nav-brand-sub">Alumni Association</div>
       </div>
     </a>
@@ -307,7 +307,7 @@
       <a href="#support"  class="nav-link text-white/90 hover:text-white text-sm">Support Students</a>
       <a href="#join"     class="nav-link text-white/90 hover:text-white text-sm">Join</a>
       <a href="#contact"  class="nav-link text-white/90 hover:text-white text-sm">Contact</a>
-      <a href="#join" class="btn-primary text-sm py-2 px-5">Join AADAN</a>
+      <a href="#join" class="btn-primary text-sm py-2 px-5">Join DND</a>
     </div>
 
     <!-- Hamburger -->
@@ -317,14 +317,14 @@
   </div>
 
   <!-- Mobile menu -->
-  <div id="mobile-menu" class="md:hidden px-5 pb-4" style="background:rgba(27,67,50,0.97)">
+  <div id="mobile-menu" class="md:hidden px-5 pb-4" style="background:rgba(0,11,31,0.97)">
     <div class="flex flex-col gap-3 pt-2">
       <a href="#bearers"  class="text-white/90 py-2 text-sm font-medium border-b border-white/10" onclick="closeMobile()">Office Bearers</a>
       <a href="#benefits" class="text-white/90 py-2 text-sm font-medium border-b border-white/10" onclick="closeMobile()">Benefits</a>
       <a href="#support"  class="text-white/90 py-2 text-sm font-medium border-b border-white/10" onclick="closeMobile()">Support Students</a>
       <a href="#join"     class="text-white/90 py-2 text-sm font-medium border-b border-white/10" onclick="closeMobile()">Join</a>
       <a href="#contact"  class="text-white/90 py-2 text-sm font-medium" onclick="closeMobile()">Contact</a>
-      <a href="#join" class="btn-primary text-sm text-center justify-center mt-2" onclick="closeMobile()">Join AADAN</a>
+      <a href="#join" class="btn-primary text-sm text-center justify-center mt-2" onclick="closeMobile()">Join DND</a>
     </div>
   </div>
 </nav>
@@ -343,17 +343,17 @@
     <div class="text-sage font-body text-sm tracking-widest uppercase mb-4">Faculty of Livestock, Fisheries &amp; Nutrition</div>
     <h1 class="font-display text-white text-4xl sm:text-5xl lg:text-6xl font-black leading-tight mb-6">
       Alumni Association of the<br/>
-      <span class="text-amber-light">Department of Applied</span><br/>
-      Nutrition
-      <span class="text-sage font-semibold text-3xl sm:text-4xl lg:text-5xl ml-2">(AADAN)</span>
+      <span class="text-amber-light">Department of Nutrition &amp;</span><br/>
+      Dietetics
+      <span class="text-sage font-semibold text-3xl sm:text-4xl lg:text-5xl ml-2">(DND)</span>
     </h1>
     <p class="font-body text-white/75 text-lg sm:text-xl max-w-2xl mx-auto mb-12 leading-relaxed">
-      Connecting Past, Present &amp; Future Nutrition Professionals — Building a community that nourishes careers, knowledge, and lifelong bonds.
+      Connecting Past, Present &amp; Future Nutrition &amp; Dietetics Professionals — Building a community that nourishes careers, knowledge, and lifelong bonds.
     </p>
     <div class="flex flex-wrap gap-4 justify-center">
       <a href="#join" class="btn-primary">
         <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
-        Join AADAN
+        Join DND
       </a>
       <a href="#benefits" class="btn-outline">
         Explore Benefits
@@ -364,7 +364,7 @@
     <!-- Stats bar -->
     <div class="mt-20 grid grid-cols-3 gap-4 max-w-lg mx-auto">
       <div class="text-center">
-        <div class="font-display text-3xl font-black text-amber">DAN</div>
+        <div class="font-display text-3xl font-black text-amber">DND</div>
         <div class="text-white/55 text-xs mt-1 uppercase tracking-wide">Department</div>
       </div>
       <div class="text-center border-x border-white/15">
@@ -403,7 +403,7 @@
         Newly Appointed<br/><span class="congrats-banner">Office Bearers</span>
       </h2>
       <p class="text-sage text-base max-w-xl mx-auto">
-        🎉 <strong class="text-amber">CONGRATULATIONS</strong> to our newly elected Executive Board — your leadership will guide AADAN to new heights!
+        🎉 <strong class="text-amber">CONGRATULATIONS</strong> to our newly elected Executive Board — your leadership will guide DND to new heights!
       </p>
     </div>
 
@@ -495,14 +495,14 @@
     <div class="grid grid-cols-2 gap-8 max-w-md mx-auto reveal">
       <div class="bearer-card text-center">
         <div class="avatar-ring mx-auto" style="background: linear-gradient(135deg, #f4c573, #e9a43e)">
-          <div class="avatar-inner" style="background: linear-gradient(135deg, #1b4332,#2d6a4f)">HG</div>
+          <div class="avatar-inner" style="background: linear-gradient(135deg, #000b1f,#001f3f)">HG</div>
         </div>
         <div class="font-display font-bold text-white text-base leading-snug">Dr. Harshi<br/>Gunawardena</div>
         <div class="mt-2 text-xs font-bold tracking-wider uppercase text-amber bg-amber/15 rounded-full px-3 py-1 inline-block">Alumni Liaison Officer</div>
       </div>
       <div class="bearer-card text-center">
         <div class="avatar-ring mx-auto" style="background: linear-gradient(135deg, #f4c573, #e9a43e)">
-          <div class="avatar-inner" style="background: linear-gradient(135deg, #1b4332,#2d6a4f)">TR</div>
+          <div class="avatar-inner" style="background: linear-gradient(135deg, #000b1f,#001f3f)">TR</div>
         </div>
         <div class="font-display font-bold text-white text-base leading-snug">Dr. Thilanka<br/>Ranathunge</div>
         <div class="mt-2 text-xs font-bold tracking-wider uppercase text-amber bg-amber/15 rounded-full px-3 py-1 inline-block">Patron</div>
@@ -521,7 +521,7 @@
     <div class="text-center mb-16 reveal">
       <span class="section-tag">Why Join</span>
       <h2 class="font-display text-4xl sm:text-5xl font-black text-forest mt-2">Alumni Benefits</h2>
-      <p class="text-gray-500 mt-4 max-w-xl mx-auto">Membership in AADAN connects you to a rich ecosystem of professional support, community, and lifelong growth.</p>
+      <p class="text-gray-500 mt-4 max-w-xl mx-auto">Membership in DND connects you to a rich ecosystem of professional support, community, and lifelong growth.</p>
       <div class="section-divider"></div>
     </div>
 
@@ -535,7 +535,7 @@
           <li class="flex gap-2"><span class="text-forest font-bold shrink-0">→</span>Job placement support and referrals within the nutrition sector</li>
           <li class="flex gap-2"><span class="text-forest font-bold shrink-0">→</span>Professional mentoring from experienced alumni</li>
           <li class="flex gap-2"><span class="text-forest font-bold shrink-0">→</span>Invitations to career fairs, industry events, and workshops</li>
-          <li class="flex gap-2"><span class="text-forest font-bold shrink-0">→</span>Access to a dedicated AADAN job board and vacancy notifications</li>
+          <li class="flex gap-2"><span class="text-forest font-bold shrink-0">→</span>Access to a dedicated DND job board and vacancy notifications</li>
           <li class="flex gap-2"><span class="text-forest font-bold shrink-0">→</span>Resume and interview coaching sessions</li>
         </ul>
       </div>
@@ -570,7 +570,7 @@
         <h3 class="font-display font-bold text-forest text-xl mb-3">Copy of Documents &amp; References</h3>
         <ul class="space-y-2 text-sm text-gray-600 font-body">
           <li class="flex gap-2"><span class="text-forest font-bold shrink-0">→</span>Assistance in obtaining academic transcripts and certificates</li>
-          <li class="flex gap-2"><span class="text-forest font-bold shrink-0">→</span>Reference letters supported by the department and AADAN</li>
+          <li class="flex gap-2"><span class="text-forest font-bold shrink-0">→</span>Reference letters supported by the department and DND</li>
           <li class="flex gap-2"><span class="text-forest font-bold shrink-0">→</span>Certified copies of relevant departmental documents</li>
           <li class="flex gap-2"><span class="text-forest font-bold shrink-0">→</span>Quick turnaround facilitation for official communications</li>
         </ul>
@@ -608,7 +608,7 @@
 <!-- ═══════════════════════════════════════════════════════════════
      SUPPORT CURRENT STUDENTS
 ═══════════════════════════════════════════════════════════════ -->
-<section id="support" class="py-24" style="background: linear-gradient(135deg, #f0faf4, #faf6f0);">
+<section id="support" class="py-24" style="background: linear-gradient(135deg, #e8f1f8, #faf6f0);">
   <div class="max-w-6xl mx-auto px-6">
     <div class="text-center mb-16 reveal">
       <span class="section-tag">Give Back</span>
@@ -679,8 +679,8 @@
   <div class="max-w-5xl mx-auto px-6">
     <div class="text-center mb-16 reveal">
       <span class="section-tag">Membership</span>
-      <h2 class="font-display text-4xl sm:text-5xl font-black text-forest mt-2">How to Join AADAN</h2>
-      <p class="text-gray-500 mt-4 max-w-xl mx-auto">Becoming a member is simple. Follow the steps below to join the AADAN community and start enjoying all the benefits of membership.</p>
+      <h2 class="font-display text-4xl sm:text-5xl font-black text-forest mt-2">How to Join DND</h2>
+      <p class="text-gray-500 mt-4 max-w-xl mx-auto">Becoming a member is simple. Follow the steps below to join the DND community and start enjoying all the benefits of membership.</p>
       <div class="section-divider"></div>
     </div>
 
@@ -690,14 +690,14 @@
           <div class="step-num">1</div>
           <h4 class="font-display font-bold text-forest text-base">Download Form</h4>
         </div>
-        <p class="text-sm text-gray-600">Download the official Membership Application Form from the AADAN website or collect it from the Department of Applied Nutrition.</p>
+        <p class="text-sm text-gray-600">Download the official Membership Application Form from the DND website or collect it from the Department of Nutrition &amp; Dietetics.</p>
       </div>
       <div class="step-card">
         <div class="flex items-center gap-3 mb-3">
           <div class="step-num">2</div>
           <h4 class="font-display font-bold text-forest text-base">Read Constitution</h4>
         </div>
-        <p class="text-sm text-gray-600">Review the AADAN Constitution to understand the rights, responsibilities, and code of conduct expected of all members.</p>
+        <p class="text-sm text-gray-600">Review the DND Constitution to understand the rights, responsibilities, and code of conduct expected of all members.</p>
       </div>
       <div class="step-card">
         <div class="flex items-center gap-3 mb-3">
@@ -734,7 +734,7 @@
 ═══════════════════════════════════════════════════════════════ -->
 <footer id="contact">
   <!-- Contact area -->
-  <div style="background:#112b1e;" class="py-20">
+  <div style="background:#00152a;" class="py-20">
     <div class="max-w-6xl mx-auto px-6">
       <div class="grid md:grid-cols-3 gap-12">
 
@@ -743,11 +743,11 @@
           <div class="flex items-center gap-3 mb-6">
             <div class="w-11 h-11 rounded-full bg-gradient-to-br from-amber to-amber-light flex items-center justify-center text-forest font-display font-black text-lg">A</div>
             <div>
-              <div class="font-display font-bold text-white text-base">AADAN</div>
+              <div class="font-display font-bold text-white text-base">DND</div>
               <div class="text-sage text-xs">Alumni Association</div>
             </div>
           </div>
-          <p class="text-white/55 text-sm leading-relaxed mb-5">Alumni Association of the Department of Applied Nutrition, committed to connecting and empowering nutrition professionals across Sri Lanka and beyond.</p>
+          <p class="text-white/55 text-sm leading-relaxed mb-5">Alumni Association of the Department of Nutrition &amp; Dietetics, committed to connecting and empowering nutrition professionals across Sri Lanka and beyond.</p>
           <div class="flex gap-3">
             <a href="#" title="Facebook" class="w-9 h-9 rounded-full border border-white/15 flex items-center justify-center text-white/50 hover:text-amber hover:border-amber/40 transition-colors">
               <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
@@ -767,7 +767,7 @@
             <li><a href="#support"  class="text-white/55 hover:text-amber transition-colors flex items-center gap-2"><span class="text-forest">›</span> Support Students</a></li>
             <li><a href="#join"     class="text-white/55 hover:text-amber transition-colors flex items-center gap-2"><span class="text-forest">›</span> Membership Application</a></li>
             <li><a href="https://www.wyb.ac.lk" target="_blank" class="text-white/55 hover:text-amber transition-colors flex items-center gap-2"><span class="text-forest">›</span> Wayamba University</a></li>
-            <li><a href="#" class="text-white/55 hover:text-amber transition-colors flex items-center gap-2"><span class="text-forest">›</span> Department of Applied Nutrition</a></li>
+            <li><a href="#" class="text-white/55 hover:text-amber transition-colors flex items-center gap-2"><span class="text-forest">›</span> Department of Nutrition &amp; Dietetics</a></li>
           </ul>
         </div>
 
@@ -777,7 +777,7 @@
           <ul class="space-y-4 text-sm">
             <li class="flex gap-3 items-start text-white/55">
               <svg class="shrink-0 mt-0.5" width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="10" r="3" stroke="currentColor" stroke-width="2"/></svg>
-              <span>Department of Applied Nutrition,<br/>Faculty of Livestock, Fisheries &amp; Nutrition,<br/>Wayamba University of Sri Lanka,<br/>Makandura, Gonawila (NWP) 60170,<br/>Sri Lanka</span>
+              <span>Department of Nutrition &amp; Dietetics,<br/>Faculty of Livestock, Fisheries &amp; Nutrition,<br/>Wayamba University of Sri Lanka,<br/>Makandura, Gonawila (NWP) 60170,<br/>Sri Lanka</span>
             </li>
             <li class="flex gap-3 items-center text-white/55">
               <svg class="shrink-0" width="16" height="16" fill="none" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2" stroke="currentColor" stroke-width="2"/><path d="M2 8l10 6 10-6" stroke="currentColor" stroke-width="2"/></svg>
@@ -794,9 +794,9 @@
   </div>
 
   <!-- Bottom bar -->
-  <div style="background:#0a1f12;" class="py-5">
+  <div style="background:#000814;" class="py-5">
     <div class="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-white/35">
-      <span>© 2024 AADAN – Alumni Association of the Department of Applied Nutrition. All rights reserved.</span>
+      <span>© 2024 DND – Alumni Association of the Department of Nutrition &amp; Dietetics. All rights reserved.</span>
       <span class="flex items-center gap-1">
         Wayamba University of Sri Lanka
         <svg width="12" height="12" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/></svg>
