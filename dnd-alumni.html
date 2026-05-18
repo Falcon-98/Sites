@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DND – Alumni Association · Nutrition &amp; Dietetics · WUSL</title>
+  <meta name="description" content="Alumni Association of the Department of Nutrition &amp; Dietetics, Faculty of Livestock, Fisheries and Nutrition, Wayamba University of Sri Lanka." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
+  <style>
+    /* ═══════════ DESIGN TOKENS ═══════════ */
+    :root {
+      --navy-900:  #040d1e;
+      --navy-800:  #071228;
+      --navy-700:  #0b1a38;
+      --navy-600:  #102248;
+      --navy-500:  #162d5e;
+      --navy-400:  #1e3d80;
+
+      --gold-500:  #d4962a;
+      --gold-400:  #e8ac48;
+      --gold-300:  #f2c568;
+      --gold-200:  #f7d99c;
+      --gold-100:  #fdf0d4;
+
+      --warm-100:  #fefaf4;
+      --warm-200:  #f9f2e6;
+      --warm-300:  #f0e6d2;
+
+      --steel-400: #7ea8cc;
+      --steel-300: #a8c8e0;
+      --steel-200: #cfe2f0;
+
+      --text-bright:  #f5f0e8;
+      --text-mid:     #c8d8e8;
+      --text-muted:   #8aa8c4;
+      --text-ghost:   #4a6a84;
+
+      --radius-sm:  8px;
+      --radius-md:  14px;
+      --radius-lg:  22px;
+      --radius-xl:  32px;
+      --radius-full: 9999px;
+
+      --ease-out:   cubic-bezier(0.22, 1, 0.36, 1);
+      --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+      --font-display: 'Libre Baskerville', Georgia, serif;
+      --font-heading: 'Syne', sans-serif;
+      --font-body:    'DM Sans', sans-serif;
+    }
+
+    /* ═══════════ RESET & BASE ═══════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    body {
+      font-family: var(--font-body);
+      background-color: var(--navy-900);
+      color: var(--text-mid);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    ::selection { background: rgba(212,150,42,0.35); color: var(--text-bright); }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--navy-800); }
+    ::-webkit-scrollbar-thumb { background: var(--gold-500); border-radius: 3px; }
+
+    img { max-width: 100%; display: block; }
+    a { text-decoration: none; color: inherit; }
+
+    /* ═══════════ NOISE TEXTURE OVERLAY ═══════════ */
+    body::after {
+      content: '';
+      position: fixed; inset: 0; z-index: 9999;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.025'/%3E%3C/svg%3E");
+      background-size: 256px 256px;
+      opacity: 0.4;
+    }
+
+    /* ═══════════ AURORA BACKGROUND ═══════════ */
+    .aurora-bg {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+    }
+    .aurora-blob {
+      position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.12;
+      animation: auroraFloat 20s ease-in-out infinite alternate;
+    }
+    .aurora-blob:nth-child(1) {
+      width: 700px; height: 700px; top: -200px; left: -200px;
+      background: radial-gradient(circle, #1e5fa8, #0a2850);
+      animation-duration: 25s;
+    }
+    .aurora-blob:nth-child(2) {
+      width: 500px; height: 500px; top: 20%; right: -150px;
+      background: radial-gradient(circle, #d4962a, #8b5a10);
+      opacity: 0.08;
+      animation-duration: 20s; animation-delay: -8s;
+    }
+    .aurora-blob:nth-child(3) {
+      width: 600px; height: 600px; bottom: -200px; left: 30%;
+      background: radial-gradient(circle, #0f3d7a, #061528);
+      animation-duration: 30s; animation-delay: -15s;
+    }
+    @keyframes auroraFloat {
+      0%   { transform: translate(0, 0) scale(1); }
+      50%  { transform: translate(40px, -30px) scale(1.1); }
+      100% { transform: translate(-20px, 20px) scale(0.95); }
+    }
+
+    /* ═══════════ GRID LINES ═══════════ */
+    .grid-overlay {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(126, 168, 204, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(126, 168, 204, 0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+
+    /* ═══════════ LAYOUT WRAPPER ═══════════ */
+    .content-wrapper { position: relative; z-index: 2; }
+
+    /* ═══════════ NAVBAR ═══════════ */
+    #navbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 0 40px;
+      height: 68px;
+      display: flex; align-items: center; justify-content: space-between;
+      transition: background 0.5s var(--ease-out), box-shadow 0.5s var(--ease-out), height 0.4s var(--ease-out);
+    }
+    #navbar.solid {
+      background: rgba(4, 13, 30, 0.92);
+      backdrop-filter: blur(20px) saturate(1.6);
+      box-shadow: 0 1px 0 rgba(212, 150, 42, 0.15), 0 8px 32px rgba(0,0,0,0.3);
+      height: 60px;
+    }
+
+    .nav-logo {
+      display: flex; align-items: center; gap: 12px;
+      user-select: none;
+    }
+    .nav-logo-mark {
+      width: 38px; height: 38px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--gold-400), var(--gold-500));
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display); font-weight: 700; color: var(--navy-900); font-size: 1rem;
+      box-shadow: 0 0 20px rgba(212,150,42,0.3);
+      flex-shrink: 0;
+    }
+    .nav-logo-text { line-height: 1.2; }
+    .nav-logo-text strong {
+      display: block; font-family: var(--font-heading); font-weight: 800;
+      font-size: .95rem; color: var(--text-bright); letter-spacing: .04em;
+    }
+    .nav-logo-text span {
+      font-size: .72rem; color: var(--gold-400); font-weight: 500; letter-spacing: .06em;
+    }
+
+    .nav-links { display: flex; align-items: center; gap: 6px; }
+    .nav-link {
+      font-family: var(--font-body); font-size: .82rem; font-weight: 500;
+      color: var(--text-muted); letter-spacing: .04em;
+      padding: 8px 14px; border-radius: var(--radius-sm);
+      transition: color .3s, background .3s;
+    }
+    .nav-link:hover { color: var(--text-bright); background: rgba(126,168,204,0.08); }
+
+    .nav-cta {
+      font-family: var(--font-body); font-size: .82rem; font-weight: 600;
+      color: var(--navy-900); background: linear-gradient(135deg, var(--gold-400), var(--gold-500));
+      padding: 9px 22px; border-radius: var(--radius-full);
+      letter-spacing: .04em; margin-left: 12px;
+      transition: transform .25s var(--ease-out), box-shadow .25s var(--ease-out);
+      box-shadow: 0 4px 16px rgba(212,150,42,0.3);
+    }
+    .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(212,150,42,0.45); }
+
+    .hamburger {
+      display: none; background: none; border: none; cursor: pointer;
+      padding: 8px; color: var(--text-bright);
+    }
+    .hamburger svg { display: block; }
+
+    #mobile-menu {
+      display: none; flex-direction: column; gap: 2px;
+      background: rgba(4, 13, 30, 0.98);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid rgba(212,150,42,0.12);
+      padding: 16px 24px 24px;
+    }
+    #mobile-menu.open { display: flex; }
+    .mobile-link {
+      font-size: .9rem; color: var(--text-mid); padding: 12px 0;
+      border-bottom: 1px solid rgba(126,168,204,0.08);
+      transition: color .2s; font-weight: 500;
+    }
+    .mobile-link:last-child { border-bottom: none; }
+    .mobile-link:hover { color: var(--gold-400); }
+
+    @media (max-width: 900px) {
+      #navbar { padding: 0 24px; }
+      .nav-links, .nav-cta { display: none; }
+      .hamburger { display: block; }
+    }
+
+    /* ═══════════ SECTION UTILITIES ═══════════ */
+    .section { padding: 100px 0; }
+    .container { max-width: 1160px; margin: 0 auto; padding: 0 40px; }
+    @media (max-width: 768px) { .container { padding: 0 24px; } .section { padding: 72px 0; } }
+
+    .section-eyebrow {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-family: var(--font-heading); font-size: .72rem;
+      font-weight: 700; letter-spacing: .2em; text-transform: uppercase;
+      color: var(--gold-400); margin-bottom: 16px;
+    }
+    .section-eyebrow::before, .section-eyebrow::after {
+      content: ''; display: block; width: 24px; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold-400));
+    }
+    .section-eyebrow::after { background: linear-gradient(90deg, var(--gold-400), transparent); }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700; line-height: 1.2;
+      color: var(--text-bright);
+      margin-bottom: 16px;
+    }
+    .section-title em { font-style: italic; color: var(--gold-400); }
+
+    .section-subtitle {
+      font-family: var(--font-body);
+      font-size: 1rem; color: var(--text-muted); max-width: 520px;
+      line-height: 1.7;
+    }
+
+    .rule {
+      width: 48px; height: 2px; margin-top: 20px;
+      background: linear-gradient(90deg, var(--gold-500), var(--gold-300));
+      border-radius: 1px;
+      box-shadow: 0 0 12px rgba(212,150,42,0.4);
+    }
+    .rule.center { margin-left: auto; margin-right: auto; }
+
+    /* ═══════════ SCROLL REVEAL ═══════════ */
+    .reveal {
+      opacity: 0; transform: translateY(32px);
+      transition: opacity .7s var(--ease-out), transform .7s var(--ease-out);
+    }
+    .reveal.up { opacity: 1; transform: translateY(0); }
+
+    /* ═══════════ HERO ═══════════ */
+    #hero {
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      text-align: center;
+      padding: 120px 40px 80px;
+      position: relative;
+    }
+
+    .hero-inner { position: relative; z-index: 2; max-width: 820px; margin: 0 auto; }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      border: 1px solid rgba(212,150,42,0.35);
+      background: rgba(212,150,42,0.07);
+      backdrop-filter: blur(10px);
+      border-radius: var(--radius-full);
+      padding: 8px 20px;
+      font-family: var(--font-heading); font-size: .7rem; font-weight: 700;
+      letter-spacing: .18em; text-transform: uppercase;
+      color: var(--gold-400); margin-bottom: 32px;
+      animation: fadeSlideDown .8s var(--ease-out) forwards;
+    }
+    .hero-badge .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--gold-400);
+      box-shadow: 0 0 6px var(--gold-400);
+      animation: pulse 2s ease infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.35;} }
+
+    @keyframes fadeSlideDown {
+      from { opacity: 0; transform: translateY(-16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-faculty {
+      font-family: var(--font-body); font-size: .75rem;
+      letter-spacing: .18em; text-transform: uppercase;
+      color: var(--steel-400); margin-bottom: 20px;
+      animation: fadeSlideDown .8s .15s var(--ease-out) both;
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.4rem, 6vw, 4.2rem);
+      font-weight: 700; line-height: 1.12;
+      color: var(--text-bright); margin-bottom: 12px;
+      animation: fadeSlideDown .8s .25s var(--ease-out) both;
+    }
+    .hero-title .gold { color: var(--gold-400); }
+    .hero-title .italic { font-style: italic; }
+
+    .hero-acronym {
+      font-family: var(--font-heading); font-size: 1.15rem; font-weight: 600;
+      color: var(--steel-300); letter-spacing: .12em;
+      margin-bottom: 28px;
+      animation: fadeSlideDown .8s .3s var(--ease-out) both;
+    }
+
+    .hero-desc {
+      font-size: 1.05rem; color: var(--text-muted); max-width: 580px;
+      margin: 0 auto 44px; line-height: 1.75;
+      animation: fadeSlideDown .8s .4s var(--ease-out) both;
+    }
+
+    .hero-actions {
+      display: flex; align-items: center; justify-content: center; gap: 14px;
+      flex-wrap: wrap; margin-bottom: 72px;
+      animation: fadeSlideDown .8s .5s var(--ease-out) both;
+    }
+
+    .btn-gold {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: var(--font-heading); font-size: .88rem; font-weight: 700;
+      letter-spacing: .06em; color: var(--navy-900);
+      background: linear-gradient(135deg, var(--gold-300) 0%, var(--gold-500) 100%);
+      padding: 14px 32px; border-radius: var(--radius-full);
+      border: none; cursor: pointer;
+      box-shadow: 0 6px 28px rgba(212,150,42,0.35), inset 0 1px 0 rgba(255,255,255,0.25);
+      transition: transform .3s var(--ease-out), box-shadow .3s var(--ease-out);
+    }
+    .btn-gold:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(212,150,42,0.5), inset 0 1px 0 rgba(255,255,255,0.25); }
+    .btn-gold:active { transform: translateY(-1px); }
+
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: var(--font-heading); font-size: .88rem; font-weight: 600;
+      letter-spacing: .06em; color: var(--text-mid);
+      background: rgba(126,168,204,0.07);
+      border: 1px solid rgba(126,168,204,0.22);
+      padding: 13px 28px; border-radius: var(--radius-full); cursor: pointer;
+      backdrop-filter: blur(6px);
+      transition: background .3s, border-color .3s, color .3s, transform .3s var(--ease-out);
+    }
+    .btn-ghost:hover { background: rgba(126,168,204,0.14); border-color: rgba(126,168,204,0.45); color: var(--text-bright); transform: translateY(-2px); }
+
+    /* Hero stats */
+    .hero-stats {
+      display: flex; align-items: center; justify-content: center; gap: 0;
+      border: 1px solid rgba(126,168,204,0.12);
+      background: rgba(11, 26, 56, 0.5);
+      backdrop-filter: blur(12px);
+      border-radius: var(--radius-lg); overflow: hidden;
+      max-width: 440px; margin: 0 auto;
+      animation: fadeSlideDown .8s .6s var(--ease-out) both;
+    }
+    .hero-stat {
+      flex: 1; padding: 20px 16px; text-align: center;
+      position: relative;
+    }
+    .hero-stat:not(:last-child)::after {
+      content: ''; position: absolute; right: 0; top: 20%; height: 60%; width: 1px;
+      background: rgba(126,168,204,0.12);
+    }
+    .hero-stat-val {
+      font-family: var(--font-heading); font-size: 1.4rem; font-weight: 800;
+      color: var(--gold-400); letter-spacing: .04em; line-height: 1;
+    }
+    .hero-stat-lab {
+      font-size: .68rem; color: var(--text-ghost); letter-spacing: .14em;
+      text-transform: uppercase; margin-top: 4px;
+    }
+
+    /* Scroll indicator */
+    .scroll-cue {
+      position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      color: var(--text-ghost); font-size: .68rem; letter-spacing: .14em; text-transform: uppercase;
+      animation: fadeSlideDown .8s .9s var(--ease-out) both;
+    }
+    .scroll-cue svg { animation: scrollBounce 2.4s ease infinite; }
+    @keyframes scrollBounce { 0%,100%{transform:translateY(0);} 50%{transform:translateY(6px);} }
+
+    /* ═══════════ OFFICE BEARERS ═══════════ */
+    #bearers {
+      background: linear-gradient(180deg, var(--navy-900) 0%, var(--navy-800) 100%);
+      border-top: 1px solid rgba(212,150,42,0.1);
+    }
+
+    .bearers-header { text-align: center; margin-bottom: 64px; }
+
+    .congrats-strip {
+      display: inline-flex; align-items: center; gap: 12px;
+      background: linear-gradient(90deg, rgba(212,150,42,0.08), rgba(212,150,42,0.15), rgba(212,150,42,0.08));
+      border: 1px solid rgba(212,150,42,0.25);
+      border-radius: var(--radius-full); padding: 10px 24px;
+      margin-bottom: 28px;
+    }
+    .congrats-strip span {
+      font-family: var(--font-heading); font-size: .75rem; font-weight: 700;
+      letter-spacing: .16em; text-transform: uppercase;
+      background: linear-gradient(90deg, var(--gold-300), var(--gold-500), var(--gold-300));
+      background-size: 200% auto;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      animation: shimmer 3s ease infinite;
+    }
+    @keyframes shimmer { 0%,100%{background-position:0%} 50%{background-position:100%} }
+
+    .row-label {
+      text-align: center; margin-bottom: 32px;
+    }
+    .row-label span {
+      font-family: var(--font-heading); font-size: .68rem; font-weight: 700;
+      letter-spacing: .2em; text-transform: uppercase;
+      color: var(--text-ghost); border: 1px solid rgba(126,168,204,0.15);
+      padding: 6px 18px; border-radius: var(--radius-full);
+    }
+
+    /* Bearer grid */
+    .exec-grid {
+      display: grid; grid-template-columns: repeat(5, 1fr); gap: 24px;
+      margin-bottom: 56px;
+    }
+    @media (max-width: 900px) { .exec-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 560px) { .exec-grid { grid-template-columns: repeat(2, 1fr); } }
+
+    .committee-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+      max-width: 560px; margin: 0 auto 56px;
+    }
+    @media (max-width: 560px) { .committee-grid { grid-template-columns: repeat(2, 1fr); } }
+
+    .advisory-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px;
+      max-width: 440px; margin: 0 auto;
+    }
+
+    .bearer-card {
+      display: flex; flex-direction: column; align-items: center; gap: 14px;
+      padding: 24px 16px; border-radius: var(--radius-lg);
+      background: rgba(7, 18, 40, 0.6);
+      border: 1px solid rgba(126,168,204,0.08);
+      text-align: center;
+      transition: transform .35s var(--ease-out), box-shadow .35s var(--ease-out), border-color .35s, background .35s;
+      cursor: default;
+    }
+    .bearer-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 24px 56px rgba(0,0,0,0.4), 0 0 0 1px rgba(212,150,42,0.2);
+      border-color: rgba(212,150,42,0.2);
+      background: rgba(11, 26, 56, 0.8);
+    }
+    .bearer-card.sm { padding: 20px 14px; gap: 10px; }
+
+    .avatar-wrap {
+      position: relative; flex-shrink: 0;
+    }
+    .avatar {
+      width: 88px; height: 88px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--navy-500), var(--navy-700));
+      border: 2px solid rgba(212,150,42,0.3);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display); font-size: 1.35rem; font-weight: 700;
+      color: var(--gold-300);
+      position: relative; overflow: hidden;
+      transition: border-color .35s, box-shadow .35s;
+    }
+    .bearer-card:hover .avatar {
+      border-color: var(--gold-400);
+      box-shadow: 0 0 24px rgba(212,150,42,0.25);
+    }
+    .avatar::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(circle at 35% 35%, rgba(212,150,42,0.12) 0%, transparent 65%);
+    }
+    .avatar.sm { width: 70px; height: 70px; font-size: 1.05rem; }
+
+    .bearer-name {
+      font-family: var(--font-heading); font-size: .88rem; font-weight: 700;
+      color: var(--text-bright); line-height: 1.35; letter-spacing: .01em;
+    }
+    .bearer-card.sm .bearer-name { font-size: .78rem; }
+    .bearer-role {
+      font-size: .68rem; font-weight: 600; letter-spacing: .14em;
+      text-transform: uppercase; border-radius: var(--radius-full);
+      padding: 4px 12px;
+    }
+    .role-gold { color: var(--gold-400); background: rgba(212,150,42,0.12); border: 1px solid rgba(212,150,42,0.2); }
+    .role-blue { color: var(--steel-300); background: rgba(126,168,204,0.1); border: 1px solid rgba(126,168,204,0.2); }
+    .role-muted { color: var(--text-ghost); background: rgba(74,106,132,0.12); border: 1px solid rgba(74,106,132,0.2); }
+
+    /* ═══════════ BENEFITS ═══════════ */
+    #benefits { background: var(--navy-900); }
+
+    .benefits-header { max-width: 560px; }
+
+    .benefits-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+      margin-top: 56px;
+    }
+    @media (max-width: 900px) { .benefits-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 560px) { .benefits-grid { grid-template-columns: 1fr; } }
+
+    .benefit-card {
+      background: rgba(7,18,40,0.7); backdrop-filter: blur(12px);
+      border: 1px solid rgba(126,168,204,0.08);
+      border-radius: var(--radius-lg); padding: 32px 26px;
+      transition: transform .35s var(--ease-out), box-shadow .35s, border-color .35s, background .35s;
+      position: relative; overflow: hidden;
+    }
+    .benefit-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold-500), transparent);
+      opacity: 0; transition: opacity .35s;
+    }
+    .benefit-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+      border-color: rgba(212,150,42,0.2);
+      background: rgba(11, 26, 56, 0.85);
+    }
+    .benefit-card:hover::before { opacity: 1; }
+
+    .benefit-icon-wrap {
+      width: 50px; height: 50px; border-radius: 14px;
+      background: linear-gradient(135deg, rgba(212,150,42,0.15), rgba(212,150,42,0.05));
+      border: 1px solid rgba(212,150,42,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; margin-bottom: 18px;
+      transition: background .35s, box-shadow .35s;
+    }
+    .benefit-card:hover .benefit-icon-wrap {
+      background: linear-gradient(135deg, rgba(212,150,42,0.25), rgba(212,150,42,0.1));
+      box-shadow: 0 0 20px rgba(212,150,42,0.2);
+    }
+
+    .benefit-title {
+      font-family: var(--font-heading); font-size: 1rem; font-weight: 700;
+      color: var(--text-bright); margin-bottom: 16px; letter-spacing: .02em;
+    }
+
+    .benefit-list { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+    .benefit-list li {
+      font-size: .82rem; color: var(--text-muted); line-height: 1.55;
+      display: flex; gap: 10px; align-items: flex-start;
+    }
+    .benefit-list li::before {
+      content: '›'; color: var(--gold-400); font-size: 1rem; font-weight: 700;
+      line-height: 1.4; flex-shrink: 0;
+    }
+
+    /* ═══════════ SUPPORT ═══════════ */
+    #support {
+      background: linear-gradient(180deg, var(--navy-900) 0%, var(--navy-800) 60%, var(--navy-900) 100%);
+      border-top: 1px solid rgba(126,168,204,0.06);
+      border-bottom: 1px solid rgba(126,168,204,0.06);
+    }
+
+    .support-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;
+      margin-top: 56px;
+    }
+    @media (max-width: 640px) { .support-grid { grid-template-columns: 1fr; } }
+
+    .support-card {
+      display: flex; gap: 18px; align-items: flex-start;
+      background: rgba(7,18,40,0.6); border: 1px solid rgba(126,168,204,0.08);
+      border-radius: var(--radius-md); padding: 22px 20px;
+      transition: background .3s, border-color .3s, transform .3s var(--ease-out);
+    }
+    .support-card:hover {
+      background: rgba(11,26,56,0.8); border-color: rgba(212,150,42,0.2);
+      transform: translateX(4px);
+    }
+    .support-icon {
+      width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px;
+      background: linear-gradient(135deg, var(--navy-400), var(--navy-500));
+      border: 1px solid rgba(212,150,42,0.2);
+      display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+    }
+    .support-card h4 {
+      font-family: var(--font-heading); font-size: .9rem; font-weight: 700;
+      color: var(--text-bright); margin-bottom: 6px; letter-spacing: .02em;
+    }
+    .support-card p { font-size: .82rem; color: var(--text-muted); line-height: 1.6; }
+
+    .support-cta { margin-top: 44px; text-align: center; }
+
+    /* ═══════════ HOW TO JOIN ═══════════ */
+    #join { background: var(--navy-900); }
+
+    .steps-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+      margin: 56px 0 48px;
+    }
+    @media (max-width: 900px) { .steps-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 480px) { .steps-grid { grid-template-columns: 1fr; } }
+
+    .step-card {
+      background: rgba(7,18,40,0.7); backdrop-filter: blur(10px);
+      border: 1px solid rgba(126,168,204,0.08); border-radius: var(--radius-lg);
+      padding: 26px 22px;
+      transition: transform .3s var(--ease-out), box-shadow .3s, border-color .3s;
+    }
+    .step-card:hover {
+      transform: translateY(-6px); box-shadow: 0 16px 40px rgba(0,0,0,0.3);
+      border-color: rgba(212,150,42,0.25);
+    }
+
+    .step-num {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold-400), var(--gold-500));
+      color: var(--navy-900); font-family: var(--font-heading); font-size: .9rem; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 16px; flex-shrink: 0;
+      box-shadow: 0 4px 16px rgba(212,150,42,0.3);
+    }
+    .step-card h4 {
+      font-family: var(--font-heading); font-size: .95rem; font-weight: 700;
+      color: var(--text-bright); margin-bottom: 10px; letter-spacing: .02em;
+    }
+    .step-card p { font-size: .82rem; color: var(--text-muted); line-height: 1.65; }
+    .step-card a { color: var(--gold-400); font-weight: 600; }
+    .step-card a:hover { color: var(--gold-300); }
+
+    .join-contact-box {
+      background: linear-gradient(135deg, rgba(14, 31, 68, 0.85), rgba(7, 18, 40, 0.9));
+      border: 1px solid rgba(212,150,42,0.2);
+      border-radius: var(--radius-xl); padding: 52px 40px; text-align: center;
+      backdrop-filter: blur(12px);
+      position: relative; overflow: hidden;
+    }
+    .join-contact-box::before {
+      content: '';
+      position: absolute; top: -1px; left: 10%; right: 10%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold-500), var(--gold-300), var(--gold-500), transparent);
+      border-radius: 1px;
+    }
+    .join-contact-box .eyebrow {
+      font-family: var(--font-heading); font-size: .7rem; font-weight: 700;
+      letter-spacing: .2em; text-transform: uppercase; color: var(--gold-400);
+      margin-bottom: 12px;
+    }
+    .join-contact-box h3 {
+      font-family: var(--font-display); font-size: 1.8rem; font-weight: 700;
+      color: var(--text-bright); margin-bottom: 10px;
+    }
+    .join-contact-box h3 em { font-style: italic; color: var(--gold-400); }
+    .join-contact-box p { font-size: .9rem; color: var(--text-muted); margin-bottom: 28px; }
+
+    /* ═══════════ FOOTER ═══════════ */
+    footer {
+      background: var(--navy-900);
+      border-top: 1px solid rgba(212,150,42,0.1);
+    }
+    .footer-main { padding: 72px 0 56px; }
+    .footer-grid {
+      display: grid; grid-template-columns: 1.4fr 1fr 1.2fr; gap: 56px;
+    }
+    @media (max-width: 768px) { .footer-grid { grid-template-columns: 1fr; gap: 40px; } }
+
+    .footer-logo { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+    .footer-logo-mark {
+      width: 40px; height: 40px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--gold-400), var(--gold-500));
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display); font-weight: 700; color: var(--navy-900); font-size: 1rem;
+    }
+    .footer-logo strong {
+      font-family: var(--font-heading); font-weight: 800; color: var(--text-bright); font-size: 1rem;
+    }
+
+    .footer-about { font-size: .85rem; color: var(--text-ghost); line-height: 1.7; margin-bottom: 22px; }
+
+    .footer-socials { display: flex; gap: 10px; }
+    .social-btn {
+      width: 36px; height: 36px; border-radius: 9px;
+      border: 1px solid rgba(126,168,204,0.15);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-ghost); transition: all .25s;
+    }
+    .social-btn:hover {
+      border-color: var(--gold-500); color: var(--gold-400);
+      background: rgba(212,150,42,0.08);
+    }
+
+    .footer-heading {
+      font-family: var(--font-heading); font-size: .82rem; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase;
+      color: var(--text-bright); margin-bottom: 20px;
+    }
+
+    .footer-links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-links li a {
+      font-size: .84rem; color: var(--text-ghost); display: flex; align-items: center; gap: 8px;
+      transition: color .25s, gap .25s;
+    }
+    .footer-links li a:hover { color: var(--gold-400); gap: 12px; }
+    .footer-links li a::before { content: '›'; color: var(--text-ghost); }
+
+    .footer-contact-list { display: flex; flex-direction: column; gap: 14px; }
+    .footer-contact-item {
+      display: flex; gap: 12px; align-items: flex-start;
+      font-size: .82rem; color: var(--text-ghost); line-height: 1.6;
+    }
+    .footer-contact-item svg { flex-shrink: 0; margin-top: 2px; color: var(--gold-500); }
+    .footer-contact-item a { color: var(--gold-400); transition: color .25s; }
+    .footer-contact-item a:hover { color: var(--gold-300); }
+
+    .footer-bar {
+      padding: 18px 40px;
+      border-top: 1px solid rgba(126,168,204,0.07);
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 8px;
+    }
+    .footer-bar span { font-size: .75rem; color: var(--text-ghost); }
+    @media (max-width: 768px) { .footer-bar { padding: 18px 24px; } }
+
+    /* ═══════════ DIVIDER ORNAMENT ═══════════ */
+    .ornament-divider {
+      display: flex; align-items: center; gap: 16px; margin: 72px 0;
+    }
+    .ornament-line { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(212,150,42,0.2), transparent); }
+    .ornament-diamond {
+      width: 8px; height: 8px;
+      background: var(--gold-500); transform: rotate(45deg);
+      box-shadow: 0 0 10px rgba(212,150,42,0.4);
+    }
+  </style>
+</head>
+<body>
+
+<!-- Aurora & Grid BG -->
+<div class="aurora-bg" aria-hidden="true">
+  <div class="aurora-blob"></div>
+  <div class="aurora-blob"></div>
+  <div class="aurora-blob"></div>
+</div>
+<div class="grid-overlay" aria-hidden="true"></div>
+
+<!-- ═══════ NAVBAR ═══════ -->
+<nav id="navbar" aria-label="Main navigation">
+  <a href="#hero" class="nav-logo" aria-label="DND Alumni Home">
+    <div class="nav-logo-mark">A</div>
+    <div class="nav-logo-text">
+      <strong>DND</strong>
+      <span>Alumni Association</span>
+    </div>
+  </a>
+  <div class="nav-links" id="desktop-nav">
+    <a href="#bearers"  class="nav-link">Office Bearers</a>
+    <a href="#benefits" class="nav-link">Benefits</a>
+    <a href="#support"  class="nav-link">Support Students</a>
+    <a href="#join"     class="nav-link">How to Join</a>
+    <a href="#contact"  class="nav-link">Contact</a>
+    <a href="#join"     class="nav-cta">Join DND</a>
+  </div>
+  <button class="hamburger" id="burger" aria-label="Open mobile menu" aria-expanded="false">
+    <svg width="22" height="20" viewBox="0 0 22 20" fill="none">
+      <rect y="0" width="22" height="2" rx="1" fill="currentColor"/>
+      <rect y="9" width="22" height="2" rx="1" fill="currentColor"/>
+      <rect y="18" width="22" height="2" rx="1" fill="currentColor"/>
+    </svg>
+  </button>
+  <div id="mobile-menu" role="navigation">
+    <a href="#bearers"  class="mobile-link" onclick="closeMobile()">Office Bearers</a>
+    <a href="#benefits" class="mobile-link" onclick="closeMobile()">Benefits</a>
+    <a href="#support"  class="mobile-link" onclick="closeMobile()">Support Students</a>
+    <a href="#join"     class="mobile-link" onclick="closeMobile()">How to Join</a>
+    <a href="#contact"  class="mobile-link" onclick="closeMobile()">Contact</a>
+    <a href="#join"     class="mobile-link" onclick="closeMobile()" style="color:var(--gold-400);font-weight:700;">→ Join DND</a>
+  </div>
+</nav>
+
+<div class="content-wrapper">
+
+<!-- ═══════ HERO ═══════ -->
+<section id="hero" aria-label="Hero">
+  <div class="hero-inner">
+    <div class="hero-badge">
+      <span class="dot" aria-hidden="true"></span>
+      Wayamba University of Sri Lanka
+    </div>
+    <p class="hero-faculty">Faculty of Livestock, Fisheries &amp; Nutrition</p>
+    <h1 class="hero-title">
+      Alumni Association of the<br/>
+      <span class="gold italic">Department of Nutrition</span><br/>
+      <span class="gold">&amp; Dietetics</span>
+    </h1>
+    <p class="hero-acronym">( DND )</p>
+    <p class="hero-desc">
+      Connecting past, present &amp; future nutrition professionals — building a community that nourishes careers, knowledge, and lifelong bonds.
+    </p>
+    <div class="hero-actions">
+      <a href="#join" class="btn-gold">
+        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+        Join DND
+      </a>
+      <a href="#benefits" class="btn-ghost">
+        Explore Benefits
+        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+    <div class="hero-stats" aria-label="Key identifiers">
+      <div class="hero-stat">
+        <div class="hero-stat-val">DND</div>
+        <div class="hero-stat-lab">Department</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-val">WUSL</div>
+        <div class="hero-stat-lab">University</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-val">LFN</div>
+        <div class="hero-stat-lab">Faculty</div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue" aria-hidden="true">
+    <span>Scroll</span>
+    <svg width="14" height="18" viewBox="0 0 14 18" fill="none"><path d="M7 1v12M1 9l6 7 6-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
+</section>
+
+<!-- ═══════ OFFICE BEARERS ═══════ -->
+<section id="bearers" class="section" aria-label="Office Bearers">
+  <div class="container">
+
+    <div class="bearers-header reveal">
+      <div class="section-eyebrow">2024–2025 Executive</div>
+      <h2 class="section-title">Newly Appointed <em>Office Bearers</em></h2>
+      <div style="margin: 16px auto 0; max-width:480px;">
+        <div class="congrats-strip">
+          🎉 <span>Congratulations to our newly elected board</span> 🎉
+        </div>
+      </div>
+    </div>
+
+    <!-- Executive Board -->
+    <div class="row-label reveal">
+      <span>Executive Board</span>
+    </div>
+
+    <div class="exec-grid">
+
+      <div class="bearer-card reveal">
+        <div class="avatar-wrap">
+          <div class="avatar" aria-label="GD initials">GD</div>
+        </div>
+        <div>
+          <div class="bearer-name">Ms. Gayathri<br/>Dissanayaka</div>
+          <div class="bearer-role role-gold" style="margin-top:8px;">President</div>
+        </div>
+      </div>
+
+      <div class="bearer-card reveal">
+        <div class="avatar-wrap">
+          <div class="avatar" aria-label="AV initials">AV</div>
+        </div>
+        <div>
+          <div class="bearer-name">Mr. Ashen<br/>Viduranga</div>
+          <div class="bearer-role role-blue" style="margin-top:8px;">Vice President</div>
+        </div>
+      </div>
+
+      <div class="bearer-card reveal">
+        <div class="avatar-wrap">
+          <div class="avatar" aria-label="AB initials">AB</div>
+        </div>
+        <div>
+          <div class="bearer-name">Ms. Amasha<br/>Bandara</div>
+          <div class="bearer-role role-blue" style="margin-top:8px;">Secretary</div>
+        </div>
+      </div>
+
+      <div class="bearer-card reveal">
+        <div class="avatar-wrap">
+          <div class="avatar" aria-label="TK initials">TK</div>
+        </div>
+        <div>
+          <div class="bearer-name">Mr. Tharaka<br/>Karunarathna</div>
+          <div class="bearer-role role-gold" style="margin-top:8px;">Treasurer</div>
+        </div>
+      </div>
+
+      <div class="bearer-card reveal">
+        <div class="avatar-wrap">
+          <div class="avatar" aria-label="YU initials">YU</div>
+        </div>
+        <div>
+          <div class="bearer-name">Ms. Yamini<br/>Umapathi</div>
+          <div class="bearer-role role-blue" style="margin-top:8px;">Editor</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Committee Members -->
+    <div class="row-label reveal">
+      <span>Committee Members</span>
+    </div>
+
+    <div class="committee-grid">
+
+      <div class="bearer-card sm reveal">
+        <div class="avatar sm" aria-label="KT initials">KT</div>
+        <div>
+          <div class="bearer-name" style="font-size:.8rem;">Ms. Kiruthajiny<br/>Thevarajah</div>
+          <div class="bearer-role role-muted" style="margin-top:6px;">Committee</div>
+        </div>
+      </div>
+
+      <div class="bearer-card sm reveal">
+        <div class="avatar sm" aria-label="TH initials">TH</div>
+        <div>
+          <div class="bearer-name" style="font-size:.8rem;">Ms. Thilini<br/>Hirumuthugodage</div>
+          <div class="bearer-role role-muted" style="margin-top:6px;">Committee</div>
+        </div>
+      </div>
+
+      <div class="bearer-card sm reveal">
+        <div class="avatar sm" aria-label="YA initials">YA</div>
+        <div>
+          <div class="bearer-name" style="font-size:.8rem;">Mr.<br/>Yashodaran</div>
+          <div class="bearer-role role-muted" style="margin-top:6px;">Committee</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Leadership & Advisory -->
+    <div class="row-label reveal">
+      <span>Leadership &amp; Advisory</span>
+    </div>
+
+    <div class="advisory-grid">
+
+      <div class="bearer-card reveal">
+        <div class="avatar" style="background:linear-gradient(135deg,#1e3d80,#071228);border-color:rgba(212,150,42,0.5);" aria-label="HG initials">HG</div>
+        <div>
+          <div class="bearer-name">Dr. Harshi<br/>Gunawardena</div>
+          <div class="bearer-role role-gold" style="margin-top:8px;">Alumni Liaison</div>
+        </div>
+      </div>
+
+      <div class="bearer-card reveal">
+        <div class="avatar" style="background:linear-gradient(135deg,#1e3d80,#071228);border-color:rgba(212,150,42,0.5);" aria-label="TR initials">TR</div>
+        <div>
+          <div class="bearer-name">Dr. Thilanka<br/>Ranathunge</div>
+          <div class="bearer-role role-gold" style="margin-top:8px;">Patron</div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════ BENEFITS ═══════ -->
+<section id="benefits" class="section" aria-label="Alumni Benefits">
+  <div class="container">
+    <div class="benefits-header reveal">
+      <div class="section-eyebrow">Why Join</div>
+      <h2 class="section-title">Alumni <em>Benefits</em></h2>
+      <p class="section-subtitle">Membership connects you to a rich ecosystem of professional support, community, and lifelong growth opportunities.</p>
+      <div class="rule"></div>
+    </div>
+
+    <div class="benefits-grid">
+
+      <div class="benefit-card reveal">
+        <div class="benefit-icon-wrap">🚀</div>
+        <h3 class="benefit-title">Career Development</h3>
+        <ul class="benefit-list">
+          <li>Job placement support and referrals within the nutrition sector</li>
+          <li>Professional mentoring from experienced alumni</li>
+          <li>Invitations to career fairs, industry events, and workshops</li>
+          <li>Access to a dedicated DND job board and vacancy notifications</li>
+          <li>Résumé and interview coaching sessions</li>
+        </ul>
+      </div>
+
+      <div class="benefit-card reveal">
+        <div class="benefit-icon-wrap">🎓</div>
+        <h3 class="benefit-title">Further Studies Assistance</h3>
+        <ul class="benefit-list">
+          <li>Guidance on postgraduate opportunities locally and abroad</li>
+          <li>Scholarship and bursary information sharing among members</li>
+          <li>Research collaboration and co-authorship opportunities</li>
+          <li>Support from senior alumni who have pursued advanced degrees</li>
+        </ul>
+      </div>
+
+      <div class="benefit-card reveal">
+        <div class="benefit-icon-wrap">🏛️</div>
+        <h3 class="benefit-title">Access Departmental Facilities</h3>
+        <ul class="benefit-list">
+          <li>Use of departmental laboratories for professional development</li>
+          <li>Library access and e-resource subscriptions</li>
+          <li>Seminar rooms for alumni-organised events</li>
+          <li>Priority booking of departmental facilities</li>
+        </ul>
+      </div>
+
+      <div class="benefit-card reveal">
+        <div class="benefit-icon-wrap">📄</div>
+        <h3 class="benefit-title">Documents &amp; References</h3>
+        <ul class="benefit-list">
+          <li>Assistance in obtaining academic transcripts and certificates</li>
+          <li>Reference letters supported by the department and DND</li>
+          <li>Certified copies of relevant departmental documents</li>
+          <li>Quick turnaround facilitation for official communications</li>
+        </ul>
+      </div>
+
+      <div class="benefit-card reveal">
+        <div class="benefit-icon-wrap">📚</div>
+        <h3 class="benefit-title">Lifelong Learning</h3>
+        <ul class="benefit-list">
+          <li>Continuous professional development workshops and webinars</li>
+          <li>Access to a curated digital learning resource library</li>
+          <li>Annual nutrition symposia and guest lecture series</li>
+          <li>Discounted registration for CPD-accredited programmes</li>
+        </ul>
+      </div>
+
+      <div class="benefit-card reveal">
+        <div class="benefit-icon-wrap">🌐</div>
+        <h3 class="benefit-title">Network with DND Community</h3>
+        <ul class="benefit-list">
+          <li>Exclusive alumni directory connecting graduates across generations</li>
+          <li>Annual reunions, felicitations, and social gatherings</li>
+          <li>Private alumni social media and communication groups</li>
+          <li>Collaborations with nutrition professionals from industry and academia</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ SUPPORT STUDENTS ═══════ -->
+<section id="support" class="section" aria-label="Support Current Students">
+  <div class="container">
+    <div class="reveal" style="text-align:center; margin-bottom: 0;">
+      <div class="section-eyebrow" style="justify-content:center;">Give Back</div>
+      <h2 class="section-title" style="text-align:center;">Support <em>Current Students</em></h2>
+      <p class="section-subtitle" style="margin: 0 auto 0; text-align:center; max-width:580px;">
+        Alumni and donors play a vital role in shaping the next generation of nutrition professionals. Your contribution — big or small — creates a lasting impact.
+      </p>
+      <div class="rule center"></div>
+    </div>
+
+    <div class="support-grid">
+
+      <div class="support-card reveal">
+        <div class="support-icon">💻</div>
+        <div>
+          <h4>Computer &amp; Technology Donations</h4>
+          <p>Donate computers, tablets, and IT equipment to help students access digital learning resources and conduct modern nutritional research.</p>
+        </div>
+      </div>
+
+      <div class="support-card reveal">
+        <div class="support-icon">💰</div>
+        <div>
+          <h4>Financial Sponsorships</h4>
+          <p>Sponsor deserving students through bursaries, scholarship top-ups, or direct financial assistance to cover tuition, accommodation, or study materials.</p>
+        </div>
+      </div>
+
+      <div class="support-card reveal">
+        <div class="support-icon">🏥</div>
+        <div>
+          <h4>Medical &amp; Health Facilities</h4>
+          <p>Contribute to improving on-campus medical facilities, first-aid resources, and student wellness programmes within the faculty.</p>
+        </div>
+      </div>
+
+      <div class="support-card reveal">
+        <div class="support-icon">🔬</div>
+        <div>
+          <h4>Laboratory &amp; Research Equipment</h4>
+          <p>Fund procurement of scientific equipment that enhances the quality of nutrition research and practical training in the department.</p>
+        </div>
+      </div>
+
+      <div class="support-card reveal">
+        <div class="support-icon">📖</div>
+        <div>
+          <h4>Library &amp; Study Resources</h4>
+          <p>Donate textbooks, journal subscriptions, and e-learning licences to keep the departmental library current and accessible to all students.</p>
+        </div>
+      </div>
+
+      <div class="support-card reveal">
+        <div class="support-icon">🌱</div>
+        <div>
+          <h4>Mentorship &amp; Internship Placement</h4>
+          <p>Offer your expertise by mentoring students or providing internship opportunities, bridging academia with industry practice.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="support-cta reveal">
+      <a href="mailto:aluminidan@wyab.ac.lk" class="btn-gold" style="display:inline-flex;">
+        <svg width="17" height="17" fill="none" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2" stroke="currentColor" stroke-width="2"/><path d="M2 8l10 6 10-6" stroke="currentColor" stroke-width="2"/></svg>
+        Express Interest in Supporting
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════ HOW TO JOIN ═══════ -->
+<section id="join" class="section" aria-label="How to Join">
+  <div class="container">
+    <div class="reveal" style="text-align:center; margin-bottom:0;">
+      <div class="section-eyebrow" style="justify-content:center;">Membership</div>
+      <h2 class="section-title" style="text-align:center;">How to <em>Join DND</em></h2>
+      <p class="section-subtitle" style="margin: 0 auto; text-align:center; max-width:500px;">
+        Becoming a member is simple. Follow the four steps below to join and start enjoying all membership benefits.
+      </p>
+      <div class="rule center"></div>
+    </div>
+
+    <div class="steps-grid">
+
+      <div class="step-card reveal">
+        <div class="step-num">1</div>
+        <h4>Download Form</h4>
+        <p>Download the official Membership Application Form from the DND website or collect it from the Department of Nutrition &amp; Dietetics.</p>
+      </div>
+
+      <div class="step-card reveal">
+        <div class="step-num">2</div>
+        <h4>Read Constitution</h4>
+        <p>Review the DND Constitution to understand the rights, responsibilities, and code of conduct expected of all members.</p>
+      </div>
+
+      <div class="step-card reveal">
+        <div class="step-num">3</div>
+        <h4>Make Payment</h4>
+        <p>Pay the membership fee via bank transfer and obtain a bank slip as proof of payment. Details are provided with the application form.</p>
+      </div>
+
+      <div class="step-card reveal">
+        <div class="step-num">4</div>
+        <h4>Submit Application</h4>
+        <p>Email your completed form along with the scanned bank slip to <a href="mailto:aluminidan@wyab.ac.lk">aluminidan@wyab.ac.lk</a></p>
+      </div>
+
+    </div>
+
+    <div class="join-contact-box reveal">
+      <p class="eyebrow">Membership Enquiries</p>
+      <h3>Ready to <em>Join?</em></h3>
+      <p>Send us an email and our team will guide you through the entire process.</p>
+      <a href="mailto:aluminidan@wyab.ac.lk" class="btn-gold" style="display:inline-flex;">
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2" stroke="currentColor" stroke-width="2"/><path d="M2 8l10 6 10-6" stroke="currentColor" stroke-width="2"/></svg>
+        aluminidan@wyab.ac.lk
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ FOOTER ═══════ -->
+<footer id="contact" role="contentinfo">
+  <div class="footer-main">
+    <div class="container">
+      <div class="footer-grid">
+
+        <!-- About col -->
+        <div>
+          <div class="footer-logo">
+            <div class="footer-logo-mark">A</div>
+            <div>
+              <strong>DND</strong>
+              <span style="display:block;font-size:.72rem;color:var(--gold-400);font-weight:500;letter-spacing:.06em;">Alumni Association</span>
+            </div>
+          </div>
+          <p class="footer-about">
+            Alumni Association of the Department of Nutrition &amp; Dietetics — committed to connecting and empowering nutrition professionals across Sri Lanka and beyond.
+          </p>
+          <div class="footer-socials">
+            <a href="#" class="social-btn" title="Facebook" aria-label="Facebook">
+              <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+            </a>
+            <a href="https://www.wyb.ac.lk" target="_blank" rel="noopener" class="social-btn" title="WUSL Website" aria-label="Wayamba University website">
+              <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10A15.3 15.3 0 0 1 12 2z" stroke="currentColor" stroke-width="2"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Quick links col -->
+        <div>
+          <h4 class="footer-heading">Quick Links</h4>
+          <ul class="footer-links">
+            <li><a href="#bearers">Office Bearers</a></li>
+            <li><a href="#benefits">Alumni Benefits</a></li>
+            <li><a href="#support">Support Students</a></li>
+            <li><a href="#join">Membership Application</a></li>
+            <li><a href="https://www.wyb.ac.lk" target="_blank" rel="noopener">Wayamba University</a></li>
+            <li><a href="#">Department of Nutrition &amp; Dietetics</a></li>
+          </ul>
+        </div>
+
+        <!-- Contact col -->
+        <div>
+          <h4 class="footer-heading">Contact Us</h4>
+          <div class="footer-contact-list">
+            <div class="footer-contact-item">
+              <svg width="14" height="14" fill="none" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="10" r="3" stroke="currentColor" stroke-width="2"/></svg>
+              <span>Department of Nutrition &amp; Dietetics,<br/>Faculty of Livestock, Fisheries &amp; Nutrition,<br/>Wayamba University of Sri Lanka,<br/>Makandura, Gonawila (NWP) 60170,<br/>Sri Lanka</span>
+            </div>
+            <div class="footer-contact-item">
+              <svg width="14" height="14" fill="none" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2" stroke="currentColor" stroke-width="2"/><path d="M2 8l10 6 10-6" stroke="currentColor" stroke-width="2"/></svg>
+              <a href="mailto:aluminidan@wyab.ac.lk">aluminidan@wyab.ac.lk</a>
+            </div>
+            <div class="footer-contact-item">
+              <svg width="14" height="14" fill="none" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.57 3.21 2 2 0 0 1 3.55 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.52a16 16 0 0 0 6 6l.86-.86a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" stroke="currentColor" stroke-width="2"/></svg>
+              <span>+94 (0)37 2 282 922</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <div class="footer-bar">
+    <span>© 2024 DND – Alumni Association of the Department of Nutrition &amp; Dietetics. All rights reserved.</span>
+    <span>Wayamba University of Sri Lanka</span>
+  </div>
+</footer>
+
+</div><!-- /content-wrapper -->
+
+
+<script>
+  /* ── Navbar scroll ── */
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('solid', window.scrollY > 40);
+  }, { passive: true });
+
+  /* ── Mobile menu ── */
+  const burger  = document.getElementById('burger');
+  const mMenu   = document.getElementById('mobile-menu');
+  burger.addEventListener('click', () => {
+    const isOpen = mMenu.classList.toggle('open');
+    burger.setAttribute('aria-expanded', isOpen);
+  });
+  function closeMobile() { mMenu.classList.remove('open'); burger.setAttribute('aria-expanded', 'false'); }
+
+  /* ── Scroll reveal ── */
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        const siblings = entry.target.parentElement.querySelectorAll('.reveal:not(.up)');
+        siblings.forEach((el, idx) => {
+          setTimeout(() => el.classList.add('up'), idx * 70);
+        });
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  revealEls.forEach(el => io.observe(el));
+
+  /* ── Smooth active nav highlight ── */
+  const sections = document.querySelectorAll('section[id], footer[id]');
+  const navAnchors = document.querySelectorAll('.nav-link');
+  const activeObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navAnchors.forEach(a => {
+          const match = a.getAttribute('href') === '#' + entry.target.id;
+          a.style.color = match ? 'var(--gold-400)' : '';
+        });
+      }
+    });
+  }, { rootMargin: '-40% 0px -55% 0px' });
+  sections.forEach(s => activeObserver.observe(s));
+</script>
+
+</body>
+</html>
