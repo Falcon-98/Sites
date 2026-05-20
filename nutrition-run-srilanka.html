@@ -4,414 +4,414 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Nutrition Run 🇱🇰 — Sri Lanka Nutrition Day</title>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
-<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Bungee+Shade&family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet"/>
 <style>
-  :root {
-    --sky: #87CEEB;
-    --ground: #5a8a3c;
-    --ground-dark: #3d6b28;
-    --track: #c8a96e;
-    --track-dark: #a8844e;
-    --sun: #FFD700;
-    --leaf: #2ecc71;
-    --danger: #e74c3c;
-    --gold: #f39c12;
-    --white: #fffef5;
-  }
+:root {
+  --deep:    #04100a;
+  --jungle:  #071a0f;
+  --emerald: #0d5c36;
+  --forest:  #1a7a42;
+  --gold:    #FFB800;
+  --amber:   #FF8C00;
+  --crimson: #8D153A;
+  --cream:   #FFF8E7;
+  --leaf:    #4CAF50;
+}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-  body {
-    font-family: 'Nunito', sans-serif;
-    background: #1a1a2e;
-    overflow: hidden;
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--deep);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
 
-  #gameWrapper {
-    position: relative;
-    width: 900px;
-    height: 520px;
-    overflow: hidden;
-    border-radius: 20px;
-    box-shadow: 0 0 60px rgba(0,0,0,0.8), 0 0 120px rgba(255,200,50,0.15);
-    border: 3px solid #f39c12;
-  }
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse at 15% 50%, rgba(13,92,54,0.35) 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 50%, rgba(141,21,58,0.22) 0%, transparent 55%),
+    radial-gradient(ellipse at 50% 0%,  rgba(255,184,0,0.12) 0%, transparent 45%);
+  pointer-events: none;
+  z-index: 0;
+}
 
-  /* ===== CANVAS ===== */
-  #gameCanvas {
-    display: block;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(to bottom, #87CEEB 0%, #b8e4f5 55%, #5a8a3c 55%, #3d6b28 100%);
-  }
+/* floating star dust */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 12% 12%, rgba(255,255,255,0.7) 0%, transparent 100%),
+    radial-gradient(1px 1px at 28%  7%, rgba(255,255,255,0.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 44% 21%, rgba(255,255,255,0.6) 0%, transparent 100%),
+    radial-gradient(1px 1px at 62%  4%, rgba(255,255,255,0.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 78% 14%, rgba(255,255,255,0.7) 0%, transparent 100%),
+    radial-gradient(1px 1px at 91% 19%, rgba(255,255,255,0.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at  6% 88%, rgba(255,255,255,0.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 86% 83%, rgba(255,255,255,0.5) 0%, transparent 100%);
+  pointer-events: none; z-index: 0;
+  animation: starTwinkle 5s ease-in-out infinite alternate;
+}
+@keyframes starTwinkle { 0%{opacity:.5} 100%{opacity:1} }
 
-  /* ===== SCREENS ===== */
-  .screen {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 10;
-    pointer-events: none;
-  }
-  .screen.active { pointer-events: all; }
-  .screen.hidden { display: none !important; }
+/* ===== WRAPPER ===== */
+#gameWrapper {
+  position: relative;
+  width: 900px; height: 520px;
+  overflow: hidden;
+  border-radius: 22px;
+  z-index: 1;
+  box-shadow:
+    0 0 0 2px var(--gold),
+    0 0 0 5px rgba(255,184,0,0.18),
+    0 0 50px rgba(255,184,0,0.22),
+    0 0 100px rgba(255,140,0,0.12),
+    0 0 140px rgba(13,92,54,0.35),
+    0 35px 100px rgba(0,0,0,0.85);
+}
+#gameWrapper::before { content:'✦'; position:absolute; top:11px; left:14px; color:var(--gold); font-size:1rem; z-index:100; pointer-events:none; opacity:.7; }
+#gameWrapper::after  { content:'✦'; position:absolute; top:11px; right:14px; color:var(--gold); font-size:1rem; z-index:100; pointer-events:none; opacity:.7; }
 
-  /* ===== START SCREEN ===== */
-  #startScreen {
-    background: linear-gradient(160deg, #0f4c2a 0%, #1a7a42 40%, #0d3b1e 100%);
-  }
-  #startScreen::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse at 50% 0%, rgba(255,200,50,0.18) 0%, transparent 70%);
-  }
+#gameCanvas { display:block; width:100%; height:100%; }
 
-  .start-badge {
-    background: linear-gradient(135deg, #f39c12, #e67e22);
-    color: #fff;
-    font-family: 'Fredoka One', cursive;
-    font-size: 0.85rem;
-    padding: 6px 18px;
-    border-radius: 999px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 14px;
-    box-shadow: 0 4px 20px rgba(243,156,18,0.5);
-  }
+/* ===== SCREEN BASE ===== */
+.screen {
+  position:absolute; inset:0;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  z-index:10; pointer-events:none;
+}
+.screen.active  { pointer-events:all; }
+.screen.hidden  { display:none !important; }
 
-  .game-title {
-    font-family: 'Fredoka One', cursive;
-    font-size: 3.4rem;
-    color: #fff;
-    text-align: center;
-    line-height: 1.1;
-    text-shadow: 0 4px 20px rgba(0,0,0,0.5), 3px 3px 0 #0d3b1e;
-    margin-bottom: 6px;
-  }
-  .game-title span { color: #FFD700; }
+/* ===== START SCREEN ===== */
+#startScreen {
+  background:
+    radial-gradient(ellipse at 50% -8%,  rgba(255,184,0,0.28) 0%, transparent 50%),
+    radial-gradient(ellipse at   0% 100%, rgba(13,92,54,0.55)  0%, transparent 50%),
+    radial-gradient(ellipse at 100% 100%, rgba(141,21,58,0.42) 0%, transparent 50%),
+    linear-gradient(168deg, #030d07 0%, #081a0e 35%, #0c3018 65%, #030d07 100%);
+}
 
-  .subtitle {
-    color: #a8e6c0;
-    font-size: 1rem;
-    font-weight: 600;
-    margin-bottom: 30px;
-    letter-spacing: 1px;
-  }
+.deco-line-top {
+  position:absolute; top:0; left:0; right:0; height:3px;
+  background:linear-gradient(90deg, transparent, var(--gold), var(--amber), var(--crimson), var(--amber), var(--gold), transparent);
+}
+.deco-line-bot {
+  position:absolute; bottom:0; left:0; right:0; height:3px;
+  background:linear-gradient(90deg, transparent, var(--emerald), var(--leaf), var(--forest), var(--leaf), var(--emerald), transparent);
+}
 
-  .food-icons-row {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 32px;
-    font-size: 2rem;
-    animation: floatRow 3s ease-in-out infinite;
-  }
-  @keyframes floatRow {
-    0%,100% { transform: translateY(0); }
-    50% { transform: translateY(-8px); }
-  }
+/* ambient food particles */
+.fp {
+  position:absolute; font-size:1.6rem; opacity:.12; pointer-events:none;
+  animation:fpDrift var(--fd,4s) ease-in-out infinite alternate;
+}
+@keyframes fpDrift {
+  from { transform:translateY(0)   rotate(-8deg);  opacity:.08; }
+  to   { transform:translateY(-22px) rotate(10deg); opacity:.18; }
+}
 
-  .how-to-box {
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 16px;
-    padding: 16px 28px;
-    color: #d4f5e2;
-    font-size: 0.88rem;
-    font-weight: 600;
-    line-height: 1.8;
-    margin-bottom: 28px;
-    max-width: 480px;
-    text-align: center;
-    backdrop-filter: blur(6px);
-  }
-  .how-to-box strong { color: #FFD700; }
+.start-badge {
+  background:linear-gradient(135deg, var(--crimson), #a01842);
+  color:#fff;
+  font-family:'Bungee', cursive;
+  font-size:.72rem; letter-spacing:2.5px; text-transform:uppercase;
+  padding:5px 20px; border-radius:999px; margin-bottom:14px;
+  box-shadow:0 4px 24px rgba(141,21,58,.55), 0 0 0 2px rgba(255,255,255,.08);
+  animation:badgePulse 2.4s ease-in-out infinite;
+}
+@keyframes badgePulse {
+  0%,100%{ box-shadow:0 4px 20px rgba(141,21,58,.5),  0 0 0 2px rgba(255,255,255,.08); }
+  50%    { box-shadow:0 4px 34px rgba(141,21,58,.85), 0 0 0 5px rgba(255,184,0,.18); }
+}
 
-  .btn-start {
-    font-family: 'Fredoka One', cursive;
-    font-size: 1.5rem;
-    background: linear-gradient(135deg, #FFD700, #f39c12);
-    color: #1a1a2e;
-    border: none;
-    padding: 14px 52px;
-    border-radius: 999px;
-    cursor: pointer;
-    box-shadow: 0 6px 30px rgba(255,215,0,0.5), 0 0 0 4px rgba(255,215,0,0.15);
-    transition: all 0.2s;
-    letter-spacing: 1px;
-  }
-  .btn-start:hover {
-    transform: scale(1.06) translateY(-2px);
-    box-shadow: 0 10px 40px rgba(255,215,0,0.7), 0 0 0 6px rgba(255,215,0,0.2);
-  }
+.game-title {
+  font-family:'Bungee Shade', cursive;
+  font-size:3.9rem; color:var(--gold);
+  text-align:center; line-height:1.0; margin-bottom:5px;
+  animation:titleGlow 3.5s ease-in-out infinite;
+  letter-spacing:1px;
+}
+@keyframes titleGlow {
+  0%,100% { filter:drop-shadow(0 4px 18px rgba(255,184,0,.4)); }
+  50%      { filter:drop-shadow(0 4px 40px rgba(255,184,0,.75)) drop-shadow(0 0 70px rgba(255,140,0,.3)); }
+}
+.game-title .run-word { color:var(--cream); -webkit-text-stroke:2px var(--gold); }
 
-  /* ===== HUD ===== */
-  #hud {
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    padding: 10px 18px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    z-index: 5;
-    pointer-events: none;
-  }
-  .hud-pill {
-    background: rgba(0,0,0,0.55);
-    backdrop-filter: blur(6px);
-    border-radius: 999px;
-    padding: 5px 14px;
-    color: #fff;
-    font-weight: 800;
-    font-size: 0.95rem;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    border: 1px solid rgba(255,255,255,0.15);
-  }
-  .hud-pill .icon { font-size: 1.1rem; }
-  #comboDisplay {
-    color: #FFD700;
-    font-family: 'Fredoka One', cursive;
-    font-size: 1.1rem;
-    transition: all 0.3s;
-  }
-  #comboDisplay.pop {
-    animation: comboPop 0.4s ease;
-  }
-  @keyframes comboPop {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.5); color: #ff6b35; }
-    100% { transform: scale(1); }
-  }
+.subtitle {
+  color:rgba(255,248,231,.55);
+  font-size:.82rem; font-weight:800;
+  letter-spacing:3.5px; text-transform:uppercase;
+  margin-bottom:18px;
+}
 
-  /* ===== LIVES ===== */
-  #livesDisplay { display: flex; gap: 4px; }
-  .heart { font-size: 1.2rem; transition: all 0.3s; }
-  .heart.lost { opacity: 0.25; filter: grayscale(1); }
+.food-icons-row { display:flex; gap:8px; margin-bottom:20px; font-size:1.75rem; }
+.food-icons-row span { display:inline-block; animation:iconBounce 2.2s ease-in-out infinite; }
+.food-icons-row span:nth-child(1){animation-delay:0s}
+.food-icons-row span:nth-child(2){animation-delay:.15s}
+.food-icons-row span:nth-child(3){animation-delay:.3s}
+.food-icons-row span:nth-child(4){animation-delay:.45s}
+.food-icons-row span:nth-child(5){animation-delay:.6s}
+.food-icons-row span:nth-child(6){animation-delay:.75s}
+.food-icons-row span:nth-child(7){animation-delay:.9s}
+.food-icons-row span:nth-child(8){animation-delay:1.05s}
+@keyframes iconBounce {
+  0%,100%{ transform:translateY(0) scale(1); }
+  50%    { transform:translateY(-11px) scale(1.12); }
+}
 
-  /* ===== QUIZ OVERLAY ===== */
-  #quizOverlay {
-    background: rgba(0,0,0,0.82);
-    backdrop-filter: blur(10px);
-  }
+.how-to-box {
+  background:rgba(255,248,231,.04);
+  border:1px solid rgba(255,184,0,.2);
+  border-radius:16px; padding:13px 26px;
+  color:rgba(255,248,231,.72);
+  font-size:.84rem; font-weight:700; line-height:1.95;
+  margin-bottom:22px; max-width:460px; text-align:center;
+  backdrop-filter:blur(10px);
+  position:relative; overflow:hidden;
+}
+.how-to-box::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:1px;
+  background:linear-gradient(90deg, transparent, rgba(255,184,0,.45), transparent);
+}
+.how-to-box strong { color:var(--gold); }
 
-  .quiz-card {
-    background: linear-gradient(145deg, #1a1a2e, #16213e);
-    border: 2px solid #e74c3c;
-    border-radius: 20px;
-    padding: 30px 36px;
-    max-width: 520px;
-    width: 90%;
-    box-shadow: 0 0 60px rgba(231,76,60,0.4);
-    animation: quizSlideIn 0.35s cubic-bezier(0.34,1.56,0.64,1);
-  }
-  @keyframes quizSlideIn {
-    from { transform: scale(0.7) translateY(30px); opacity: 0; }
-    to { transform: scale(1) translateY(0); opacity: 1; }
-  }
+.btn-start {
+  font-family:'Bungee', cursive; font-size:1.25rem; letter-spacing:2px;
+  background:linear-gradient(135deg, var(--gold) 0%, var(--amber) 100%);
+  color:var(--deep); border:none;
+  padding:14px 58px; border-radius:999px; cursor:pointer;
+  box-shadow:0 6px 0 rgba(0,0,0,.45), 0 8px 32px rgba(255,184,0,.4), inset 0 1px 0 rgba(255,255,255,.35);
+  transition:all .15s; position:relative; top:0;
+}
+.btn-start:hover { transform:translateY(-3px); box-shadow:0 9px 0 rgba(0,0,0,.45), 0 14px 44px rgba(255,184,0,.65), inset 0 1px 0 rgba(255,255,255,.35); }
+.btn-start:active{ transform:translateY(3px);  box-shadow:0 3px 0 rgba(0,0,0,.4),  0 4px 18px rgba(255,184,0,.4),  inset 0 1px 0 rgba(255,255,255,.2); }
 
-  .quiz-danger-tag {
-    background: #e74c3c;
-    color: #fff;
-    font-family: 'Fredoka One', cursive;
-    font-size: 0.8rem;
-    padding: 4px 14px;
-    border-radius: 999px;
-    letter-spacing: 2px;
-    display: inline-block;
-    margin-bottom: 12px;
-    animation: pulse-tag 1s ease-in-out infinite;
-  }
-  @keyframes pulse-tag {
-    0%,100% { box-shadow: 0 0 0 0 rgba(231,76,60,0.5); }
-    50% { box-shadow: 0 0 0 8px rgba(231,76,60,0); }
-  }
+/* ===== HUD ===== */
+#hud {
+  position:absolute; top:0; left:0; right:0;
+  padding:10px 14px;
+  display:flex; justify-content:space-between; align-items:center;
+  z-index:5; pointer-events:none;
+  background:linear-gradient(to bottom, rgba(0,0,0,.45) 0%, transparent 100%);
+}
+.hud-group { display:flex; gap:6px; align-items:center; }
+.hud-pill {
+  background:rgba(4,16,10,.78); backdrop-filter:blur(8px);
+  border-radius:999px; padding:4px 12px;
+  color:#fff; font-family:'Bungee', cursive; font-size:.82rem;
+  display:flex; align-items:center; gap:5px;
+  border:1px solid rgba(255,184,0,.22);
+  box-shadow:0 2px 10px rgba(0,0,0,.35);
+}
+.hud-pill .icon { font-size:.95rem; }
+#comboDisplay { color:var(--gold); transition:all .25s; }
+#comboDisplay.pop { animation:comboPop .38s ease; }
+@keyframes comboPop {
+  0%  { transform:scale(1); }
+  40% { transform:scale(1.65); color:var(--amber); }
+  100%{ transform:scale(1); }
+}
+#livesDisplay { display:flex; gap:3px; }
+.heart { font-size:1.05rem; transition:all .3s; }
+.heart.lost { opacity:.18; filter:grayscale(1) brightness(.4); transform:scale(.75); }
 
-  .quiz-food-icon {
-    font-size: 3.5rem;
-    text-align: center;
-    margin-bottom: 10px;
-    animation: wobble 0.5s ease-in-out;
-  }
-  @keyframes wobble {
-    0%,100%{transform:rotate(0)} 25%{transform:rotate(-12deg)} 75%{transform:rotate(12deg)}
-  }
+/* ===== QUIZ ===== */
+#quizOverlay { background:rgba(0,0,0,.9); backdrop-filter:blur(14px); }
 
-  .quiz-question {
-    font-family: 'Fredoka One', cursive;
-    font-size: 1.3rem;
-    color: #fff;
-    text-align: center;
-    margin-bottom: 20px;
-    line-height: 1.4;
-  }
+.quiz-card {
+  background:linear-gradient(148deg, #081510, #04100a);
+  border:2px solid var(--crimson); border-radius:24px;
+  padding:26px 32px 22px; max-width:520px; width:90%;
+  box-shadow:
+    0 0 0 5px rgba(141,21,58,.12),
+    0 0 60px rgba(141,21,58,.38),
+    0 24px 70px rgba(0,0,0,.65);
+  animation:quizSlideIn .4s cubic-bezier(.34,1.56,.64,1);
+  position:relative; overflow:hidden;
+}
+.quiz-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg, transparent, var(--crimson), var(--gold), var(--crimson), transparent);
+}
+@keyframes quizSlideIn {
+  from { transform:scale(.72) translateY(44px); opacity:0; }
+  to   { transform:scale(1)   translateY(0);    opacity:1; }
+}
 
-  .quiz-options {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
+.quiz-danger-tag {
+  background:var(--crimson); color:#fff;
+  font-family:'Bungee', cursive; font-size:.7rem;
+  padding:4px 14px; border-radius:999px; letter-spacing:2px;
+  display:inline-block; margin-bottom:10px;
+  animation:pulseCrimson 1.1s ease-in-out infinite;
+  box-shadow:0 0 18px rgba(141,21,58,.5);
+}
+@keyframes pulseCrimson {
+  0%,100%{ box-shadow:0 0 10px rgba(141,21,58,.5); }
+  50%    { box-shadow:0 0 28px rgba(141,21,58,.95), 0 0 0 7px rgba(141,21,58,.08); }
+}
 
-  .quiz-opt {
-    background: rgba(255,255,255,0.07);
-    border: 2px solid rgba(255,255,255,0.15);
-    border-radius: 12px;
-    color: #fff;
-    font-family: 'Nunito', sans-serif;
-    font-weight: 700;
-    font-size: 0.92rem;
-    padding: 12px 10px;
-    cursor: pointer;
-    transition: all 0.2s;
-    text-align: center;
-  }
-  .quiz-opt:hover {
-    background: rgba(255,255,255,0.14);
-    border-color: #FFD700;
-    transform: translateY(-2px);
-    color: #FFD700;
-  }
-  .quiz-opt.correct {
-    background: rgba(46,204,113,0.3);
-    border-color: #2ecc71;
-    color: #2ecc71;
-    animation: correctFlash 0.5s ease;
-  }
-  .quiz-opt.wrong {
-    background: rgba(231,76,60,0.3);
-    border-color: #e74c3c;
-    color: #e74c3c;
-    animation: shake 0.4s ease;
-  }
-  @keyframes correctFlash {
-    0%,100%{transform:scale(1)} 50%{transform:scale(1.06)}
-  }
-  @keyframes shake {
-    0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)}
-  }
+.quiz-food-icon {
+  font-size:3.8rem; text-align:center; margin-bottom:8px;
+  display:block; filter:drop-shadow(0 4px 14px rgba(141,21,58,.45));
+  animation:wobble .6s ease-in-out;
+}
+@keyframes wobble {
+  0%,100%{ transform:rotate(0)    scale(1);   }
+  25%    { transform:rotate(-14deg) scale(1.1); }
+  75%    { transform:rotate(14deg)  scale(1.1); }
+}
 
-  .quiz-timer-bar {
-    height: 6px;
-    background: rgba(255,255,255,0.1);
-    border-radius: 999px;
-    overflow: hidden;
-    margin-bottom: 18px;
-  }
-  .quiz-timer-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #2ecc71, #f39c12, #e74c3c);
-    border-radius: 999px;
-    transition: width 0.1s linear;
-  }
+.quiz-question {
+  font-weight:900; font-size:1.18rem; color:var(--cream);
+  text-align:center; margin-bottom:16px; line-height:1.45;
+}
 
-  .quiz-fact {
-    margin-top: 14px;
-    background: rgba(255,215,0,0.1);
-    border-left: 3px solid #FFD700;
-    padding: 10px 14px;
-    border-radius: 0 8px 8px 0;
-    color: #FFD700;
-    font-size: 0.82rem;
-    font-weight: 600;
-    line-height: 1.5;
-    display: none;
-  }
+.quiz-options { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
 
-  /* ===== GAME OVER / WIN ===== */
-  #gameOverScreen {
-    background: linear-gradient(160deg, #1a0a0a 0%, #3d0f0f 50%, #1a0a0a 100%);
-  }
-  #winScreen {
-    background: linear-gradient(160deg, #0a1a0a 0%, #0f3d1a 50%, #0a1a0a 100%);
-  }
+.quiz-opt {
+  background:rgba(255,248,231,.04);
+  border:1.5px solid rgba(255,248,231,.11);
+  border-radius:12px; color:rgba(255,248,231,.82);
+  font-weight:800; font-size:.87rem;
+  padding:11px 10px; cursor:pointer;
+  transition:all .18s; text-align:center;
+}
+.quiz-opt:hover {
+  background:rgba(255,184,0,.09); border-color:var(--gold);
+  color:var(--gold); transform:translateY(-2px);
+  box-shadow:0 4px 16px rgba(255,184,0,.15);
+}
+.quiz-opt.correct {
+  background:rgba(46,204,113,.15); border-color:#2ecc71; color:#2ecc71;
+  animation:correctFlash .45s ease; box-shadow:0 0 22px rgba(46,204,113,.3);
+}
+.quiz-opt.wrong {
+  background:rgba(141,21,58,.22); border-color:var(--crimson); color:#ff7a9a;
+  animation:shake .4s ease;
+}
+@keyframes correctFlash{ 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
+@keyframes shake{ 0%,100%{transform:translateX(0)} 25%{transform:translateX(-7px)} 75%{transform:translateX(7px)} }
 
-  .result-title {
-    font-family: 'Fredoka One', cursive;
-    font-size: 3rem;
-    text-align: center;
-    text-shadow: 0 4px 20px rgba(0,0,0,0.5);
-    margin-bottom: 10px;
-  }
-  .result-score {
-    font-family: 'Fredoka One', cursive;
-    font-size: 1.8rem;
-    color: #FFD700;
-    margin-bottom: 6px;
-  }
-  .result-sub {
-    color: rgba(255,255,255,0.6);
-    font-size: 0.95rem;
-    margin-bottom: 28px;
-  }
+.quiz-timer-bar {
+  height:5px; background:rgba(255,255,255,.07);
+  border-radius:999px; overflow:hidden; margin-bottom:14px;
+}
+.quiz-timer-fill {
+  height:100%;
+  background:linear-gradient(90deg, #2ecc71, var(--gold), var(--crimson));
+  border-radius:999px; transition:width .1s linear;
+  box-shadow:0 0 8px rgba(255,184,0,.4);
+}
 
-  /* ===== FLOATING FEEDBACK ===== */
-  .float-feedback {
-    position: absolute;
-    font-family: 'Fredoka One', cursive;
-    font-size: 1.6rem;
-    pointer-events: none;
-    z-index: 20;
-    animation: floatUp 1.2s ease forwards;
-    text-shadow: 2px 2px 6px rgba(0,0,0,0.5);
-  }
-  @keyframes floatUp {
-    0%   { opacity: 1; transform: translateY(0) scale(1); }
-    60%  { opacity: 1; transform: translateY(-60px) scale(1.1); }
-    100% { opacity: 0; transform: translateY(-100px) scale(0.8); }
-  }
+.quiz-fact {
+  margin-top:11px;
+  background:rgba(255,184,0,.06); border-left:3px solid var(--gold);
+  padding:9px 13px; border-radius:0 10px 10px 0;
+  color:rgba(255,248,231,.78); font-size:.79rem; font-weight:700;
+  line-height:1.6; display:none;
+}
 
-  /* ===== PARALLAX LAYERS ===== */
-  #cloudLayer, #treeLayer {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    pointer-events: none;
-    z-index: 1;
-  }
+/* ===== RESULT SCREENS ===== */
+#gameOverScreen {
+  background:
+    radial-gradient(ellipse at 50% 28%, rgba(141,21,58,.45) 0%, transparent 60%),
+    linear-gradient(162deg, #080303 0%, #180606 50%, #080303 100%);
+}
+#winScreen {
+  background:
+    radial-gradient(ellipse at 50% 28%, rgba(13,92,54,.55) 0%, transparent 60%),
+    radial-gradient(ellipse at 50% 100%, rgba(255,184,0,.18) 0%, transparent 50%),
+    linear-gradient(162deg, #030803 0%, #081c08 50%, #030803 100%);
+}
 
-  /* ===== SPEED INDICATOR ===== */
-  #speedBar {
-    position: absolute;
-    bottom: 12px;
-    right: 14px;
-    background: rgba(0,0,0,0.5);
-    border-radius: 999px;
-    padding: 4px 12px;
-    color: #FFD700;
-    font-family: 'Fredoka One', cursive;
-    font-size: 0.82rem;
-    z-index: 5;
-    pointer-events: none;
-  }
+.result-icon {
+  font-size:4.5rem; margin-bottom:10px; display:block;
+  filter:drop-shadow(0 8px 22px rgba(0,0,0,.55));
+}
+.gameover-icon { animation:wobble 1s ease infinite; }
+.win-icon { animation:winFloat 1.6s ease-in-out infinite; }
+@keyframes winFloat {
+  0%,100%{ transform:translateY(0)   rotate(-4deg); }
+  50%    { transform:translateY(-15px) rotate(5deg); }
+}
 
-  /* ===== DISTANCE PROGRESS ===== */
-  #progressBar {
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 5px;
-    background: rgba(255,255,255,0.1);
-    z-index: 5;
-  }
-  #progressFill {
-    height: 100%;
-    background: linear-gradient(90deg, #2ecc71, #FFD700);
-    transition: width 0.3s ease;
-  }
+.result-title {
+  font-family:'Bungee Shade', cursive; font-size:3rem;
+  text-align:center; margin-bottom:8px; letter-spacing:2px;
+}
+.result-title.gameover { color:var(--crimson); filter:drop-shadow(0 4px 22px rgba(141,21,58,.65)); }
+.result-title.win      { color:var(--gold);    filter:drop-shadow(0 4px 22px rgba(255,184,0,.65)); }
 
-  /* Responsive shrink for small screens */
-  @media (max-width: 960px) {
-    #gameWrapper { width: 98vw; height: 56vw; min-height: 300px; }
-    .game-title { font-size: 2.2rem; }
-  }
+.result-score { font-family:'Bungee',cursive; font-size:1.55rem; color:var(--gold); margin-bottom:4px; }
+.result-sub   { color:rgba(255,248,231,.48); font-size:.86rem; font-weight:700; margin-bottom:5px; letter-spacing:1px; }
+.result-sub.good { color:rgba(100,220,140,.8); }
+.result-sub.bad  { color:rgba(220,100,120,.8); }
+
+/* confetti */
+.cpiece {
+  position:absolute; width:7px; height:7px;
+  border-radius:2px; pointer-events:none;
+  animation:cFall var(--cd,2s) ease-in var(--ca,0s) infinite;
+}
+@keyframes cFall {
+  0%  { transform:translateY(-10px) rotate(0);    opacity:1; }
+  100%{ transform:translateY(540px) rotate(720deg); opacity:0; }
+}
+
+/* ===== FEEDBACK ===== */
+.float-feedback {
+  position:absolute; font-family:'Bungee',cursive; font-size:1.35rem;
+  pointer-events:none; z-index:20; white-space:nowrap;
+  animation:floatUp 1.2s ease forwards;
+  text-shadow:2px 2px 8px rgba(0,0,0,.65);
+}
+@keyframes floatUp {
+  0%  { opacity:1; transform:translateY(0)    scale(1);   }
+  40% { opacity:1; transform:translateY(-52px) scale(1.15); }
+  100%{ opacity:0; transform:translateY(-95px) scale(.8);  }
+}
+
+/* ===== BOTTOM CHROME ===== */
+#speedBar {
+  position:absolute; bottom:15px; right:14px;
+  background:rgba(4,16,10,.82); backdrop-filter:blur(6px);
+  border-radius:999px; padding:4px 13px;
+  color:var(--gold); font-family:'Bungee',cursive; font-size:.73rem;
+  z-index:5; pointer-events:none; border:1px solid rgba(255,184,0,.2);
+}
+#progressBar { position:absolute; bottom:0; left:0; right:0; height:4px; background:rgba(255,255,255,.06); z-index:5; }
+#progressFill {
+  height:100%;
+  background:linear-gradient(90deg, var(--emerald), var(--gold), var(--amber));
+  transition:width .3s ease; box-shadow:0 0 7px rgba(255,184,0,.5);
+}
+
+/* shake keyframe for screen hit */
+@keyframes screenShake {
+  0%,100%{ transform:translateX(0); }
+  20%    { transform:translateX(-9px); }
+  40%    { transform:translateX(9px); }
+  60%    { transform:translateX(-5px); }
+  80%    { transform:translateX(5px); }
+}
+.shake { animation:screenShake .38s ease; }
+
+@media(max-width:960px){
+  #gameWrapper{ width:98vw; height:56vw; min-height:300px; }
+  .game-title{ font-size:2.5rem; }
+  .result-title{ font-size:2rem; }
+}
 </style>
 </head>
 <body>
@@ -421,11 +421,11 @@
 
   <!-- HUD -->
   <div id="hud">
-    <div style="display:flex;gap:8px">
+    <div class="hud-group">
       <div class="hud-pill"><span class="icon">⭐</span><span id="scoreDisplay">0</span></div>
       <div class="hud-pill"><span class="icon">🔥</span><span id="comboDisplay">x1</span></div>
     </div>
-    <div style="display:flex;gap:8px">
+    <div class="hud-group">
       <div class="hud-pill"><span class="icon">📏</span><span id="distDisplay">0m</span></div>
       <div class="hud-pill" id="livesDisplay">
         <span class="heart" id="h1">❤️</span>
@@ -434,31 +434,43 @@
       </div>
     </div>
   </div>
-
-  <div id="speedBar">🏃 SPEED x<span id="speedVal">1.0</span></div>
-
+  <div id="speedBar">🏃 x<span id="speedVal">1.0</span></div>
   <div id="progressBar"><div id="progressFill" style="width:0%"></div></div>
 
   <!-- START SCREEN -->
   <div id="startScreen" class="screen active">
+    <div class="deco-line-top"></div>
+    <div class="fp" style="left:7%;top:14%;--fd:4.2s">🥥</div>
+    <div class="fp" style="left:87%;top:20%;--fd:5.6s">🌿</div>
+    <div class="fp" style="left:14%;top:70%;--fd:3.9s">🐟</div>
+    <div class="fp" style="left:83%;top:67%;--fd:4.7s">🍌</div>
+    <div class="fp" style="left:50%;top:7%;--fd:5.2s">🌶️</div>
+    <div class="fp" style="left:4%;top:47%;--fd:6.1s">🥬</div>
+    <div class="fp" style="left:93%;top:44%;--fd:4.4s">🍋</div>
+    <div class="fp" style="left:38%;top:85%;--fd:3.6s">🧅</div>
+
     <div class="start-badge">🇱🇰 Sri Lanka Nutrition Day</div>
-    <div class="game-title">Nutrition<br/><span>Run!</span></div>
-    <div class="subtitle">Farm to Fork — Myth Buster Edition</div>
-    <div class="food-icons-row">🥥 🌿 🍚 🍌 🧅 🐟 🌶️ 🍋</div>
+    <div class="game-title">Nutrition<br/><span class="run-word">Run!</span></div>
+    <div class="subtitle">Farm to Fork · Myth Buster Edition</div>
+    <div class="food-icons-row">
+      <span>🥥</span><span>🌿</span><span>🍚</span><span>🍌</span>
+      <span>🧅</span><span>🐟</span><span>🌶️</span><span>🍋</span>
+    </div>
     <div class="how-to-box">
       <strong>⬆ JUMP</strong> to collect healthy foods &amp; avoid junk!<br/>
-      If you eat <strong>unhealthy food</strong>, answer a nutrition quiz<br/>
-      to save yourself — or <strong>lose a life</strong>!<br/>
+      Eat an <strong>unhealthy food?</strong> Answer the nutrition quiz<br/>
+      to save yourself — or <strong>lose a life!</strong><br/>
       Reach <strong>2000m</strong> to win the run! 🏆
     </div>
     <button class="btn-start" onclick="startGame()">🌾 START RUN!</button>
+    <div class="deco-line-bot"></div>
   </div>
 
   <!-- QUIZ OVERLAY -->
   <div id="quizOverlay" class="screen hidden">
     <div class="quiz-card">
       <div class="quiz-danger-tag">⚠️ UNHEALTHY FOOD ALERT</div>
-      <div class="quiz-food-icon" id="quizFoodIcon">🍟</div>
+      <span class="quiz-food-icon" id="quizFoodIcon">🍟</span>
       <div class="quiz-timer-bar"><div class="quiz-timer-fill" id="quizTimerFill" style="width:100%"></div></div>
       <div class="quiz-question" id="quizQuestion">Loading question...</div>
       <div class="quiz-options" id="quizOptions"></div>
@@ -468,22 +480,22 @@
 
   <!-- GAME OVER -->
   <div id="gameOverScreen" class="screen hidden">
-    <div style="font-size:4rem;margin-bottom:10px;animation:wobble 1s ease infinite">💀</div>
-    <div class="result-title" style="color:#e74c3c">Game Over!</div>
+    <span class="result-icon gameover-icon">💀</span>
+    <div class="result-title gameover">Game Over!</div>
     <div class="result-score">Score: <span id="finalScore">0</span></div>
     <div class="result-sub" id="finalDist">Distance: 0m</div>
-    <div class="result-sub" style="color:#e88">Your nutrition knowledge needs work!<br/>Learn and try again! 🇱🇰</div>
-    <button class="btn-start" style="margin-top:8px" onclick="restartGame()">🔄 TRY AGAIN</button>
+    <div class="result-sub bad">Your nutrition knowledge needs work!<br/>Learn and try again! 🇱🇰</div>
+    <button class="btn-start" style="margin-top:18px" onclick="restartGame()">🔄 TRY AGAIN</button>
   </div>
 
   <!-- WIN SCREEN -->
   <div id="winScreen" class="screen hidden">
-    <div style="font-size:4rem;margin-bottom:10px;animation:floatRow 1.5s ease-in-out infinite">🏆</div>
-    <div class="result-title" style="color:#FFD700">You Win!</div>
+    <span class="result-icon win-icon">🏆</span>
+    <div class="result-title win">You Win!</div>
     <div class="result-score">Score: <span id="winScore">0</span></div>
     <div class="result-sub" id="winDist">Distance: 2000m</div>
-    <div class="result-sub" style="color:#8ef0a2">You're a Sri Lankan Nutrition Champion! 🌿🥥</div>
-    <button class="btn-start" style="margin-top:8px" onclick="restartGame()">🎮 PLAY AGAIN</button>
+    <div class="result-sub good">You're a Sri Lankan Nutrition Champion! 🌿🥥</div>
+    <button class="btn-start" style="margin-top:18px" onclick="restartGame()">🎮 PLAY AGAIN</button>
   </div>
 </div>
 
@@ -493,14 +505,14 @@
 // =============================================
 const HEALTHY_FOODS = [
   { emoji:'🥥', name:'King Coconut', pts:15, msg:'Superhydrator!' },
-  { emoji:'🌿', name:'Gotukola', pts:20, msg:'Brain Boost!' },
-  { emoji:'🍌', name:'Banana', pts:10, msg:'Energy Up!' },
-  { emoji:'🐟', name:'Fish', pts:18, msg:'Omega-3 Power!' },
-  { emoji:'🧅', name:'Red Onion', pts:12, msg:'Antioxidant!' },
+  { emoji:'🌿', name:'Gotukola',     pts:20, msg:'Brain Boost!' },
+  { emoji:'🍌', name:'Banana',       pts:10, msg:'Energy Up!' },
+  { emoji:'🐟', name:'Fish',         pts:18, msg:'Omega-3 Power!' },
+  { emoji:'🧅', name:'Red Onion',    pts:12, msg:'Antioxidant!' },
   { emoji:'🌶️', name:'Green Chilli', pts:10, msg:'Vitamin C!' },
-  { emoji:'🍋', name:'Lime', pts:10, msg:'Fresh Boost!' },
-  { emoji:'🥬', name:'Mukunuwenna', pts:22, msg:'Iron Rich!' },
-  { emoji:'🫘', name:'Dhal', pts:14, msg:'Protein Power!' },
+  { emoji:'🍋', name:'Lime',         pts:10, msg:'Fresh Boost!' },
+  { emoji:'🥬', name:'Mukunuwenna',  pts:22, msg:'Iron Rich!' },
+  { emoji:'🫘', name:'Dhal',         pts:14, msg:'Protein Power!' },
   { emoji:'🍠', name:'Sweet Potato', pts:12, msg:'Fibre Rich!' },
 ];
 
@@ -536,96 +548,84 @@ const UNHEALTHY_FOODS = [
   { emoji:'🥨', name:'Salted Snack',
     question:'High sodium intake is most directly linked to?',
     options:['Good eyesight','Hypertension (High BP)','Strong muscles','Clear skin'],
-    correct:1, fact:'Excess sodium raises blood pressure, a major risk factor for stroke and heart disease. Gotukola sambol is a healthier Sri Lankan snack!' },
+    correct:1, fact:'Excess sodium raises blood pressure, a major risk factor for stroke and heart disease. Gotukola sambol is a healthier snack!' },
 ];
 
 // =============================================
 //  GAME STATE
 // =============================================
 const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
+const ctx    = canvas.getContext('2d');
 const W = 900, H = 520;
 
-let gameState = 'start'; // start | playing | quiz | gameover | win
+let gameState = 'start';
 let score = 0, combo = 1, lives = 3, distance = 0;
 const MAX_DIST = 2000;
 
-// Player
 let player = {
-  x: 120, y: 0, w: 52, h: 64,
-  vy: 0, onGround: true,
-  frame: 0, frameTimer: 0,
-  invincible: 0,
-  hitAnim: 0,
+  x:120, y:0, w:52, h:64,
+  vy:0, onGround:true,
+  frame:0, frameTimer:0,
+  invincible:0, hitAnim:0,
 };
-const GROUND_Y = H * 0.56; // pixel Y of ground surface
-const GRAVITY = 0.6;
+const GROUND_Y   = H * 0.58;
+const GRAVITY    = 0.62;
 const JUMP_FORCE = -14;
 
-// World speed
-let worldSpeed = 4;
-let speedMultiplier = 1;
-let frameCount = 0;
+let worldSpeed = 4, speedMultiplier = 1, frameCount = 0;
+let items = [], spawnTimer = 0;
 
-// Objects
-let items = [];
-let spawnTimer = 0;
-
-// Clouds
+// background layers
 let clouds = [
-  {x:100, y:40, w:120, h:50, s:0.4},
-  {x:400, y:65, w:90, h:40, s:0.3},
-  {x:700, y:35, w:140, h:55, s:0.5},
+  {x:90,  y:38, w:130, h:54, s:.38},
+  {x:380, y:62, w:100, h:42, s:.28},
+  {x:680, y:32, w:150, h:58, s:.48},
 ];
-// Trees (background)
-let trees = [
-  {x:200, y: GROUND_Y - 90, h:90},
-  {x:500, y: GROUND_Y - 110, h:110},
-  {x:750, y: GROUND_Y - 80, h:80},
+let palmTrees = [
+  {x:220,  h:110},
+  {x:520,  h:130},
+  {x:760,  h:100},
+  {x:1050, h:120},
 ];
+// mountain scroll offsets
+let mtnOffset1 = 0, mtnOffset2 = 0;
 
-// Quiz state
-let currentQuizFood = null;
-let quizTimerVal = 100;
-let quizTimerInterval = null;
-let quizAnswered = false;
+// particles (collect sparkles)
+let particles = [];
+
+// quiz
+let currentQuizFood = null, quizTimerVal = 100;
+let quizTimerInterval = null, quizAnswered = false;
 
 // =============================================
 //  INPUT
 // =============================================
 document.addEventListener('keydown', e => {
   if ((e.code === 'Space' || e.code === 'ArrowUp') && gameState === 'playing') {
-    doJump();
-    e.preventDefault();
+    doJump(); e.preventDefault();
   }
 });
-canvas.addEventListener('click', () => {
-  if (gameState === 'playing') doJump();
-});
-// Touch
-canvas.addEventListener('touchstart', e => {
-  if (gameState === 'playing') { doJump(); e.preventDefault(); }
-}, {passive:false});
+canvas.addEventListener('click',      () => { if (gameState==='playing') doJump(); });
+canvas.addEventListener('touchstart', e => { if (gameState==='playing'){ doJump(); e.preventDefault(); } }, {passive:false});
 
 function doJump() {
-  if (player.onGround) {
-    player.vy = JUMP_FORCE;
-    player.onGround = false;
-  }
+  if (player.onGround) { player.vy = JUMP_FORCE; player.onGround = false; }
 }
 
 // =============================================
-//  GAME LIFECYCLE
+//  LIFECYCLE
 // =============================================
 function startGame() {
   show('startScreen', false);
   gameState = 'playing';
-  score = 0; combo = 1; lives = 3; distance = 0;
-  worldSpeed = 4; speedMultiplier = 1; frameCount = 0;
+  score=0; combo=1; lives=3; distance=0;
+  worldSpeed=4; speedMultiplier=1; frameCount=0;
   player.y = GROUND_Y - player.h;
-  player.vy = 0; player.onGround = true;
-  player.invincible = 0;
-  items = []; spawnTimer = 0;
+  player.vy=0; player.onGround=true; player.invincible=0; player.hitAnim=0;
+  items=[]; spawnTimer=0; particles=[];
+  mtnOffset1=0; mtnOffset2=0;
+  // reset hearts
+  ['h1','h2','h3'].forEach(id => document.getElementById(id).classList.remove('lost'));
   updateHUD();
   requestAnimationFrame(loop);
 }
@@ -633,6 +633,8 @@ function startGame() {
 function restartGame() {
   show('gameOverScreen', false);
   show('winScreen', false);
+  // remove confetti
+  document.querySelectorAll('.cpiece').forEach(e=>e.remove());
   startGame();
 }
 
@@ -642,100 +644,80 @@ function restartGame() {
 function loop() {
   if (gameState !== 'playing') return;
   frameCount++;
-
   update();
   render();
   updateHUD();
-
   requestAnimationFrame(loop);
 }
 
 function update() {
-  // Speed ramp
   speedMultiplier = 1 + distance / 1000 * 0.5;
   const spd = worldSpeed * speedMultiplier;
 
-  // Distance
   distance += spd * 0.05;
   if (distance >= MAX_DIST) { triggerWin(); return; }
 
-  // Player physics
+  // player physics
   player.vy += GRAVITY;
-  player.y += player.vy;
-  const groundLevel = GROUND_Y - player.h;
-  if (player.y >= groundLevel) {
-    player.y = groundLevel;
-    player.vy = 0;
-    player.onGround = true;
-  }
+  player.y  += player.vy;
+  const gl = GROUND_Y - player.h;
+  if (player.y >= gl) { player.y=gl; player.vy=0; player.onGround=true; }
   if (player.invincible > 0) player.invincible--;
-  if (player.hitAnim > 0) player.hitAnim--;
+  if (player.hitAnim    > 0) player.hitAnim--;
 
-  // Run animation frame
   player.frameTimer++;
-  if (player.frameTimer > 8) { player.frame = (player.frame + 1) % 4; player.frameTimer = 0; }
+  if (player.frameTimer > 7) { player.frame = (player.frame+1) % 4; player.frameTimer=0; }
 
-  // Clouds
-  clouds.forEach(c => { c.x -= c.s * spd * 0.3; if (c.x + c.w < 0) c.x = W + 20; });
+  // clouds
+  clouds.forEach(c => { c.x -= c.s * spd * 0.28; if (c.x + c.w < 0) c.x = W + 30; });
 
-  // Trees
-  trees.forEach(t => { t.x -= spd * 0.5; if (t.x < -80) t.x = W + Math.random()*200; });
+  // palms scroll
+  palmTrees.forEach(t => {
+    t.x -= spd * 0.55;
+    if (t.x < -80) t.x = W + 80 + Math.random()*200;
+  });
 
-  // Spawn items
+  // mountain offsets
+  mtnOffset1 = (mtnOffset1 + spd * 0.04) % W;
+  mtnOffset2 = (mtnOffset2 + spd * 0.14) % W;
+
+  // spawn
   spawnTimer++;
-  const spawnInterval = Math.max(55, 90 - distance / 40);
-  if (spawnTimer >= spawnInterval) {
-    spawnTimer = 0;
-    spawnItem(spd);
-  }
+  const interval = Math.max(55, 90 - distance/40);
+  if (spawnTimer >= interval) { spawnTimer=0; spawnItem(spd); }
 
-  // Move items
-  items.forEach(item => { item.x -= spd; item.floatY = Math.sin(frameCount * 0.08 + item.seed) * 5; });
-  items = items.filter(i => i.x > -60);
+  items.forEach(i => { i.x -= spd; i.floatY = Math.sin(frameCount*0.08 + i.seed) * 5; });
+  items = items.filter(i => i.x > -70);
 
-  // Collision
+  // particles
+  particles.forEach(p => { p.x+=p.vx; p.y+=p.vy; p.vy+=0.15; p.life--; p.alpha = p.life/p.maxLife; });
+  particles = particles.filter(p => p.life > 0);
+
   checkCollisions();
 }
 
 function spawnItem(spd) {
   const isJunk = Math.random() < 0.32;
-  const data = isJunk
-    ? UNHEALTHY_FOODS[Math.floor(Math.random() * UNHEALTHY_FOODS.length)]
-    : HEALTHY_FOODS[Math.floor(Math.random() * HEALTHY_FOODS.length)];
-
+  const data   = isJunk
+    ? UNHEALTHY_FOODS[Math.floor(Math.random()*UNHEALTHY_FOODS.length)]
+    : HEALTHY_FOODS [Math.floor(Math.random()*HEALTHY_FOODS.length)];
   const onGround = Math.random() < 0.4;
-  const yPos = onGround
-    ? GROUND_Y - 48
-    : GROUND_Y - 48 - Math.random() * 120 - 30;
-
-  items.push({
-    x: W + 40,
-    y: yPos,
-    w: 44, h: 44,
-    data,
-    isJunk,
-    seed: Math.random() * Math.PI * 2,
-    floatY: 0,
-    collected: false,
-  });
+  const yPos     = onGround ? GROUND_Y-48 : GROUND_Y-48-Math.random()*120-30;
+  items.push({ x:W+40, y:yPos, w:44, h:44, data, isJunk, seed:Math.random()*Math.PI*2, floatY:0, collected:false });
 }
 
 function checkCollisions() {
   if (player.invincible > 0) return;
   for (let item of items) {
     if (item.collected) continue;
-    const px = player.x + 8, pw = player.w - 16;
-    const py = player.y + 8, ph = player.h - 12;
-    const ix = item.x, iw = item.w;
-    const iy = item.y + item.floatY, ih = item.h;
-
-    if (px < ix + iw && px + pw > ix && py < iy + ih && py + ph > iy) {
+    const px=player.x+8,  pw=player.w-16;
+    const py=player.y+8,  ph=player.h-12;
+    const ix=item.x,      iw=item.w;
+    const iy=item.y+item.floatY, ih=item.h;
+    if (px<ix+iw && px+pw>ix && py<iy+ih && py+ph>iy) {
       item.collected = true;
-      if (item.isJunk) {
-        triggerQuiz(item.data, item.x + item.w / 2, item.y);
-      } else {
-        collectHealthy(item);
-      }
+      if (item.isJunk) triggerQuiz(item.data, item.x+item.w/2, item.y);
+      else             collectHealthy(item);
       break;
     }
   }
@@ -743,10 +725,19 @@ function checkCollisions() {
 
 function collectHealthy(item) {
   score += item.data.pts * combo;
-  combo = Math.min(combo + 1, 8);
-  showFeedback('+' + (item.data.pts * combo), item.x + item.w/2, item.y, '#2ecc71');
-  showFeedback(item.data.msg, item.x + item.w/2, item.y - 35, '#FFD700');
+  combo  = Math.min(combo+1, 8);
+  spawnParticles(item.x+item.w/2, item.y+item.h/2, '#4CAF50');
+  showFeedback('+' + (item.data.pts*combo), item.x+item.w/2, item.y, '#4CAF50');
+  showFeedback(item.data.msg, item.x+item.w/2, item.y-36, '#FFB800');
   updateComboDisplay();
+}
+
+function spawnParticles(x, y, color) {
+  for (let i=0; i<10; i++) {
+    const angle = (Math.random()*Math.PI*2);
+    const spd   = 1.5 + Math.random()*2.5;
+    particles.push({ x, y, vx:Math.cos(angle)*spd, vy:Math.sin(angle)*spd-1, color, alpha:1, life:30, maxLife:30 });
+  }
 }
 
 // =============================================
@@ -754,21 +745,19 @@ function collectHealthy(item) {
 // =============================================
 function triggerQuiz(foodData, fx, fy) {
   gameState = 'quiz';
-  currentQuizFood = foodData;
-  quizAnswered = false;
-  showFeedback('😱 ' + foodData.name + '!', fx, fy, '#e74c3c');
-
-  document.getElementById('quizFoodIcon').textContent = foodData.emoji;
-  document.getElementById('quizQuestion').textContent = foodData.question;
-  document.getElementById('quizFact').style.display = 'none';
+  currentQuizFood = foodData; quizAnswered = false;
+  showFeedback('😱 '+foodData.name+'!', fx, fy, '#e74c3c');
+  document.getElementById('quizFoodIcon').textContent  = foodData.emoji;
+  document.getElementById('quizQuestion').textContent  = foodData.question;
+  document.getElementById('quizFact').style.display    = 'none';
 
   const optsEl = document.getElementById('quizOptions');
   optsEl.innerHTML = '';
-  foodData.options.forEach((opt, i) => {
+  foodData.options.forEach((opt,i) => {
     const btn = document.createElement('button');
-    btn.className = 'quiz-opt';
+    btn.className   = 'quiz-opt';
     btn.textContent = opt;
-    btn.onclick = () => answerQuiz(i, btn);
+    btn.onclick     = () => answerQuiz(i, btn);
     optsEl.appendChild(btn);
   });
 
@@ -780,11 +769,8 @@ function triggerQuiz(foodData, fx, fy) {
   quizTimerInterval = setInterval(() => {
     if (quizAnswered) return;
     quizTimerVal -= 1.4;
-    document.getElementById('quizTimerFill').style.width = quizTimerVal + '%';
-    if (quizTimerVal <= 0) {
-      clearInterval(quizTimerInterval);
-      quizTimeUp();
-    }
+    document.getElementById('quizTimerFill').style.width = quizTimerVal+'%';
+    if (quizTimerVal <= 0) { clearInterval(quizTimerInterval); quizTimeUp(); }
   }, 100);
 }
 
@@ -792,25 +778,19 @@ function answerQuiz(idx, btn) {
   if (quizAnswered) return;
   quizAnswered = true;
   clearInterval(quizTimerInterval);
-
-  const food = currentQuizFood;
+  const food    = currentQuizFood;
   const allBtns = document.querySelectorAll('.quiz-opt');
-
+  document.getElementById('quizFact').style.display = 'block';
+  document.getElementById('quizFact').textContent   = '💡 '+food.fact;
   if (idx === food.correct) {
     btn.classList.add('correct');
-    combo = Math.max(combo - 1, 1);
-    document.getElementById('quizFact').style.display = 'block';
-    document.getElementById('quizFact').textContent = '💡 ' + food.fact;
+    combo = Math.max(combo-1, 1);
     setTimeout(closeQuiz, 2200);
   } else {
     btn.classList.add('wrong');
     allBtns[food.correct].classList.add('correct');
-    document.getElementById('quizFact').style.display = 'block';
-    document.getElementById('quizFact').textContent = '💡 ' + food.fact;
     loseLife();
-    setTimeout(() => {
-      if (lives > 0) closeQuiz();
-    }, 2400);
+    setTimeout(() => { if (lives>0) closeQuiz(); }, 2400);
   }
 }
 
@@ -820,9 +800,9 @@ function quizTimeUp() {
   const allBtns = document.querySelectorAll('.quiz-opt');
   allBtns[currentQuizFood.correct].classList.add('correct');
   document.getElementById('quizFact').style.display = 'block';
-  document.getElementById('quizFact').textContent = '⏰ Time\'s up! ' + currentQuizFood.fact;
+  document.getElementById('quizFact').textContent   = "⏰ Time's up! "+currentQuizFood.fact;
   loseLife();
-  setTimeout(() => { if (lives > 0) closeQuiz(); }, 2400);
+  setTimeout(() => { if (lives>0) closeQuiz(); }, 2400);
 }
 
 function closeQuiz() {
@@ -835,12 +815,15 @@ function closeQuiz() {
 function loseLife() {
   lives--;
   combo = 1;
-  player.hitAnim = 40;
+  player.hitAnim = 45;
+  // screen shake
+  const w = document.getElementById('gameWrapper');
+  w.classList.remove('shake');
+  void w.offsetWidth;
+  w.classList.add('shake');
   const hearts = ['h1','h2','h3'];
   document.getElementById(hearts[lives])?.classList.add('lost');
-  if (lives <= 0) {
-    setTimeout(triggerGameOver, 1800);
-  }
+  if (lives <= 0) setTimeout(triggerGameOver, 1800);
 }
 
 function triggerGameOver() {
@@ -848,258 +831,422 @@ function triggerGameOver() {
   show('quizOverlay', false);
   gameState = 'gameover';
   document.getElementById('finalScore').textContent = score;
-  document.getElementById('finalDist').textContent = 'Distance: ' + Math.floor(distance) + 'm';
+  document.getElementById('finalDist').textContent  = 'Distance: '+Math.floor(distance)+'m';
   show('gameOverScreen', true);
 }
 
 function triggerWin() {
   gameState = 'win';
   document.getElementById('winScore').textContent = score;
-  document.getElementById('winDist').textContent = 'Distance: ' + Math.floor(distance) + 'm';
+  document.getElementById('winDist').textContent  = 'Distance: '+Math.floor(distance)+'m';
   show('winScreen', true);
+  spawnConfetti();
+}
+
+function spawnConfetti() {
+  const colors = ['#FFB800','#FF8C00','#4CAF50','#8D153A','#2ecc71','#fff8e7','#ff6b8a'];
+  const ws = document.getElementById('winScreen');
+  for (let i=0; i<60; i++) {
+    const d = document.createElement('div');
+    d.className = 'cpiece';
+    d.style.cssText = `left:${Math.random()*100}%;background:${colors[i%colors.length]};--cd:${1.4+Math.random()*1.8}s;--ca:${Math.random()*1.5}s`;
+    ws.appendChild(d);
+  }
 }
 
 // =============================================
 //  RENDER
 // =============================================
 function render() {
-  ctx.clearRect(0, 0, W, H);
-
-  // Sky gradient
-  const sky = ctx.createLinearGradient(0, 0, 0, H * 0.56);
-  sky.addColorStop(0, '#4aa8d8');
-  sky.addColorStop(1, '#b8e4f5');
-  ctx.fillStyle = sky;
-  ctx.fillRect(0, 0, W, H * 0.56);
-
-  // Sun
-  ctx.save();
-  ctx.beginPath();
-  ctx.arc(820, 60, 38, 0, Math.PI * 2);
-  const sunGrad = ctx.createRadialGradient(820, 60, 5, 820, 60, 38);
-  sunGrad.addColorStop(0, '#FFE566');
-  sunGrad.addColorStop(1, '#FFD700');
-  ctx.fillStyle = sunGrad;
-  ctx.shadowColor = '#FFD70077';
-  ctx.shadowBlur = 30;
-  ctx.fill();
-  ctx.restore();
-
-  // Clouds
-  clouds.forEach(c => drawCloud(c));
-
-  // Ground
-  const groundGrad = ctx.createLinearGradient(0, GROUND_Y, 0, H);
-  groundGrad.addColorStop(0, '#6ab040');
-  groundGrad.addColorStop(0.12, '#5a8a3c');
-  groundGrad.addColorStop(0.13, '#c8a96e');
-  groundGrad.addColorStop(1, '#8b6340');
-  ctx.fillStyle = groundGrad;
-  ctx.fillRect(0, GROUND_Y, W, H - GROUND_Y);
-
-  // Ground line detail
-  ctx.fillStyle = '#82c050';
-  ctx.fillRect(0, GROUND_Y, W, 6);
-
-  // Track dashes
-  ctx.fillStyle = 'rgba(255,255,255,0.18)';
-  for (let i = 0; i < 6; i++) {
-    const tx = ((frameCount * worldSpeed * speedMultiplier * 0.8) % 180);
-    ctx.fillRect(i * 180 - tx + 20, GROUND_Y + 18, 80, 4);
-  }
-
-  // Trees (background)
-  trees.forEach(t => drawTree(t));
-
-  // Items
-  items.forEach(item => {
-    if (item.collected) return;
-    const iy = item.y + item.floatY;
-
-    // Glow ring
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(item.x + item.w/2, iy + item.h/2, 28, 0, Math.PI * 2);
-    ctx.fillStyle = item.isJunk
-      ? 'rgba(231,76,60,0.18)'
-      : 'rgba(46,204,113,0.18)';
-    ctx.fill();
-    ctx.restore();
-
-    // Emoji
-    ctx.font = '32px serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(item.data.emoji, item.x + item.w/2, iy + item.h/2);
-
-    // Label
-    ctx.font = 'bold 9px Nunito, sans-serif';
-    ctx.fillStyle = item.isJunk ? '#ff6b6b' : '#2ecc71';
-    ctx.fillText(item.data.name, item.x + item.w/2, iy + item.h + 10);
-  });
-
-  // Player
+  ctx.clearRect(0,0,W,H);
+  drawSky();
+  drawSun();
+  drawMountains();
+  drawClouds();
+  drawGround();
+  drawPalmTrees();
+  drawItems();
+  drawParticles();
   drawPlayer();
 }
 
-function drawCloud(c) {
+function drawSky() {
+  const sky = ctx.createLinearGradient(0,0,0,GROUND_Y);
+  sky.addColorStop(0,   '#1a5f8a');
+  sky.addColorStop(0.4, '#3a98c8');
+  sky.addColorStop(0.75,'#78c8e8');
+  sky.addColorStop(1,   '#f0c060');
+  ctx.fillStyle = sky;
+  ctx.fillRect(0, 0, W, GROUND_Y);
+}
+
+function drawSun() {
+  const sx = 810, sy = 65, sr = 36;
+  // rays
   ctx.save();
-  ctx.fillStyle = 'rgba(255,255,255,0.9)';
-  ctx.shadowColor = 'rgba(255,255,255,0.5)';
-  ctx.shadowBlur = 10;
-  const cx = c.x, cy = c.y, cw = c.w, ch = c.h;
-  ctx.beginPath();
-  ctx.ellipse(cx + cw*0.5, cy + ch*0.6, cw*0.5, ch*0.4, 0, 0, Math.PI*2);
-  ctx.ellipse(cx + cw*0.3, cy + ch*0.45, cw*0.28, ch*0.38, 0, 0, Math.PI*2);
-  ctx.ellipse(cx + cw*0.7, cy + ch*0.5, cw*0.25, ch*0.32, 0, 0, Math.PI*2);
-  ctx.fill();
+  ctx.translate(sx, sy);
+  ctx.rotate(frameCount * 0.004);
+  for (let i=0; i<12; i++) {
+    const a = (i/12)*Math.PI*2;
+    ctx.save();
+    ctx.rotate(a);
+    const rg = ctx.createLinearGradient(0,0,0,sr+28);
+    rg.addColorStop(0, 'rgba(255,220,80,0.22)');
+    rg.addColorStop(1, 'rgba(255,180,0,0)');
+    ctx.fillStyle = rg;
+    ctx.beginPath();
+    ctx.moveTo(-4, 0); ctx.lineTo(4, 0); ctx.lineTo(0, sr+28);
+    ctx.fill();
+    ctx.restore();
+  }
+  ctx.restore();
+  // glow halo
+  ctx.save();
+  const halo = ctx.createRadialGradient(sx,sy, sr*0.6, sx,sy, sr*2.5);
+  halo.addColorStop(0, 'rgba(255,230,100,0.25)');
+  halo.addColorStop(1, 'rgba(255,180,0,0)');
+  ctx.fillStyle = halo;
+  ctx.beginPath(); ctx.arc(sx,sy,sr*2.5,0,Math.PI*2); ctx.fill();
+  // sun disc
+  const disc = ctx.createRadialGradient(sx-8,sy-8, 2, sx,sy, sr);
+  disc.addColorStop(0, '#FFF0A0');
+  disc.addColorStop(0.6,'#FFDD00');
+  disc.addColorStop(1, '#FFB800');
+  ctx.fillStyle = disc;
+  ctx.shadowColor = 'rgba(255,200,0,0.6)'; ctx.shadowBlur = 24;
+  ctx.beginPath(); ctx.arc(sx,sy,sr,0,Math.PI*2); ctx.fill();
   ctx.restore();
 }
 
-function drawTree(t) {
+function drawMountains() {
+  // far range — dark indigo silhouette
+  drawMtnRange(mtnOffset1, [
+    [0,.62],[60,.42],[140,.52],[230,.36],[320,.50],[410,.40],[510,.58],[590,.33],[680,.46],[770,.38],[870,.44],[940,.60],[W+10,.62]
+  ], 'rgba(40,55,110,0.45)');
+
+  // near range — dark teal-green
+  drawMtnRange(mtnOffset2, [
+    [0,.74],[50,.58],[120,.66],[210,.50],[300,.62],[400,.53],[490,.68],[580,.47],[660,.60],[750,.52],[840,.64],[W+10,.74]
+  ], 'rgba(18,72,45,0.6)');
+}
+
+function drawMtnRange(offset, peaks, color) {
+  const drawRow = (dx) => {
+    ctx.beginPath();
+    ctx.moveTo(peaks[0][0]+dx, H);
+    ctx.lineTo(peaks[0][0]+dx, GROUND_Y * peaks[0][1]);
+    for (let i=1; i<peaks.length; i++) {
+      const px0 = peaks[i-1][0]+dx, py0 = GROUND_Y * peaks[i-1][1];
+      const px1 = peaks[i][0]+dx,   py1 = GROUND_Y * peaks[i][1];
+      const cx  = (px0+px1)/2;
+      ctx.quadraticCurveTo(px0, py0, cx, (py0+py1)/2);
+    }
+    const last = peaks[peaks.length-1];
+    ctx.lineTo(last[0]+dx, H);
+    ctx.closePath();
+    ctx.fill();
+  };
   ctx.save();
-  // Trunk
-  ctx.fillStyle = '#7a5c38';
-  ctx.fillRect(t.x + 12, t.y + t.h * 0.55, 14, t.h * 0.45);
-  // Canopy
-  ctx.fillStyle = '#2d7a2d';
-  ctx.beginPath();
-  ctx.ellipse(t.x + 19, t.y + t.h * 0.35, 26, t.h * 0.45, 0, 0, Math.PI*2);
-  ctx.fill();
-  ctx.fillStyle = '#3a9e3a';
-  ctx.beginPath();
-  ctx.ellipse(t.x + 26, t.y + t.h * 0.25, 20, t.h * 0.35, 0, 0, Math.PI*2);
-  ctx.fill();
+  ctx.fillStyle = color;
+  drawRow(-offset);
+  drawRow(W-offset);
   ctx.restore();
+}
+
+function drawClouds() {
+  clouds.forEach(c => {
+    ctx.save();
+    ctx.fillStyle = 'rgba(255,255,255,0.88)';
+    ctx.shadowColor = 'rgba(220,240,255,0.5)'; ctx.shadowBlur = 12;
+    ctx.beginPath();
+    ctx.ellipse(c.x+c.w*.5,  c.y+c.h*.62, c.w*.5,   c.h*.38, 0,0,Math.PI*2);
+    ctx.ellipse(c.x+c.w*.3,  c.y+c.h*.46, c.w*.28,  c.h*.35, 0,0,Math.PI*2);
+    ctx.ellipse(c.x+c.w*.72, c.y+c.h*.50, c.w*.26,  c.h*.30, 0,0,Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+  });
+}
+
+function drawGround() {
+  // soil/earth below
+  const soil = ctx.createLinearGradient(0,GROUND_Y,0,H);
+  soil.addColorStop(0,   '#7abe48');
+  soil.addColorStop(0.08,'#5a8a3c');
+  soil.addColorStop(0.1, '#c8a96e');
+  soil.addColorStop(1,   '#8b6340');
+  ctx.fillStyle = soil;
+  ctx.fillRect(0, GROUND_Y, W, H-GROUND_Y);
+
+  // bright grass strip
+  ctx.fillStyle = '#8ccc50';
+  ctx.fillRect(0, GROUND_Y, W, 7);
+  ctx.fillStyle = '#6ab040';
+  ctx.fillRect(0, GROUND_Y+7, W, 5);
+
+  // grass tufts
+  const tOff = (frameCount * worldSpeed * speedMultiplier * 0.7) % 60;
+  ctx.fillStyle = '#6ab040';
+  for (let i=0; i<18; i++) {
+    const tx = (i*60 - tOff + W) % W;
+    ctx.fillRect(tx,   GROUND_Y-3, 4, 5);
+    ctx.fillRect(tx+8, GROUND_Y-5, 3, 7);
+    ctx.fillRect(tx+16,GROUND_Y-2, 4, 4);
+  }
+
+  // track dashes
+  ctx.fillStyle = 'rgba(255,255,255,0.16)';
+  const dOff = (frameCount * worldSpeed * speedMultiplier * 0.7) % 160;
+  for (let i=0; i<7; i++) {
+    ctx.fillRect(i*160 - dOff + 20, GROUND_Y+18, 72, 3);
+  }
+}
+
+function drawPalmTrees() {
+  palmTrees.forEach(t => drawPalm(t.x, GROUND_Y, t.h));
+}
+
+function drawPalm(bx, by, h) {
+  ctx.save();
+  const tw = h * 0.09;
+  // trunk - curved using bezier
+  ctx.strokeStyle = '#8b5e2e';
+  ctx.lineWidth   = tw;
+  ctx.lineCap     = 'round';
+  ctx.beginPath();
+  ctx.moveTo(bx, by);
+  ctx.bezierCurveTo(bx+h*.12, by-h*.3, bx-h*.08, by-h*.7, bx+h*.05, by-h);
+  ctx.stroke();
+  // fronds (6 leaves)
+  const topX = bx + h*0.05, topY = by - h;
+  const fronds = [
+    [-1.1,.3],[-.6,-.2],[-.1,-.7],[.4,-.5],[.9,-.1],[1.2,.4]
+  ];
+  fronds.forEach(([dx,dy]) => {
+    const len = h * 0.48;
+    const ex  = topX + dx*len, ey = topY + dy*len*0.55;
+    const cx1 = topX + dx*len*.4, cy1 = topY + dy*len*.2 - 10;
+    const cx2 = topX + dx*len*.75,cy2 = topY + dy*len*.4;
+    // leaf fill
+    ctx.save();
+    ctx.strokeStyle = '#2d8a2d';
+    ctx.lineWidth   = 5 + Math.abs(dx)*2;
+    ctx.lineCap     = 'round';
+    ctx.shadowColor = 'rgba(0,80,0,0.3)'; ctx.shadowBlur = 4;
+    ctx.beginPath();
+    ctx.moveTo(topX, topY);
+    ctx.bezierCurveTo(cx1,cy1, cx2,cy2, ex,ey);
+    ctx.stroke();
+    ctx.strokeStyle = '#3aaa3a';
+    ctx.lineWidth   = 2;
+    ctx.stroke();
+    ctx.restore();
+  });
+  // coconuts
+  const cg = '#8b5e2e';
+  ctx.fillStyle = cg;
+  [-.12,.08,.22].forEach(ox => {
+    ctx.beginPath();
+    ctx.arc(topX + ox*h*.3, topY + h*.06, h*.04, 0, Math.PI*2);
+    ctx.fill();
+  });
+  ctx.restore();
+}
+
+function drawItems() {
+  items.forEach(item => {
+    if (item.collected) return;
+    const iy = item.y + item.floatY;
+    const cx = item.x + item.w/2, cy = iy + item.h/2;
+    const pulse = 0.8 + Math.sin(frameCount*0.1 + item.seed)*0.2;
+
+    ctx.save();
+    // outer glow ring
+    const gradient = ctx.createRadialGradient(cx,cy,8,cx,cy,32*pulse);
+    if (item.isJunk) {
+      gradient.addColorStop(0, 'rgba(141,21,58,0.35)');
+      gradient.addColorStop(1, 'rgba(141,21,58,0)');
+    } else {
+      gradient.addColorStop(0, 'rgba(46,204,113,0.35)');
+      gradient.addColorStop(1, 'rgba(46,204,113,0)');
+    }
+    ctx.beginPath(); ctx.arc(cx,cy,32*pulse,0,Math.PI*2);
+    ctx.fillStyle = gradient; ctx.fill();
+
+    // inner ring
+    ctx.beginPath(); ctx.arc(cx,cy,24,0,Math.PI*2);
+    ctx.strokeStyle = item.isJunk ? 'rgba(141,21,58,0.5)' : 'rgba(46,204,113,0.5)';
+    ctx.lineWidth   = 1.5; ctx.stroke();
+
+    // shadow on ground
+    if (item.y+item.h > GROUND_Y - 60) {
+      ctx.fillStyle = 'rgba(0,0,0,0.15)';
+      ctx.beginPath();
+      ctx.ellipse(cx, GROUND_Y+2, 18, 5, 0, 0, Math.PI*2);
+      ctx.fill();
+    }
+
+    // emoji
+    ctx.font          = '30px serif';
+    ctx.textAlign     = 'center';
+    ctx.textBaseline  = 'middle';
+    ctx.shadowColor   = item.isJunk ? 'rgba(141,21,58,0.6)' : 'rgba(46,204,113,0.6)';
+    ctx.shadowBlur    = 10;
+    ctx.fillText(item.data.emoji, cx, cy);
+
+    // label
+    ctx.shadowBlur = 0;
+    ctx.font        = 'bold 8.5px Nunito, sans-serif';
+    ctx.fillStyle   = item.isJunk ? '#ff7a9a' : '#4CAF50';
+    ctx.fillText(item.data.name, cx, iy+item.h+11);
+    ctx.restore();
+  });
+}
+
+function drawParticles() {
+  particles.forEach(p => {
+    ctx.save();
+    ctx.globalAlpha = p.alpha;
+    ctx.fillStyle   = p.color;
+    ctx.beginPath(); ctx.arc(p.x,p.y,3,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+  });
 }
 
 function drawPlayer() {
-  const px = player.x, py = player.y;
-  const pw = player.w, ph = player.h;
-
-  // Invincibility flicker
-  if (player.invincible > 0 && Math.floor(player.invincible / 5) % 2 === 0) return;
+  const px=player.x, py=player.y, pw=player.w, ph=player.h;
+  if (player.invincible>0 && Math.floor(player.invincible/5)%2===0) return;
 
   ctx.save();
+  if (player.hitAnim>0) { ctx.shadowColor='#e74c3c'; ctx.shadowBlur=22; }
 
-  // Hit flash
-  if (player.hitAnim > 0) {
-    ctx.shadowColor = '#e74c3c';
-    ctx.shadowBlur = 20;
-  }
+  const leg = Math.sin(frameCount*0.28)*12;
 
-  // Body (farmer outfit)
-  // Legs animation
-  const legSwing = Math.sin(frameCount * 0.25) * 10;
-
-  // Shadow
-  ctx.fillStyle = 'rgba(0,0,0,0.2)';
+  // ground shadow
+  ctx.fillStyle = 'rgba(0,0,0,0.22)';
   ctx.beginPath();
-  ctx.ellipse(px + pw/2, py + ph + 4, pw*0.4, 7, 0, 0, Math.PI*2);
+  ctx.ellipse(px+pw/2, GROUND_Y+3, pw*.38, 6, 0, 0, Math.PI*2);
   ctx.fill();
 
-  // Left leg
-  ctx.fillStyle = '#3b5bdb';
-  ctx.save();
-  ctx.translate(px + pw/2 - 8, py + ph * 0.65);
-  ctx.rotate((legSwing * Math.PI) / 180);
-  ctx.fillRect(-5, 0, 10, 20);
-  ctx.restore();
+  // --- legs ---
+  const drawLeg = (offX, swing) => {
+    ctx.save();
+    ctx.translate(px+pw/2+offX, py+ph*.66);
+    ctx.rotate(swing*Math.PI/180);
+    // upper leg
+    ctx.fillStyle = '#2b4abf';
+    ctx.fillRect(-5, 0, 10, 14);
+    // lower leg
+    ctx.translate(0, 14);
+    ctx.rotate(Math.max(0,swing)*Math.PI/200);
+    ctx.fillRect(-4, 0, 8, 13);
+    // shoe
+    ctx.fillStyle = '#1a1a1a';
+    ctx.beginPath();
+    ctx.roundRect(-5,12,14,5,2);
+    ctx.fill();
+    ctx.restore();
+  };
+  drawLeg(-8,  leg);
+  drawLeg( 8, -leg);
 
-  // Right leg
-  ctx.save();
-  ctx.translate(px + pw/2 + 8, py + ph * 0.65);
-  ctx.rotate((-legSwing * Math.PI) / 180);
-  ctx.fillRect(-5, 0, 10, 20);
-  ctx.restore();
+  // --- body / shirt ---
+  const bodyG = ctx.createLinearGradient(px+8, py+ph*.34, px+pw-8, py+ph*.66);
+  bodyG.addColorStop(0, '#e09020');
+  bodyG.addColorStop(1, '#b07010');
+  ctx.fillStyle = bodyG;
+  ctx.shadowBlur = 0;
+  ctx.beginPath(); ctx.roundRect(px+8, py+ph*.34, pw-16, ph*.38, 5); ctx.fill();
+  // shirt highlight
+  ctx.fillStyle = 'rgba(255,255,255,0.15)';
+  ctx.beginPath(); ctx.roundRect(px+9, py+ph*.35, pw-18, 5, 3); ctx.fill();
 
-  // Body / shirt
-  const bodyGrad = ctx.createLinearGradient(px+8, py+ph*0.35, px+pw-8, py+ph*0.65);
-  bodyGrad.addColorStop(0, '#e8a020');
-  bodyGrad.addColorStop(1, '#c07010');
-  ctx.fillStyle = bodyGrad;
-  ctx.beginPath();
-  ctx.roundRect(px + 8, py + ph * 0.35, pw - 16, ph * 0.38, 4);
-  ctx.fill();
+  // --- arms ---
+  const drawArm = (offX, swing) => {
+    ctx.save();
+    ctx.translate(px+offX, py+ph*.40);
+    ctx.rotate(swing*Math.PI/180);
+    ctx.fillStyle = '#e09020';
+    ctx.fillRect(-4, 0, 8, 15);
+    // hand
+    ctx.fillStyle = '#f5c99a';
+    ctx.beginPath(); ctx.arc(0, 16, 4, 0, Math.PI*2); ctx.fill();
+    ctx.restore();
+  };
+  drawArm(7,  -leg);
+  drawArm(pw-7, leg);
 
-  // Arm swing
-  ctx.fillStyle = '#e8a020';
-  ctx.save();
-  ctx.translate(px + 6, py + ph * 0.4);
-  ctx.rotate((-legSwing * Math.PI) / 180);
-  ctx.fillRect(-4, 0, 8, 16);
-  ctx.restore();
-
-  ctx.save();
-  ctx.translate(px + pw - 6, py + ph * 0.4);
-  ctx.rotate((legSwing * Math.PI) / 180);
-  ctx.fillRect(-4, 0, 8, 16);
-  ctx.restore();
-
-  // Head
+  // --- head ---
   ctx.fillStyle = '#f5c99a';
-  ctx.beginPath();
-  ctx.ellipse(px + pw/2, py + ph * 0.22, 15, 16, 0, 0, Math.PI*2);
-  ctx.fill();
+  ctx.shadowColor = 'rgba(0,0,0,0.2)'; ctx.shadowBlur = 6;
+  ctx.beginPath(); ctx.ellipse(px+pw/2, py+ph*.21, 15, 16, 0, 0, Math.PI*2); ctx.fill();
+  ctx.shadowBlur = 0;
 
-  // Hat (farmer hat)
-  ctx.fillStyle = '#c8963c';
-  ctx.beginPath();
-  ctx.ellipse(px + pw/2, py + ph * 0.1, 21, 5, 0, 0, Math.PI*2);
-  ctx.fill();
-  ctx.fillStyle = '#b07820';
-  ctx.beginPath();
-  ctx.moveTo(px + pw/2 - 10, py + ph * 0.1);
-  ctx.lineTo(px + pw/2 + 10, py + ph * 0.1);
-  ctx.lineTo(px + pw/2 + 7, py + ph * 0.03);
-  ctx.lineTo(px + pw/2 - 7, py + ph * 0.03);
-  ctx.fill();
+  // neck
+  ctx.fillStyle = '#e8b580';
+  ctx.fillRect(px+pw/2-5, py+ph*.32, 10, 6);
 
-  // Eyes
-  ctx.fillStyle = '#222';
+  // --- hat (wide brim sun hat) ---
+  // brim
+  ctx.fillStyle = '#c07818';
+  ctx.beginPath(); ctx.ellipse(px+pw/2, py+ph*.09, 24, 6, 0, 0, Math.PI*2); ctx.fill();
+  // crown
+  ctx.fillStyle = '#e09020';
   ctx.beginPath();
-  ctx.arc(px + pw/2 - 5, py + ph*0.21, 2.5, 0, Math.PI*2);
-  ctx.arc(px + pw/2 + 5, py + ph*0.21, 2.5, 0, Math.PI*2);
+  ctx.moveTo(px+pw/2-11, py+ph*.09);
+  ctx.lineTo(px+pw/2+11, py+ph*.09);
+  ctx.lineTo(px+pw/2+8,  py+ph*.02);
+  ctx.lineTo(px+pw/2-8,  py+ph*.02);
   ctx.fill();
+  // hat band
+  ctx.fillStyle = '#8D153A';
+  ctx.fillRect(px+pw/2-10, py+ph*.07, 20, 3);
 
-  // Smile
-  ctx.strokeStyle = '#8b4513';
-  ctx.lineWidth = 1.5;
+  // --- face ---
+  // eyes
+  ctx.fillStyle = '#2a1a0a';
   ctx.beginPath();
-  ctx.arc(px + pw/2, py + ph*0.25, 5, 0.2, Math.PI - 0.2);
-  ctx.stroke();
+  ctx.arc(px+pw/2-5.5, py+ph*.20, 2.5, 0, Math.PI*2);
+  ctx.arc(px+pw/2+5.5, py+ph*.20, 2.5, 0, Math.PI*2);
+  ctx.fill();
+  // eye shine
+  ctx.fillStyle = 'rgba(255,255,255,0.7)';
+  ctx.beginPath();
+  ctx.arc(px+pw/2-4.5, py+ph*.19, 1, 0, Math.PI*2);
+  ctx.arc(px+pw/2+6.5, py+ph*.19, 1, 0, Math.PI*2);
+  ctx.fill();
+  // smile
+  ctx.strokeStyle = '#8b4513'; ctx.lineWidth = 1.8; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.arc(px+pw/2, py+ph*.245, 4.5, 0.15, Math.PI-0.15); ctx.stroke();
 
   ctx.restore();
 }
 
 // =============================================
-//  HUD UPDATE
+//  HUD
 // =============================================
 function updateHUD() {
   document.getElementById('scoreDisplay').textContent = score;
-  document.getElementById('distDisplay').textContent = Math.floor(distance) + 'm';
-  document.getElementById('speedVal').textContent = speedMultiplier.toFixed(1);
-  document.getElementById('progressFill').style.width = Math.min(distance / MAX_DIST * 100, 100) + '%';
+  document.getElementById('distDisplay').textContent  = Math.floor(distance)+'m';
+  document.getElementById('speedVal').textContent     = speedMultiplier.toFixed(1);
+  document.getElementById('progressFill').style.width = Math.min(distance/MAX_DIST*100, 100)+'%';
 }
 
 function updateComboDisplay() {
   const el = document.getElementById('comboDisplay');
-  el.textContent = 'x' + combo;
-  el.classList.remove('pop');
-  void el.offsetWidth;
-  el.classList.add('pop');
+  el.textContent = 'x'+combo;
+  el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop');
 }
 
 // =============================================
 //  FLOATING FEEDBACK
 // =============================================
 function showFeedback(text, x, y, color) {
-  const el = document.createElement('div');
-  el.className = 'float-feedback';
-  el.textContent = text;
-  el.style.color = color;
-  el.style.left = Math.min(Math.max(x - 40, 0), W - 100) + 'px';
-  el.style.top = (y - 20) + 'px';
+  const el      = document.createElement('div');
+  el.className  = 'float-feedback';
+  el.textContent= text;
+  el.style.color= color;
+  el.style.left = Math.min(Math.max(x-40,0), W-120)+'px';
+  el.style.top  = (y-20)+'px';
   document.getElementById('gameWrapper').appendChild(el);
   setTimeout(() => el.remove(), 1300);
 }
@@ -1109,44 +1256,36 @@ function showFeedback(text, x, y, color) {
 // =============================================
 function show(id, visible) {
   const el = document.getElementById(id);
-  if (visible) {
-    el.classList.remove('hidden');
-    el.classList.add('active');
-  } else {
-    el.classList.add('hidden');
-    el.classList.remove('active');
-  }
+  if (visible) { el.classList.remove('hidden'); el.classList.add('active'); }
+  else         { el.classList.add('hidden');    el.classList.remove('active'); }
 }
 
-// Polyfill roundRect if needed
 if (!CanvasRenderingContext2D.prototype.roundRect) {
-  CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
+  CanvasRenderingContext2D.prototype.roundRect = function(x,y,w,h,r){
     this.beginPath();
-    this.moveTo(x + r, y);
-    this.lineTo(x + w - r, y);
-    this.quadraticCurveTo(x + w, y, x + w, y + r);
-    this.lineTo(x + w, y + h - r);
-    this.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-    this.lineTo(x + r, y + h);
-    this.quadraticCurveTo(x, y + h, x, y + h - r);
-    this.lineTo(x, y + r);
-    this.quadraticCurveTo(x, y, x + r, y);
-    this.closePath();
-    return this;
+    this.moveTo(x+r,y);
+    this.lineTo(x+w-r,y); this.quadraticCurveTo(x+w,y,x+w,y+r);
+    this.lineTo(x+w,y+h-r); this.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+    this.lineTo(x+r,y+h); this.quadraticCurveTo(x,y+h,x,y+h-r);
+    this.lineTo(x,y+r); this.quadraticCurveTo(x,y,x+r,y);
+    this.closePath(); return this;
   };
 }
 
-// Draw start screen canvas background while on start
+// Draw initial background on canvas while start screen shows
 (function initBG() {
-  const sky = ctx.createLinearGradient(0, 0, 0, H * 0.56);
-  sky.addColorStop(0, '#4aa8d8'); sky.addColorStop(1, '#b8e4f5');
-  ctx.fillStyle = sky;
-  ctx.fillRect(0, 0, W, H * 0.56);
-  const groundGrad = ctx.createLinearGradient(0, GROUND_Y, 0, H);
-  groundGrad.addColorStop(0, '#6ab040'); groundGrad.addColorStop(0.12, '#5a8a3c');
-  groundGrad.addColorStop(0.13, '#c8a96e'); groundGrad.addColorStop(1, '#8b6340');
-  ctx.fillStyle = groundGrad;
-  ctx.fillRect(0, GROUND_Y, W, H - GROUND_Y);
+  const sky = ctx.createLinearGradient(0,0,0,GROUND_Y);
+  sky.addColorStop(0,'#1a5f8a'); sky.addColorStop(.4,'#3a98c8');
+  sky.addColorStop(.75,'#78c8e8'); sky.addColorStop(1,'#f0c060');
+  ctx.fillStyle = sky; ctx.fillRect(0,0,W,GROUND_Y);
+  const soil = ctx.createLinearGradient(0,GROUND_Y,0,H);
+  soil.addColorStop(0,'#7abe48'); soil.addColorStop(.08,'#5a8a3c');
+  soil.addColorStop(.1,'#c8a96e'); soil.addColorStop(1,'#8b6340');
+  ctx.fillStyle = soil; ctx.fillRect(0,GROUND_Y,W,H-GROUND_Y);
+  ctx.fillStyle = '#8ccc50'; ctx.fillRect(0,GROUND_Y,W,7);
+  // static palms on start screen
+  drawPalm(200, GROUND_Y, 110);
+  drawPalm(600, GROUND_Y, 130);
 })();
 </script>
 </body>
