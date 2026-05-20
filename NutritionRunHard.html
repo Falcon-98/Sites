@@ -1,0 +1,1572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>Nutrition Run 🇱🇰 — Sri Lanka Nutrition Day</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Bungee+Shade&family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --deep:    #04100a;
+  --emerald: #0d5c36;
+  --forest:  #1a7a42;
+  --gold:    #FFB800;
+  --amber:   #FF8C00;
+  --crimson: #8D153A;
+  --cream:   #FFF8E7;
+  --leaf:    #4CAF50;
+}
+* { box-sizing:border-box; margin:0; padding:0; }
+
+/* Global hidden — works on ANY element, not just .screen elements */
+.hidden { display:none !important; }
+
+body {
+  font-family:'Nunito',sans-serif;
+  background:var(--deep);
+  min-height:100vh; min-height:100dvh;
+  display:flex; align-items:center; justify-content:center;
+  overflow:hidden; position:relative;
+  -webkit-tap-highlight-color:transparent;
+}
+body::before {
+  content:''; position:fixed; inset:0;
+  background:
+    radial-gradient(ellipse at 15% 50%, rgba(13,92,54,.35) 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 50%, rgba(141,21,58,.22) 0%, transparent 55%),
+    radial-gradient(ellipse at 50% 0%,  rgba(255,184,0,.12) 0%, transparent 45%);
+  pointer-events:none; z-index:0;
+}
+body::after {
+  content:''; position:fixed; inset:0;
+  background-image:
+    radial-gradient(1px 1px at 12% 12%, rgba(255,255,255,.7) 0%, transparent 100%),
+    radial-gradient(1px 1px at 28%  7%, rgba(255,255,255,.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 44% 21%, rgba(255,255,255,.6) 0%, transparent 100%),
+    radial-gradient(1px 1px at 62%  4%, rgba(255,255,255,.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 78% 14%, rgba(255,255,255,.7) 0%, transparent 100%),
+    radial-gradient(1px 1px at 91% 19%, rgba(255,255,255,.5) 0%, transparent 100%);
+  pointer-events:none; z-index:0;
+  animation:starTwinkle 5s ease-in-out infinite alternate;
+}
+@keyframes starTwinkle { 0%{opacity:.5} 100%{opacity:1} }
+
+/* ===== WRAPPER ===== */
+#gameWrapper {
+  position:relative; width:900px; height:520px;
+  overflow:hidden; border-radius:22px; z-index:1;
+  /* GPU compositing hint */
+  transform:translateZ(0); will-change:transform;
+  box-shadow:
+    0 0 0 2px var(--gold),
+    0 0 0 5px rgba(255,184,0,.18),
+    0 0 50px rgba(255,184,0,.22),
+    0 0 100px rgba(255,140,0,.12),
+    0 35px 100px rgba(0,0,0,.85);
+}
+#gameWrapper::before { content:'✦'; position:absolute; top:11px; left:14px; color:var(--gold); font-size:1rem; z-index:100; pointer-events:none; opacity:.7; }
+#gameWrapper::after  { content:'✦'; position:absolute; top:11px; right:14px; color:var(--gold); font-size:1rem; z-index:100; pointer-events:none; opacity:.7; }
+/* Canvas — touch-action none prevents scroll interference */
+#gameCanvas { display:block; width:100%; height:100%; touch-action:none; cursor:pointer; }
+
+/* ===== SCREENS ===== */
+.screen { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:10; pointer-events:none; }
+.screen.active { pointer-events:all; }
+
+/* ===== VIGNETTE ===== */
+#vignette { position:absolute; inset:0; z-index:6; pointer-events:none; border-radius:22px; }
+.vhit     { animation:vigHit .5s ease forwards; }
+.vcollect { animation:vigCollect .35s ease forwards; }
+@keyframes vigHit    { 0%{background:radial-gradient(ellipse at center, transparent 30%, rgba(141,21,58,.72) 100%)} 100%{background:transparent} }
+@keyframes vigCollect{ 0%{background:radial-gradient(ellipse at center, rgba(76,175,80,.22) 0%, transparent 60%)}  100%{background:transparent} }
+
+/* ===== START SCREEN ===== */
+#startScreen {
+  background:
+    radial-gradient(ellipse at 50% -8%,  rgba(255,184,0,.28) 0%, transparent 50%),
+    radial-gradient(ellipse at   0% 100%, rgba(13,92,54,.55)  0%, transparent 50%),
+    radial-gradient(ellipse at 100% 100%, rgba(141,21,58,.42) 0%, transparent 50%),
+    linear-gradient(168deg, #030d07 0%, #081a0e 35%, #0c3018 65%, #030d07 100%);
+}
+.deco-line-top { position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg, transparent, var(--gold), var(--amber), var(--crimson), var(--amber), var(--gold), transparent); }
+.deco-line-bot { position:absolute; bottom:0; left:0; right:0; height:3px; background:linear-gradient(90deg, transparent, var(--emerald), var(--leaf), var(--forest), var(--leaf), var(--emerald), transparent); }
+.fp { position:absolute; font-size:1.6rem; opacity:.12; pointer-events:none; animation:fpDrift var(--fd,4s) ease-in-out infinite alternate; }
+@keyframes fpDrift { from{transform:translateY(0) rotate(-8deg);opacity:.08} to{transform:translateY(-22px) rotate(10deg);opacity:.18} }
+
+.hs-badge {
+  background:rgba(255,184,0,.08); border:1px solid rgba(255,184,0,.22);
+  border-radius:999px; padding:4px 14px; margin-bottom:10px;
+  color:rgba(255,248,231,.5); font-family:'Bungee',cursive;
+  font-size:.7rem; letter-spacing:1px; display:inline-flex; align-items:center; gap:5px;
+}
+.hs-badge .hs-val { color:var(--gold); }
+.hs-badge.new-rec { border-color:var(--gold); color:var(--gold); background:rgba(255,184,0,.15); animation:hsGlow .8s ease-in-out infinite alternate; }
+@keyframes hsGlow { from{box-shadow:0 0 8px rgba(255,184,0,.2)} to{box-shadow:0 0 22px rgba(255,184,0,.55)} }
+
+.start-badge {
+  background:linear-gradient(135deg, var(--crimson), #a01842);
+  color:#fff; font-family:'Bungee',cursive; font-size:.72rem;
+  padding:5px 20px; border-radius:999px; margin-bottom:12px;
+  letter-spacing:2.5px; text-transform:uppercase;
+  box-shadow:0 4px 24px rgba(141,21,58,.55);
+  animation:badgePulse 2.4s ease-in-out infinite;
+}
+@keyframes badgePulse {
+  0%,100%{ box-shadow:0 4px 20px rgba(141,21,58,.5); }
+  50%    { box-shadow:0 4px 34px rgba(141,21,58,.85), 0 0 0 5px rgba(255,184,0,.18); }
+}
+.game-title { font-family:'Bungee Shade',cursive; font-size:3.9rem; color:var(--gold); text-align:center; line-height:1.0; margin-bottom:5px; animation:titleGlow 3.5s ease-in-out infinite; }
+@keyframes titleGlow {
+  0%,100%{ filter:drop-shadow(0 4px 18px rgba(255,184,0,.4)); }
+  50%    { filter:drop-shadow(0 4px 40px rgba(255,184,0,.75)) drop-shadow(0 0 70px rgba(255,140,0,.3)); }
+}
+.game-title .run-word { color:var(--cream); -webkit-text-stroke:2px var(--gold); }
+.subtitle { color:rgba(255,248,231,.55); font-size:.8rem; font-weight:800; letter-spacing:3.5px; text-transform:uppercase; margin-bottom:14px; }
+.food-icons-row { display:flex; gap:8px; margin-bottom:14px; font-size:1.7rem; }
+.food-icons-row span { display:inline-block; animation:iconBounce 2.2s ease-in-out infinite; }
+.food-icons-row span:nth-child(1){animation-delay:0s}
+.food-icons-row span:nth-child(2){animation-delay:.15s}
+.food-icons-row span:nth-child(3){animation-delay:.3s}
+.food-icons-row span:nth-child(4){animation-delay:.45s}
+.food-icons-row span:nth-child(5){animation-delay:.6s}
+.food-icons-row span:nth-child(6){animation-delay:.75s}
+.food-icons-row span:nth-child(7){animation-delay:.9s}
+.food-icons-row span:nth-child(8){animation-delay:1.05s}
+@keyframes iconBounce { 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(-11px) scale(1.12)} }
+.how-to-box {
+  background:rgba(255,248,231,.04); border:1px solid rgba(255,184,0,.2);
+  border-radius:16px; padding:11px 24px;
+  color:rgba(255,248,231,.7); font-size:.8rem; font-weight:700; line-height:1.85;
+  margin-bottom:18px; max-width:460px; text-align:center; position:relative; overflow:hidden;
+}
+.how-to-box::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg, transparent, rgba(255,184,0,.45), transparent); }
+.how-to-box strong { color:var(--gold); }
+.how-to-box .tip { color:rgba(100,220,160,.8); font-size:.73rem; }
+.btn-start {
+  font-family:'Bungee',cursive; font-size:1.25rem; letter-spacing:2px;
+  background:linear-gradient(135deg, var(--gold) 0%, var(--amber) 100%);
+  color:var(--deep); border:none; padding:14px 58px; border-radius:999px; cursor:pointer;
+  box-shadow:0 6px 0 rgba(0,0,0,.45), 0 8px 32px rgba(255,184,0,.4), inset 0 1px 0 rgba(255,255,255,.35);
+  transition:transform .15s, box-shadow .15s; position:relative; top:0;
+  -webkit-tap-highlight-color:transparent;
+}
+.btn-start:hover  { transform:translateY(-3px); box-shadow:0 9px 0 rgba(0,0,0,.45), 0 14px 44px rgba(255,184,0,.65), inset 0 1px 0 rgba(255,255,255,.35); }
+.btn-start:active { transform:translateY(3px);  box-shadow:0 3px 0 rgba(0,0,0,.4), 0 4px 18px rgba(255,184,0,.4), inset 0 1px 0 rgba(255,255,255,.2); }
+.btn-secondary {
+  font-family:'Bungee',cursive; font-size:1rem; letter-spacing:1.5px;
+  background:transparent; color:rgba(255,248,231,.65);
+  border:2px solid rgba(255,248,231,.2); padding:12px 28px;
+  border-radius:999px; cursor:pointer; transition:all .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.btn-secondary:hover { border-color:rgba(255,248,231,.5); color:var(--cream); }
+
+/* ===== HUD — no backdrop-filter for performance ===== */
+#hud {
+  position:absolute; top:0; left:0; right:0; padding:10px 14px;
+  display:flex; justify-content:space-between; align-items:center;
+  z-index:5; pointer-events:none;
+  background:linear-gradient(to bottom, rgba(0,0,0,.45) 0%, transparent 100%);
+}
+.hud-group { display:flex; gap:6px; align-items:center; }
+.hud-pill {
+  /* Solid background instead of backdrop-filter — much faster on mobile */
+  background:rgba(4,16,10,.88);
+  border-radius:999px; padding:4px 12px; color:#fff;
+  font-family:'Bungee',cursive; font-size:.82rem;
+  display:flex; align-items:center; gap:5px;
+  border:1px solid rgba(255,184,0,.22);
+}
+.hud-pill .icon { font-size:.95rem; }
+#comboDisplay { color:var(--gold); transition:color .25s, font-size .25s; }
+#comboDisplay.pop { animation:comboPop .38s ease; }
+@keyframes comboPop { 0%{transform:scale(1)} 40%{transform:scale(1.65)} 100%{transform:scale(1)} }
+#livesDisplay { display:flex; gap:3px; }
+.heart { font-size:1.05rem; transition:all .3s; }
+.heart.lost { opacity:.18; filter:grayscale(1) brightness(.4); transform:scale(.75); }
+#pauseBtn {
+  background:rgba(4,16,10,.88);
+  border:1px solid rgba(255,184,0,.22); border-radius:999px;
+  color:rgba(255,248,231,.6); font-family:'Bungee',cursive;
+  font-size:.72rem; padding:4px 14px; cursor:pointer; pointer-events:all;
+  transition:color .2s, border-color .2s; letter-spacing:1px;
+  -webkit-tap-highlight-color:transparent;
+}
+#pauseBtn:hover { color:var(--gold); border-color:var(--gold); }
+
+/* ===== POWER-UP SLOT — no backdrop-filter ===== */
+#puSlot {
+  position:absolute; bottom:20px; left:14px;
+  background:rgba(4,16,10,.92);
+  border:2px solid var(--pu-col, rgba(255,255,255,.2));
+  border-radius:14px; padding:6px 14px;
+  display:none; align-items:center; gap:8px;
+  z-index:5; pointer-events:none;
+  animation:puSlideUp .4s cubic-bezier(.34,1.56,.64,1);
+  will-change:transform;
+}
+@keyframes puSlideUp { from{transform:translateY(20px);opacity:0} to{transform:none;opacity:1} }
+.pu-icon { font-size:1.3rem; }
+.pu-name { color:var(--pu-col,#fff); font-family:'Bungee',cursive; font-size:.62rem; letter-spacing:1.5px; display:block; }
+.pu-bar  { height:3px; background:rgba(255,255,255,.1); border-radius:999px; overflow:hidden; margin-top:3px; width:68px; }
+.pu-fill { height:100%; background:var(--pu-col,#fff); border-radius:999px; }
+
+/* ===== SPEED + PROGRESS ===== */
+#speedBar {
+  position:absolute; bottom:20px; right:14px;
+  background:rgba(4,16,10,.92);
+  border-radius:999px; padding:4px 13px;
+  color:var(--gold); font-family:'Bungee',cursive; font-size:.73rem;
+  z-index:5; pointer-events:none; border:1px solid rgba(255,184,0,.2);
+}
+#progressBar { position:absolute; bottom:0; left:0; right:0; height:4px; background:rgba(255,255,255,.06); z-index:5; }
+#progressFill { height:100%; background:linear-gradient(90deg, var(--emerald), var(--gold), var(--amber)); transition:width .3s ease; }
+.mile-tick { position:absolute; top:0; bottom:0; width:1px; background:rgba(255,184,0,.38); }
+.mile-tick::before { content:attr(data-label); position:absolute; bottom:100%; left:50%; transform:translateX(-50%); color:rgba(255,184,0,.4); font-family:'Bungee',cursive; font-size:6px; white-space:nowrap; margin-bottom:1px; }
+
+/* ===== MOBILE JUMP BUTTON ===== */
+#mobileJump {
+  position:absolute; bottom:34px; right:18px;
+  width:72px; height:72px;
+  background:rgba(255,184,0,.18); border:2.5px solid var(--gold);
+  border-radius:50%; z-index:8; cursor:pointer;
+  display:none; flex-direction:column; align-items:center; justify-content:center;
+  font-family:'Bungee',cursive; color:var(--gold); font-size:.72rem;
+  letter-spacing:1px; line-height:1.3;
+  transition:background .1s, transform .1s;
+  -webkit-tap-highlight-color:transparent; user-select:none;
+}
+#mobileJump:active { background:rgba(255,184,0,.38); transform:scale(.93); }
+@media(hover:none) { #mobileJump{ display:flex; } #speedBar{ right:102px; } }
+
+/* ===== MILESTONE BANNER — will-change for smooth animation ===== */
+#milestoneBanner {
+  position:absolute; top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  z-index:25; pointer-events:none;
+  will-change:transform, opacity;
+}
+.mile-inner {
+  background:linear-gradient(135deg, rgba(4,16,10,.97), rgba(13,92,54,.93));
+  border:2px solid var(--gold); border-radius:20px; padding:16px 44px; text-align:center;
+  box-shadow:0 0 50px rgba(255,184,0,.4), 0 24px 70px rgba(0,0,0,.65);
+}
+.mile-emoji { font-size:2.8rem; display:block; }
+.mile-text  { font-family:'Bungee Shade',cursive; font-size:1.8rem; color:var(--gold); display:block; }
+.mile-sub   { color:rgba(255,248,231,.45); font-size:.7rem; font-weight:700; letter-spacing:3px; text-transform:uppercase; display:block; margin-top:4px; }
+.banner-anim { animation:bannerPop 2.6s ease forwards; }
+@keyframes bannerPop {
+  0%  { transform:translate(-50%,-50%) scale(0) rotate(-8deg); opacity:0; }
+  10% { transform:translate(-50%,-50%) scale(1.08) rotate(1.5deg); opacity:1; }
+  18% { transform:translate(-50%,-50%) scale(1) rotate(0); opacity:1; }
+  70% { transform:translate(-50%,-50%) scale(1) rotate(0); opacity:1; }
+  100%{ transform:translate(-50%,-50%) scale(.7) rotate(4deg); opacity:0; }
+}
+
+/* ===== ACHIEVEMENT POPUP — will-change ===== */
+#achievePopup {
+  position:absolute; top:76px; right:14px; z-index:22; pointer-events:none;
+  will-change:transform, opacity;
+}
+.ach-inner {
+  background:linear-gradient(135deg, rgba(4,16,10,.96), rgba(26,122,66,.92));
+  border:2px solid var(--gold); border-radius:14px;
+  padding:10px 18px; display:flex; align-items:center; gap:10px;
+  box-shadow:0 0 30px rgba(255,184,0,.3), 0 12px 35px rgba(0,0,0,.55);
+}
+.ach-icon { font-size:1.7rem; }
+.ach-text { font-family:'Bungee',cursive; font-size:.82rem; color:var(--gold); }
+.ach-show { animation:achSlide .45s cubic-bezier(.34,1.56,.64,1) forwards; }
+@keyframes achSlide { from{transform:translateX(140px);opacity:0} to{transform:none;opacity:1} }
+.ach-hide { animation:achFade .4s ease forwards; }
+@keyframes achFade { from{opacity:1;transform:none} to{opacity:0;transform:translateY(-18px)} }
+
+/* ===== PAUSE SCREEN — backdrop-filter only here (intentional/rare) ===== */
+#pauseScreen { background:rgba(0,0,0,.88); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); }
+.pause-card {
+  background:linear-gradient(148deg, #081510, #04100a);
+  border:2px solid var(--gold); border-radius:24px; padding:36px 56px; text-align:center;
+  box-shadow:0 0 60px rgba(255,184,0,.2); animation:cardIn .3s ease;
+}
+@keyframes cardIn { from{transform:scale(.88);opacity:0} to{transform:scale(1);opacity:1} }
+.pause-title { font-family:'Bungee Shade',cursive; font-size:2.4rem; color:var(--gold); margin-bottom:6px; }
+.pause-sub   { color:rgba(255,248,231,.4); font-size:.78rem; font-weight:700; letter-spacing:2.5px; margin-bottom:22px; text-transform:uppercase; }
+.pause-stats { display:flex; gap:28px; justify-content:center; margin-bottom:24px; }
+.p-stat span { display:block; color:rgba(255,248,231,.38); font-size:.72rem; font-weight:700; letter-spacing:1px; text-transform:uppercase; }
+.p-stat strong { display:block; font-family:'Bungee',cursive; font-size:1.5rem; color:var(--gold); margin-top:2px; }
+.pause-btns { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+
+/* ===== QUIZ — backdrop-filter only here ===== */
+#quizOverlay { background:rgba(0,0,0,.9); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); }
+.quiz-card {
+  background:linear-gradient(148deg, #081510, #04100a);
+  border:2px solid var(--crimson); border-radius:24px;
+  padding:26px 32px 22px; max-width:520px; width:90%;
+  box-shadow:0 0 0 5px rgba(141,21,58,.12), 0 0 60px rgba(141,21,58,.38), 0 24px 70px rgba(0,0,0,.65);
+  animation:cardIn .4s cubic-bezier(.34,1.56,.64,1); position:relative; overflow:hidden;
+}
+.quiz-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg, transparent, var(--crimson), var(--gold), var(--crimson), transparent); }
+.quiz-danger-tag {
+  background:var(--crimson); color:#fff; font-family:'Bungee',cursive; font-size:.7rem;
+  padding:4px 14px; border-radius:999px; letter-spacing:2px; display:inline-block; margin-bottom:10px;
+  animation:pulseCrimson 1.1s ease-in-out infinite;
+}
+@keyframes pulseCrimson { 0%,100%{box-shadow:0 0 10px rgba(141,21,58,.5)} 50%{box-shadow:0 0 28px rgba(141,21,58,.95)} }
+.quiz-food-icon { font-size:3.8rem; text-align:center; margin-bottom:8px; display:block; animation:wobble .6s ease-in-out; }
+@keyframes wobble { 0%,100%{transform:rotate(0) scale(1)} 25%{transform:rotate(-14deg) scale(1.1)} 75%{transform:rotate(14deg) scale(1.1)} }
+.quiz-question { font-weight:900; font-size:1.18rem; color:var(--cream); text-align:center; margin-bottom:16px; line-height:1.45; }
+.quiz-options { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.quiz-opt {
+  background:rgba(255,248,231,.04); border:1.5px solid rgba(255,248,231,.11);
+  border-radius:12px; color:rgba(255,248,231,.82); font-weight:800; font-size:.87rem;
+  padding:11px 10px; cursor:pointer; transition:all .18s; text-align:center;
+  -webkit-tap-highlight-color:transparent;
+}
+.quiz-opt:hover  { background:rgba(255,184,0,.09); border-color:var(--gold); color:var(--gold); transform:translateY(-2px); }
+.quiz-opt.correct{ background:rgba(46,204,113,.15); border-color:#2ecc71; color:#2ecc71; animation:correctFlash .45s ease; }
+.quiz-opt.wrong  { background:rgba(141,21,58,.22); border-color:var(--crimson); color:#ff7a9a; animation:shake .4s ease; }
+@keyframes correctFlash { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
+@keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-7px)} 75%{transform:translateX(7px)} }
+.quiz-timer-bar  { height:5px; background:rgba(255,255,255,.07); border-radius:999px; overflow:hidden; margin-bottom:14px; }
+.quiz-timer-fill { height:100%; background:linear-gradient(90deg, #2ecc71, var(--gold), var(--crimson)); border-radius:999px; transition:width .1s linear; }
+.quiz-fact { margin-top:11px; background:rgba(255,184,0,.06); border-left:3px solid var(--gold); padding:9px 13px; border-radius:0 10px 10px 0; color:rgba(255,248,231,.78); font-size:.79rem; font-weight:700; line-height:1.6; display:none; }
+
+/* ===== RESULT SCREENS ===== */
+#gameOverScreen { background:radial-gradient(ellipse at 50% 28%, rgba(141,21,58,.45) 0%, transparent 60%), linear-gradient(162deg, #080303 0%, #180606 50%, #080303 100%); }
+#winScreen      { background:radial-gradient(ellipse at 50% 28%, rgba(13,92,54,.55) 0%, transparent 60%), radial-gradient(ellipse at 50% 100%, rgba(255,184,0,.18) 0%, transparent 50%), linear-gradient(162deg, #030803 0%, #081c08 50%, #030803 100%); }
+.result-icon { font-size:4.5rem; margin-bottom:10px; display:block; }
+.gameover-icon { animation:wobble 1s ease infinite; }
+.win-icon { animation:winFloat 1.6s ease-in-out infinite; }
+@keyframes winFloat { 0%,100%{transform:translateY(0) rotate(-4deg)} 50%{transform:translateY(-15px) rotate(5deg)} }
+.result-title { font-family:'Bungee Shade',cursive; font-size:3rem; text-align:center; margin-bottom:8px; letter-spacing:2px; }
+.result-title.gameover { color:var(--crimson); filter:drop-shadow(0 4px 22px rgba(141,21,58,.65)); }
+.result-title.win      { color:var(--gold);    filter:drop-shadow(0 4px 22px rgba(255,184,0,.65)); }
+.result-score { font-family:'Bungee',cursive; font-size:1.55rem; color:var(--gold); margin-bottom:4px; }
+.result-sub   { color:rgba(255,248,231,.48); font-size:.86rem; font-weight:700; margin-bottom:5px; letter-spacing:1px; }
+.result-sub.good { color:rgba(100,220,140,.8); }
+.result-sub.bad  { color:rgba(220,100,120,.8); }
+.new-record-badge { background:linear-gradient(135deg,var(--gold),var(--amber)); color:var(--deep); font-family:'Bungee',cursive; font-size:.75rem; padding:4px 14px; border-radius:999px; letter-spacing:1.5px; display:inline-block; margin-bottom:6px; animation:hsGlow .8s ease-in-out infinite alternate; }
+.cpiece { position:absolute; width:7px; height:7px; border-radius:2px; pointer-events:none; animation:cFall var(--cd,2s) ease-in var(--ca,0s) infinite; }
+@keyframes cFall { 0%{transform:translateY(-10px) rotate(0);opacity:1} 100%{transform:translateY(540px) rotate(720deg);opacity:0} }
+
+/* ===== FLOAT FEEDBACK ===== */
+.float-feedback { position:absolute; font-family:'Bungee',cursive; font-size:1.3rem; pointer-events:none; z-index:20; white-space:nowrap; animation:floatUp 1.2s ease forwards; text-shadow:2px 2px 8px rgba(0,0,0,.65); }
+@keyframes floatUp { 0%{opacity:1;transform:translateY(0) scale(1)} 40%{opacity:1;transform:translateY(-52px) scale(1.15)} 100%{opacity:0;transform:translateY(-95px) scale(.8)} }
+
+/* Screen shake */
+@keyframes screenShake { 0%,100%{transform:translateZ(0) translateX(0)} 20%{transform:translateZ(0) translateX(-9px)} 40%{transform:translateZ(0) translateX(9px)} 60%{transform:translateZ(0) translateX(-5px)} 80%{transform:translateZ(0) translateX(5px)} }
+.shake { animation:screenShake .38s ease; }
+
+/* Responsive */
+@media(max-width:960px){
+  #gameWrapper{ width:98vw; height:calc(98vw * 520/900); min-height:280px; max-height:90vh; }
+  .game-title{ font-size:min(3.9rem, 8vw); }
+  .result-title{ font-size:min(3rem, 7vw); }
+  .pause-card{ padding:28px 32px; }
+  .how-to-box{ font-size:.75rem; padding:9px 18px; }
+}
+</style>
+</head>
+<body>
+
+<div id="gameWrapper">
+  <canvas id="gameCanvas" width="900" height="520"></canvas>
+
+  <div id="vignette"></div>
+
+  <!-- HUD -->
+  <div id="hud">
+    <div class="hud-group">
+      <div class="hud-pill"><span class="icon">⭐</span><span id="scoreDisplay">0</span></div>
+      <div class="hud-pill"><span class="icon">🔥</span><span id="comboDisplay">x1</span></div>
+    </div>
+    <button id="pauseBtn" onclick="togglePause()">⏸ PAUSE</button>
+    <div class="hud-group">
+      <div class="hud-pill"><span class="icon">📏</span><span id="distDisplay">0m</span></div>
+      <div class="hud-pill" id="livesDisplay">
+        <span class="heart" id="h1">❤️</span>
+        <span class="heart" id="h2">❤️</span>
+        <span class="heart" id="h3">❤️</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="puSlot">
+    <span class="pu-icon" id="puIcon">⚡</span>
+    <div><span class="pu-name" id="puName">TURBO</span><div class="pu-bar"><div class="pu-fill" id="puFill"></div></div></div>
+  </div>
+
+  <div id="speedBar">🏃 x<span id="speedVal">1.0</span></div>
+  <div id="progressBar">
+    <div id="progressFill" style="width:0%"></div>
+    <div class="mile-tick" style="left:25%" data-label="500m"></div>
+    <div class="mile-tick" style="left:50%" data-label="1km"></div>
+    <div class="mile-tick" style="left:75%" data-label="1.5km"></div>
+  </div>
+
+  <button id="mobileJump" ontouchstart="mobileJumpFn(event)" onclick="doJump()">⬆<br/>JUMP</button>
+
+  <!-- Milestone banner — starts hidden via style, NOT class (avoids .screen.hidden CSS issue) -->
+  <div id="milestoneBanner" style="display:none">
+    <div class="mile-inner">
+      <span class="mile-emoji" id="mileEmoji">🏃</span>
+      <span class="mile-text"  id="mileText">500m!</span>
+      <span class="mile-sub">KEEP RUNNING!</span>
+    </div>
+  </div>
+
+  <!-- Achievement popup — same, uses style.display -->
+  <div id="achievePopup" style="display:none">
+    <div class="ach-inner">
+      <span class="ach-icon" id="achIcon">🔥</span>
+      <span class="ach-text" id="achText">COMBO x5!</span>
+    </div>
+  </div>
+
+  <!-- START SCREEN -->
+  <div id="startScreen" class="screen active">
+    <div class="deco-line-top"></div>
+    <div class="fp" style="left:7%;top:14%;--fd:4.2s">🥥</div>
+    <div class="fp" style="left:87%;top:20%;--fd:5.6s">🌿</div>
+    <div class="fp" style="left:14%;top:70%;--fd:3.9s">🐟</div>
+    <div class="fp" style="left:83%;top:67%;--fd:4.7s">🍌</div>
+    <div class="fp" style="left:50%;top:7%;--fd:5.2s">🌶️</div>
+    <div class="fp" style="left:4%;top:47%;--fd:6.1s">🥬</div>
+    <div class="fp" style="left:93%;top:44%;--fd:4.4s">🍋</div>
+    <div class="fp" style="left:38%;top:85%;--fd:3.6s">🧅</div>
+
+    <div class="hs-badge"><span>BEST</span><span class="hs-val" id="hsDisplay">0</span>⭐</div>
+    <div class="start-badge">🇱🇰 Sri Lanka Nutrition Day</div>
+    <div class="game-title">Nutrition<br/><span class="run-word">Run!</span></div>
+    <div class="subtitle">Farm to Fork · Myth Buster Edition</div>
+    <div class="food-icons-row">
+      <span>🥥</span><span>🌿</span><span>🍚</span><span>🍌</span>
+      <span>🧅</span><span>🐟</span><span>🌶️</span><span>🍋</span>
+    </div>
+    <div class="how-to-box">
+      <strong>SPACE / ↑</strong> to jump · <strong>Double-tap</strong> for air jump!<br/>
+      Collect healthy food · Avoid junk · Answer quiz to survive!<br/>
+      Grab power-ups: <strong>🛡️ Shield · ⚡ Turbo · 🧲 Magnet</strong><br/>
+      <span class="tip">Press P to pause · Reach 2000m to win 🏆</span>
+    </div>
+    <button class="btn-start" onclick="startGame()">🌾 START RUN!</button>
+    <div class="deco-line-bot"></div>
+  </div>
+
+  <!-- PAUSE SCREEN -->
+  <div id="pauseScreen" class="screen hidden">
+    <div class="pause-card">
+      <div class="pause-title">PAUSED</div>
+      <div class="pause-sub">Take a breath 🌿</div>
+      <div class="pause-stats">
+        <div class="p-stat"><span>Score</span><strong id="pauseScore">0</strong></div>
+        <div class="p-stat"><span>Distance</span><strong id="pauseDist">0m</strong></div>
+      </div>
+      <div class="pause-btns">
+        <button class="btn-start" onclick="togglePause()">▶ RESUME</button>
+        <button class="btn-secondary" onclick="restartGame()">🔄 RESTART</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUIZ OVERLAY -->
+  <div id="quizOverlay" class="screen hidden">
+    <div class="quiz-card">
+      <div class="quiz-danger-tag">⚠️ UNHEALTHY FOOD ALERT</div>
+      <span class="quiz-food-icon" id="quizFoodIcon">🍟</span>
+      <div class="quiz-timer-bar"><div class="quiz-timer-fill" id="quizTimerFill" style="width:100%"></div></div>
+      <div class="quiz-question" id="quizQuestion">Loading question...</div>
+      <div class="quiz-options" id="quizOptions"></div>
+      <div class="quiz-fact" id="quizFact"></div>
+    </div>
+  </div>
+
+  <!-- GAME OVER -->
+  <div id="gameOverScreen" class="screen hidden">
+    <span class="result-icon gameover-icon">💀</span>
+    <div class="result-title gameover">Game Over!</div>
+    <div id="newRecGO" class="new-record-badge" style="display:none">🏆 NEW RECORD!</div>
+    <div class="result-score">Score: <span id="finalScore">0</span></div>
+    <div class="result-sub" id="finalDist">Distance: 0m</div>
+    <div class="result-sub bad">Your nutrition knowledge needs work!<br/>Learn and try again! 🇱🇰</div>
+    <button class="btn-start" style="margin-top:18px" onclick="restartGame()">🔄 TRY AGAIN</button>
+  </div>
+
+  <!-- WIN SCREEN -->
+  <div id="winScreen" class="screen hidden">
+    <span class="result-icon win-icon">🏆</span>
+    <div class="result-title win">You Win!</div>
+    <div id="newRecWin" class="new-record-badge" style="display:none">🏆 NEW RECORD!</div>
+    <div class="result-score">Score: <span id="winScore">0</span></div>
+    <div class="result-sub" id="winDist">Distance: 2000m</div>
+    <div class="result-sub good">Sri Lankan Nutrition Champion! 🌿🥥</div>
+    <button class="btn-start" style="margin-top:18px" onclick="restartGame()">🎮 PLAY AGAIN</button>
+  </div>
+</div>
+
+<script>
+// =============================================
+//  PERFORMANCE: DPR-aware canvas
+// =============================================
+const canvas = document.getElementById('gameCanvas');
+const ctx    = canvas.getContext('2d', { alpha:false }); // alpha:false = faster compositing
+const W = 900, H = 520;
+// Scale canvas buffer for device pixel ratio (capped at 2 for performance)
+const DPR = Math.min(window.devicePixelRatio || 1, 2);
+canvas.width  = W * DPR;
+canvas.height = H * DPR;
+canvas.style.width  = '100%';
+canvas.style.height = '100%';
+ctx.scale(DPR, DPR);
+
+// =============================================
+//  DATA
+// =============================================
+const HEALTHY_FOODS = [
+  { emoji:'🥥', name:'King Coconut', pts:15, msg:'Superhydrator!' },
+  { emoji:'🌿', name:'Gotukola',     pts:20, msg:'Brain Boost!' },
+  { emoji:'🍌', name:'Banana',       pts:10, msg:'Energy Up!' },
+  { emoji:'🐟', name:'Fish',         pts:18, msg:'Omega-3 Power!' },
+  { emoji:'🧅', name:'Red Onion',    pts:12, msg:'Antioxidant!' },
+  { emoji:'🌶️', name:'Green Chilli', pts:10, msg:'Vitamin C!' },
+  { emoji:'🍋', name:'Lime',         pts:10, msg:'Fresh Boost!' },
+  { emoji:'🥬', name:'Mukunuwenna',  pts:22, msg:'Iron Rich!' },
+  { emoji:'🫘', name:'Dhal',         pts:14, msg:'Protein Power!' },
+  { emoji:'🍠', name:'Sweet Potato', pts:12, msg:'Fibre Rich!' },
+];
+const UNHEALTHY_FOODS = [
+  { emoji:'🍟', name:'French Fries' },
+  { emoji:'🥤', name:'Soda' },
+  { emoji:'🍔', name:'Burger' },
+  { emoji:'🍩', name:'Donut' },
+  { emoji:'🧁', name:'Cupcake' },
+  { emoji:'🍕', name:'Junk Pizza' },
+  { emoji:'🍭', name:'Candy' },
+  { emoji:'🥨', name:'Salted Snack' },
+  { emoji:'🌭', name:'Hot Dog' },
+  { emoji:'🧋', name:'Bubble Tea' },
+  { emoji:'🍦', name:'Ice Cream' },
+  { emoji:'🥞', name:'Pancake Stack' },
+];
+const QUESTION_POOL = [
+  // Fats
+  { question:'What is the main health risk of deep-fried foods?', options:['High in Trans Fats','Rich in Protein','Good for Heart','Low Calories'], correct:0, fact:'Deep-fried foods are high in trans fats and saturated fats, raising bad cholesterol and increasing heart disease risk.' },
+  { question:'Which type of fat is MOST harmful to heart health?', options:['Unsaturated fat','Omega-3 fat','Trans fat','Monounsaturated fat'], correct:2, fact:'Trans fats raise LDL (bad) cholesterol and lower HDL (good) cholesterol, significantly increasing heart disease risk.' },
+  { question:'Donuts are high in which harmful type of fat?', options:['Omega-3','Trans Fat','Monounsaturated','Polyunsaturated'], correct:1, fact:'Donuts made with partially hydrogenated oils contain trans fats — the most harmful dietary fat for your heart.' },
+  { question:'Which oil is considered the LEAST healthy for frying?', options:['Olive oil','Coconut oil','Palm oil','Partially hydrogenated vegetable oil'], correct:3, fact:'Partially hydrogenated vegetable oils contain trans fats, which are the most dangerous type of dietary fat for cardiovascular health.' },
+  { question:'Saturated fat is most commonly found in?', options:['Fresh vegetables','Whole grains','Butter and fatty meats','Olive oil'], correct:2, fact:'Saturated fats found in butter, red meat and full-fat dairy raise LDL cholesterol. Limit to less than 10% of daily calories.' },
+  // Sugar
+  { question:'How much sugar is in an average 330ml can of soda?', options:['About 2 tsp','About 10 tsp','About 1 tsp','None at all'], correct:1, fact:'A 330ml soda contains ~35g (7-10 tsp) of sugar — far exceeding the daily recommendation of 6 tsp for adults!' },
+  { question:'Excess sugar consumption primarily contributes to?', options:['Strong Bones','Diabetes & Obesity','Better Vision','More Energy'], correct:1, fact:'High sugar intake is a leading cause of type 2 diabetes, obesity and dental decay. Sri Lanka has rising diabetes rates!' },
+  { question:'Sugary drinks are most directly associated with which disease?', options:['Asthma','Type 2 Diabetes','Arthritis','Common Cold'], correct:1, fact:'Frequent sugary drink consumption is one of the strongest dietary predictors of type 2 diabetes development.' },
+  { question:'WHO recommends adults consume how much free sugar per day?', options:['Up to 50g','Less than 25g (6 tsp)','Up to 100g','No limit'], correct:1, fact:'WHO recommends less than 25g (6 tsp) of free sugars per day to reduce obesity, diabetes, and dental disease risk.' },
+  { question:'Which disease is most strongly linked to excess sugary snack consumption?', options:['Osteoporosis','Dental caries (tooth decay)','Anaemia','Night blindness'], correct:1, fact:'Bacteria in the mouth feed on sugar, producing acid that dissolves tooth enamel — the direct cause of tooth decay.' },
+  // Sodium / Salt
+  { question:'Which nutrient is excessive in processed fast food?', options:['Fibre','Vitamin C','Sodium','Calcium'], correct:2, fact:'Fast food is extremely high in sodium (salt), contributing to high blood pressure and kidney issues.' },
+  { question:'High sodium intake is most directly linked to?', options:['Good eyesight','Hypertension (High BP)','Strong muscles','Clear skin'], correct:1, fact:'Excess sodium raises blood pressure — a major risk factor for stroke and heart disease. Gotukola sambol is healthier!' },
+  { question:'WHO recommends daily salt intake for adults to be?', options:['Less than 5g','More than 15g','Exactly 10g','No restriction'], correct:0, fact:'WHO recommends less than 5g (about 1 teaspoon) of salt per day to prevent hypertension and cardiovascular disease.' },
+  { question:'Which organ is most damaged by chronic high salt consumption?', options:['Liver','Lungs','Kidneys','Pancreas'], correct:2, fact:'The kidneys filter excess salt. Chronic high sodium intake overworks them, leading to chronic kidney disease over time.' },
+  { question:'Hidden salt in food is most commonly found in?', options:['Fresh fruit','Plain water','Processed and packaged foods','Plain rice'], correct:2, fact:'Up to 75% of daily salt intake comes from processed foods like bread, canned soups, and ready meals — even when it doesn\'t taste salty!' },
+  // Empty Calories / Junk
+  { question:'What are "empty calories" in junk food?', options:['Calories with nutrients','Calories without nutrients','Zero calorie food','Healthy fast food'], correct:1, fact:'Empty calories provide energy but zero nutritional value — common in chips, pizza, and sweets.' },
+  { question:'Processed meats like hot dogs are linked to increased risk of?', options:['Better bone health','Colorectal cancer','Improved vision','Lower cholesterol'], correct:1, fact:'WHO classifies processed meats as Group 1 carcinogens — there is strong evidence they cause colorectal cancer.' },
+  { question:'Which snack has the LEAST nutritional value?', options:['Roasted chickpeas','Mixed nuts','Potato chips','Fresh fruit'], correct:2, fact:'Potato chips are high in fat, salt and refined carbs with minimal vitamins, minerals or fibre — classic empty calories.' },
+  { question:'Junk food is often described as "calorie-dense but nutrient-poor." This means?', options:['It has many vitamins per calorie','Many calories, few vitamins and minerals','It is low in calories','It has no calories'], correct:1, fact:'Calorie-dense, nutrient-poor foods provide energy without the vitamins, minerals and fibre needed for body functions.' },
+  // Sri Lanka Specific
+  { question:'Which local Sri Lankan fruit is a HEALTHY sweet alternative to candy?', options:['Wood Apple','Bubblegum fruit','Toffee apple','Cola Nut'], correct:0, fact:'Wood apple (Beli mal) is a traditional Sri Lankan fruit rich in vitamins and antioxidants — a perfect natural sweet!' },
+  { question:'Mukunuwenna (swamp cabbage) is especially rich in?', options:['Vitamin D','Iron','Calcium','Vitamin B12'], correct:1, fact:'Mukunuwenna is a powerful iron-rich green leafy vegetable in traditional Sri Lankan cooking — great for preventing anaemia.' },
+  { question:'Gotukola in Sri Lankan cuisine is high in?', options:['Saturated fat','Vitamin K and antioxidants','Sugar','Sodium'], correct:1, fact:'Gotukola (Centella asiatica) is packed with Vitamin K, antioxidants and has traditional Ayurvedic medicinal uses.' },
+  { question:'Which Sri Lankan grain is MORE nutritious than milled white rice?', options:['Red/kurakkan rice','Instant noodles','White bread','Processed white rice'], correct:0, fact:'Red rice retains its bran and germ layers, providing more fibre, vitamins and minerals than milled white rice.' },
+  { question:'Coconut water is naturally high in?', options:['Saturated fat','Caffeine','Potassium and electrolytes','Added sugar'], correct:2, fact:'Coconut water is a natural isotonic drink rich in potassium and electrolytes — excellent for rehydration in Sri Lanka\'s tropical heat.' },
+  { question:'Dhal (lentils) in Sri Lankan cooking is rich in?', options:['Saturated fat','Protein and fibre','Simple sugar','Cholesterol'], correct:1, fact:'Dhal is an excellent plant-based protein and dietary fibre source — a nutritional powerhouse in Sri Lankan cuisine!' },
+  { question:'Young jak fruit (polos) is high in?', options:['Saturated fat','Dietary fibre and B vitamins','Simple sugar','Sodium'], correct:1, fact:'Young jackfruit is rich in dietary fibre and B vitamins — used as a nutritious meat alternative in Sri Lankan cooking.' },
+  { question:'Which Sri Lankan traditional grain drink is nutritionally beneficial?', options:['Kurakkan (finger millet) porridge','Soda','Energy drink','Cola'], correct:0, fact:'Kurakkan (finger millet) is high in calcium, iron and dietary fibre — a nutritional powerhouse traditional to Sri Lanka.' },
+  { question:'Kankun (water spinach) is a traditional Sri Lankan vegetable rich in?', options:['Trans fat','Iron and Vitamin C','Sugar','Sodium'], correct:1, fact:'Kankun is rich in iron, Vitamin C and antioxidants, supporting blood health and immune function.' },
+  // Vitamins & Minerals
+  { question:'Which vitamin is produced when your skin is exposed to sunlight?', options:['Vitamin A','Vitamin C','Vitamin B12','Vitamin D'], correct:3, fact:'Vitamin D is synthesised in the skin upon UVB exposure. Deficiency causes weak bones and impaired immune function.' },
+  { question:'Which vitamin helps the body absorb iron better?', options:['Vitamin D','Vitamin B12','Vitamin C','Vitamin K'], correct:2, fact:'Vitamin C enhances non-heme iron absorption from plant sources. Pairing citrus with spinach is a perfect combination.' },
+  { question:'Which vitamin is found in yellow and orange vegetables?', options:['Vitamin K','Vitamin C','Vitamin A (beta-carotene)','Vitamin B6'], correct:2, fact:'Beta-carotene in orange/yellow foods like carrots and pumpkin converts to Vitamin A, supporting eye and immune health.' },
+  { question:'Which mineral is critical for strong bones and teeth?', options:['Iron','Sodium','Calcium','Zinc'], correct:2, fact:'Calcium is the most abundant mineral in the body. Adequate intake reduces osteoporosis risk throughout life.' },
+  { question:'Which fruit is highest in Vitamin C?', options:['Apple','Banana','Guava','Grape'], correct:2, fact:'Guava contains ~228mg of Vitamin C per 100g — nearly 2.5× more than an orange! Plentiful in Sri Lanka.' },
+  { question:'Iron deficiency most commonly causes?', options:['Obesity','Anaemia and fatigue','Strong bones','Better sleep'], correct:1, fact:'Iron deficiency anaemia causes fatigue, poor concentration and developmental delays — the world\'s most common nutritional deficiency.' },
+  // Healthy Habits
+  { question:'What fraction of your plate should be vegetables and fruit?', options:['One quarter','Three quarters','Half (½)','One eighth'], correct:2, fact:'Health guidelines recommend filling half your plate with vegetables and fruit at every meal for optimal nutrition.' },
+  { question:'Which cooking method retains the most nutrients in vegetables?', options:['Deep frying','Long boiling','Steaming','Grilling with oil'], correct:2, fact:'Steaming preserves the most water-soluble vitamins (B, C) compared to boiling, which leaches nutrients into water.' },
+  { question:'The recommended number of daily fruit and vegetable servings is?', options:['At least 5','At least 1','At least 10','Only 2'], correct:0, fact:'WHO recommends at least 5 servings (400g) of fruit and vegetables per day to reduce chronic disease risk.' },
+  { question:'How many glasses of water should adults drink daily?', options:['2 glasses','4 glasses','8 glasses (2L)','20 glasses'], correct:2, fact:'Adults need about 2 litres (8 glasses) of water per day. In Sri Lanka\'s tropical heat, requirements can be higher!' },
+  { question:'Dark yellow urine is a sign of?', options:['Eating too much fruit','Dehydration','Good hydration','Vitamin D deficiency'], correct:1, fact:'Dark yellow urine indicates dehydration. Well-hydrated individuals produce pale yellow, nearly clear urine.' },
+  { question:'Dietary fibre primarily helps with?', options:['Building muscle','Digestion and gut health','Vision improvement','Bone strength'], correct:1, fact:'Dietary fibre feeds beneficial gut bacteria, promotes bowel regularity, reduces cholesterol and stabilises blood sugar.' },
+  // Food Science
+  { question:'How many calories does 1 gram of fat contain?', options:['4 calories','7 calories','9 calories','2 calories'], correct:2, fact:'Fat contains 9 calories per gram — more than double carbohydrates or protein (both 4 cal/g). This makes high-fat foods very calorie-dense.' },
+  { question:'What does "whole grain" mean?', options:['Only made from wheat','Contains all three grain kernel layers','Gluten-free grain','Low-carb grain'], correct:1, fact:'Whole grains contain the bran, germ and endosperm. Refined grains remove bran and germ, losing fibre and key nutrients.' },
+  { question:'What does BMI stand for?', options:['Body Metabolism Index','Body Mass Index','Blood Mineral Intake','Basic Metabolic Indicator'], correct:1, fact:'Body Mass Index (BMI) is calculated as weight(kg) ÷ height(m)². A healthy BMI range is 18.5–24.9.' },
+  { question:'Artificial food coloring is most commonly found in?', options:['Fresh vegetables','Plain yoghurt','Candy and soft drinks','Brown rice'], correct:2, fact:'Synthetic dyes in candy, soft drinks and processed snacks have been linked to hyperactivity in children.' },
+  { question:'Which breakfast gives the most sustained energy?', options:['Sugary cereal','Oats with fruit','Energy drinks','White bread with jam'], correct:1, fact:'Oats provide complex carbohydrates for slow-release energy, keeping you focused and full throughout the morning.' },
+];
+const POWERUP_TYPES = [
+  { emoji:'🛡️', name:'SHIELD', color:'#00bcd4', effect:'shield', dur:320 },
+  { emoji:'⚡',  name:'TURBO',  color:'#FFB800', effect:'turbo',  dur:250 },
+  { emoji:'🧲',  name:'MAGNET', color:'#ce93d8', effect:'magnet', dur:280 },
+];
+const MILESTONES = [
+  { dist:500,  emoji:'🏃', text:'500m Reached!',  sub:'HALFWAY HUSTLE!' },
+  { dist:1000, emoji:'⚡', text:'1 KILOMETER!',   sub:'EXTRAORDINARY!' },
+  { dist:1500, emoji:'🚀', text:'1.5km DONE!',    sub:'ALMOST THERE!' },
+];
+const ACHIEVEMENTS = {
+  5:{ icon:'🔥', text:'COMBO FEVER x5!' },
+  8:{ icon:'💥', text:'UNSTOPPABLE x8!' },
+};
+
+// =============================================
+//  GAME STATE
+// =============================================
+const GROUND_Y   = H * 0.58;
+const GRAVITY    = 0.62;
+const JUMP_FORCE = -14;
+const MAX_DIST   = 2000;
+const MAX_PARTICLES = 45;
+
+let gameState = 'start';
+let score=0, combo=1, lives=3, distance=0;
+let worldSpeed=4, speedMultiplier=1, frameCount=0;
+let player = { x:120, y:0, w:52, h:64, vy:0, onGround:true, frame:0, frameTimer:0, invincible:0, hitAnim:0, shielded:false };
+let jumpsLeft=2, wasOnGround=true, runDustAcc=0;
+
+let items=[], spawnTimer=0, particles=[], playerTrail=[];
+
+// Background entities
+let clouds = [
+  {x:90,  y:38, w:130, h:54, s:.38},
+  {x:380, y:62, w:100, h:42, s:.28},
+  {x:680, y:32, w:150, h:58, s:.48},
+];
+let palmTrees=[{x:220,h:110},{x:520,h:130},{x:760,h:100},{x:1050,h:120}];
+let mtnOffset1=0, mtnOffset2=0;
+let birds=[
+  {x:300,y:75, spd:.9, phase:0,   size:1.0},
+  {x:650,y:52, spd:.7, phase:2.1, size:.8},
+  {x:100,y:98, spd:1.1,phase:1.2, size:.85},
+  {x:820,y:65, spd:.6, phase:3.5, size:.95},
+];
+let fireflies=[];
+for(let i=0;i<12;i++) fireflies.push({x:Math.random()*W,y:GROUND_Y-20-Math.random()*100,phase:Math.random()*Math.PI*2,hue:Math.random()<.6?60:100});
+
+// Power-up state
+let activePowerup=null, puTimer=0, puMaxTimer=1, puColor='#fff';
+
+// Persistence
+let highScore=parseInt(localStorage.getItem('nrHiScore')||'0');
+
+// Milestone / achievement
+let reachedMilestones=new Set(), shownAchievements=new Set();
+let milestoneTO=null, achieveTO=null;
+
+// Quiz
+let currentQuizFood=null, quizTimerVal=100;
+let quizTimerInterval=null, quizAnswered=false;
+
+// =============================================
+//  PERFORMANCE: adaptive quality + delta time
+// =============================================
+let ql = 2;        // quality: 0=low, 1=medium, 2=high — auto-detected
+let lastTs = 0;
+let perfSamples=[], perfChecked=false, perfStart=0;
+
+// Cached gradients
+let skyGradCache=null;
+
+function getSkyGrad(){
+  if(skyGradCache) return skyGradCache;
+  skyGradCache=ctx.createLinearGradient(0,0,0,GROUND_Y);
+  skyGradCache.addColorStop(0,'#1a5f8a');
+  skyGradCache.addColorStop(.4,'#3a98c8');
+  skyGradCache.addColorStop(.75,'#78c8e8');
+  skyGradCache.addColorStop(1,'#f0c060');
+  return skyGradCache;
+}
+
+// Shadow helper — skipped at low quality for major perf gain
+function sh(color,blur){ ctx.shadowColor=color; ctx.shadowBlur=blur; }
+function clsh(){ ctx.shadowColor='transparent'; ctx.shadowBlur=0; }
+function setShadow(color,blur){ if(ql>=2){ sh(color,blur); } }
+function clearShadow(){ if(ql>=2){ clsh(); } }
+
+// =============================================
+//  SOUND ENGINE (Web Audio API, no files)
+// =============================================
+let audioCtx=null;
+function ensureAudio(){
+  if(!audioCtx){ try{ audioCtx=new(window.AudioContext||window.webkitAudioContext)(); }catch(e){} }
+}
+function tone(freq,vol,type,dur,delay=0){
+  if(!audioCtx) return;
+  try{
+    const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+    o.connect(g); g.connect(audioCtx.destination);
+    o.type=type; o.frequency.value=freq;
+    const t=audioCtx.currentTime+delay;
+    g.gain.setValueAtTime(0,t);
+    g.gain.linearRampToValueAtTime(vol,t+.01);
+    g.gain.exponentialRampToValueAtTime(.001,t+dur);
+    o.start(t); o.stop(t+dur+.05);
+  }catch(e){}
+}
+function sfx(name){
+  ensureAudio();
+  const p=(...a)=>tone(...a);
+  switch(name){
+    case 'jump':     p(480,.14,'sine',.08); p(640,.07,'sine',.06,.05); break;
+    case 'dblJump':  [440,554,659].forEach((f,i)=>p(f,.1,'sine',.12,i*.04)); break;
+    case 'collect':  [523,659,784].forEach((f,i)=>p(f,.1,'sine',.14,i*.04)); break;
+    case 'junk':     [280,200].forEach((f,i)=>p(f,.17,'sawtooth',.15,i*.09)); break;
+    case 'correct':  [523,659,784,1047].forEach((f,i)=>p(f,.1,'sine',.18,i*.06)); break;
+    case 'wrong':    [300,250,200].forEach((f,i)=>p(f,.13,'square',.15,i*.07)); break;
+    case 'powerup':  [440,554,659,880,1047].forEach((f,i)=>p(f,.1,'sine',.18,i*.06)); break;
+    case 'milestone':[523,659,784,659,784,1047].forEach((f,i)=>p(f,.12,'sine',.14,i*.1)); break;
+    case 'win':      [523,659,784,1047,784,1047,1175,1047].forEach((f,i)=>p(f,.12,'sine',.18,i*.12)); break;
+    case 'lose':     [523,466,392,330,262].forEach((f,i)=>p(f,.13,'sawtooth',.22,i*.16)); break;
+    case 'land':     p(150,.1,'sine',.06); break;
+    case 'combo':    p(880,.07,'sine',.08); break;
+  }
+}
+
+// =============================================
+//  INPUT
+// =============================================
+document.addEventListener('keydown',e=>{
+  if(e.code==='Space'||e.code==='ArrowUp'){
+    if(gameState==='playing'){ doJump(); e.preventDefault(); }
+  }
+  if(e.code==='KeyP'||e.code==='Escape') togglePause();
+});
+canvas.addEventListener('click',()=>{ if(gameState==='playing') doJump(); });
+canvas.addEventListener('touchstart',e=>{ if(gameState==='playing'){ doJump(); e.preventDefault(); } },{passive:false});
+function mobileJumpFn(e){ e.preventDefault(); doJump(); }
+
+function doJump(){
+  ensureAudio();
+  if(jumpsLeft>0){
+    const isAir=!player.onGround;
+    player.vy=JUMP_FORCE*(isAir?.88:1);
+    player.onGround=false; jumpsLeft--;
+    if(isAir){ sfx('dblJump'); spawnParticles(player.x+player.w/2,player.y+player.h/2,'#00bcd4',12,'burst'); }
+    else      { sfx('jump');   spawnDust(player.x+player.w/2,GROUND_Y,6); }
+  }
+}
+
+function togglePause(){
+  if(gameState==='playing'){
+    gameState='paused';
+    document.getElementById('pauseScore').textContent=score;
+    document.getElementById('pauseDist').textContent=Math.floor(distance)+'m';
+    show('pauseScreen',true);
+  } else if(gameState==='paused'){
+    gameState='playing';
+    show('pauseScreen',false);
+    lastTs=0; // reset delta so no spike after resume
+    requestAnimationFrame(loop);
+  }
+}
+
+// =============================================
+//  LIFECYCLE
+// =============================================
+function startGame(){
+  show('startScreen',false);
+  gameState='playing'; score=0; combo=1; lives=3; distance=0;
+  worldSpeed=4; speedMultiplier=1; frameCount=0;
+  player.y=GROUND_Y-player.h; player.vy=0; player.onGround=true;
+  player.invincible=0; player.hitAnim=0; player.shielded=false;
+  jumpsLeft=2; wasOnGround=true; runDustAcc=0;
+  items=[]; spawnTimer=0; particles=[]; playerTrail=[];
+  mtnOffset1=0; mtnOffset2=0;
+  activePowerup=null; puTimer=0;
+  reachedMilestones.clear(); shownAchievements.clear();
+  skyGradCache=null; // reset cached gradient for a fresh start
+  ['h1','h2','h3'].forEach(id=>document.getElementById(id).classList.remove('lost'));
+  document.getElementById('puSlot').style.display='none';
+  document.getElementById('pauseBtn').style.display='block';
+  document.getElementById('hsDisplay').textContent=highScore;
+  // reset quality detector
+  perfSamples=[]; perfChecked=false; perfStart=0;
+  lastTs=0; updateHUD();
+  requestAnimationFrame(loop);
+}
+
+function restartGame(){
+  ['gameOverScreen','winScreen','pauseScreen','quizOverlay'].forEach(id=>show(id,false));
+  document.querySelectorAll('.cpiece').forEach(e=>e.remove());
+  document.getElementById('pauseBtn').style.display='none';
+  document.getElementById('milestoneBanner').style.display='none';
+  document.getElementById('achievePopup').style.display='none';
+  clearInterval(quizTimerInterval);
+  clearTimeout(milestoneTO); clearTimeout(achieveTO);
+  startGame();
+}
+
+// =============================================
+//  MAIN LOOP — delta-time based
+// =============================================
+function loop(ts){
+  if(gameState!=='playing') return;
+
+  // Auto-detect device quality in first ~1.5s of play
+  if(!perfChecked){
+    if(!perfStart) perfStart=ts;
+    if(lastTs>0 && ts-perfStart>200){ perfSamples.push((ts-lastTs)/16.67); }
+    if(ts-perfStart>1500 && perfSamples.length>15){
+      perfChecked=true;
+      const avg=perfSamples.reduce((a,b)=>a+b,0)/perfSamples.length;
+      if(avg>2.2)      ql=0;  // device runs < ~27fps
+      else if(avg>1.4) ql=1;  // device runs < ~43fps
+      perfSamples=[];
+    }
+  }
+
+  // Normalized delta: 1.0 = perfect 60fps, capped to prevent tunneling
+  const dt = lastTs>0 ? Math.min((ts-lastTs)/16.67, 2.5) : 1;
+  lastTs=ts;
+
+  frameCount++;
+  update(dt);
+  render();
+  updateHUD();
+  requestAnimationFrame(loop);
+}
+
+// =============================================
+//  UPDATE — all movement scaled by dt
+// =============================================
+function update(dt){
+  speedMultiplier=1+distance/1000*.5;
+  const turboMult=activePowerup==='turbo'?1.45:1;
+  const spd=worldSpeed*speedMultiplier*turboMult;
+
+  // Distance
+  distance+=spd*.05*dt;
+  if(distance>=MAX_DIST){ triggerWin(); return; }
+
+  // Milestone check
+  for(const m of MILESTONES){
+    if(distance>=m.dist&&!reachedMilestones.has(m.dist)){
+      reachedMilestones.add(m.dist); triggerMilestone(m);
+    }
+  }
+
+  // Player physics
+  wasOnGround=player.onGround;
+  player.vy+=GRAVITY*dt;
+  player.y+=player.vy*dt;
+  const gl=GROUND_Y-player.h;
+  if(player.y>=gl){
+    if(!wasOnGround){ sfx('land'); spawnDust(player.x+player.w/2,GROUND_Y,7); }
+    player.y=gl; player.vy=0; player.onGround=true; jumpsLeft=2;
+  }
+  if(player.invincible>0) player.invincible-=dt;
+  if(player.hitAnim>0)    player.hitAnim-=dt;
+
+  // Run animation
+  player.frameTimer+=dt;
+  if(player.frameTimer>7){ player.frame=(player.frame+1)%4; player.frameTimer=0; }
+
+  // Running dust
+  if(player.onGround){ runDustAcc+=dt; if(runDustAcc>=9){ spawnRunDust(); runDustAcc=0; } }
+
+  // Turbo trail (only high/medium quality)
+  if(activePowerup==='turbo'&&ql>=1){
+    playerTrail.unshift({x:player.x,y:player.y});
+    if(playerTrail.length>8) playerTrail.pop();
+  } else if(playerTrail.length>0) playerTrail.pop();
+
+  // Power-up countdown
+  if(puTimer>0){
+    puTimer-=dt;
+    const pct=Math.max(0,puTimer/puMaxTimer*100);
+    document.getElementById('puFill').style.width=pct+'%';
+    if(puTimer<=0) expirePowerup();
+  }
+
+  // Clouds
+  clouds.forEach(c=>{ c.x-=c.s*spd*.28*dt; if(c.x+c.w<0) c.x=W+30; });
+  // Palms
+  palmTrees.forEach(t=>{ t.x-=spd*.55*dt; if(t.x<-80) t.x=W+80+Math.random()*200; });
+  // Mountains
+  mtnOffset1=(mtnOffset1+spd*.04*dt)%W;
+  mtnOffset2=(mtnOffset2+spd*.14*dt)%W;
+  // Birds (only ql>=1)
+  if(ql>=1) birds.forEach(b=>{
+    b.x-=b.spd*speedMultiplier*.4*dt;
+    b.phase+=.08*dt;
+    if(b.x<-30){ b.x=W+60; b.y=35+Math.random()*110; }
+  });
+  // Fireflies (only ql>=1)
+  if(ql>=1) fireflies.forEach(f=>{
+    f.x-=spd*.18*dt;
+    f.y+=Math.sin(frameCount*.06+f.phase)*.35;
+    f.phase+=.02*dt;
+    if(f.x<-10) f.x=W+10;
+    f.y=Math.max(GROUND_Y-115,Math.min(GROUND_Y-8,f.y));
+  });
+
+  // Spawn items
+  spawnTimer+=dt;
+  const interval=Math.max(55,90-distance/40);
+  if(spawnTimer>=interval){ spawnTimer=0; spawnItem(spd); }
+
+  // Move items + magnet
+  items.forEach(item=>{
+    item.x-=spd*dt;
+    item.floatY=Math.sin(frameCount*.08+item.seed)*5;
+    if(activePowerup==='magnet'&&!item.isJunk&&!item.isPowerup&&!item.collected){
+      const cx2=item.x+item.w/2,cy2=item.y+item.h/2;
+      const pcx=player.x+player.w/2,pcy=player.y+player.h/2;
+      const d=Math.hypot(cx2-pcx,cy2-pcy);
+      if(d<210){ const f=(210-d)/210*3.5*dt; item.x+=(pcx-cx2)/d*f; item.y+=(pcy-cy2)/d*f; }
+    }
+  });
+  items=items.filter(i=>i.x>-70);
+
+  // Particles
+  particles.forEach(p=>{ p.x+=p.vx*dt; p.y+=p.vy*dt; p.vy+=(p.gravity||.15)*dt; p.life-=dt; });
+  particles=particles.filter(p=>p.life>0);
+
+  checkCollisions();
+}
+
+// =============================================
+//  SPAWN
+// =============================================
+function spawnItem(spd){
+  const roll=Math.random();
+  let data,isJunk=false,isPowerup=false,puEffect=null,puColor2=null,puDur=0;
+  if(roll<0.07){
+    const pt=POWERUP_TYPES[Math.floor(Math.random()*POWERUP_TYPES.length)];
+    data={emoji:pt.emoji,name:pt.name,pts:0}; isPowerup=true; puEffect=pt.effect; puColor2=pt.color; puDur=pt.dur;
+  } else if(roll<0.38){
+    data=UNHEALTHY_FOODS[Math.floor(Math.random()*UNHEALTHY_FOODS.length)]; isJunk=true;
+  } else {
+    data=HEALTHY_FOODS[Math.floor(Math.random()*HEALTHY_FOODS.length)];
+  }
+  const onGround=Math.random()<0.4;
+  const yPos=onGround?GROUND_Y-48:GROUND_Y-48-Math.random()*120-30;
+  items.push({x:W+40,y:yPos,w:44,h:44,data,isJunk,isPowerup,puEffect,puColor:puColor2,puDur,seed:Math.random()*Math.PI*2,floatY:0,collected:false});
+}
+
+// =============================================
+//  COLLISIONS
+// =============================================
+function checkCollisions(){
+  const blocked=player.invincible>0||player.shielded||activePowerup==='shield';
+  for(let item of items){
+    if(item.collected) continue;
+    const px=player.x+8,pw=player.w-16,py=player.y+8,ph=player.h-12;
+    const ix=item.x,iw=item.w,iy=item.y+item.floatY,ih=item.h;
+    if(px<ix+iw&&px+pw>ix&&py<iy+ih&&py+ph>iy){
+      item.collected=true;
+      if(item.isPowerup)   collectPowerup(item);
+      else if(item.isJunk) { if(!blocked) triggerQuiz(item.data,item.x+item.w/2,item.y); }
+      else                 collectHealthy(item);
+      break;
+    }
+  }
+}
+
+function collectHealthy(item){
+  score+=item.data.pts*combo; combo=Math.min(combo+1,8);
+  if(particles.length<MAX_PARTICLES) spawnParticles(item.x+item.w/2,item.y+item.h/2,'#4CAF50',8,'spark');
+  flashVignette('vcollect');
+  showFeedback('+'+(item.data.pts*combo),item.x+item.w/2,item.y,'#4CAF50');
+  showFeedback(item.data.msg,item.x+item.w/2,item.y-36,'#FFB800');
+  sfx('collect'); updateComboDisplay();
+}
+
+function collectPowerup(item){
+  activePowerup=item.puEffect; puMaxTimer=puTimer=item.puDur; puColor=item.puColor;
+  if(activePowerup==='shield') player.shielded=true;
+  const slot=document.getElementById('puSlot');
+  slot.style.setProperty('--pu-col',puColor);
+  slot.style.display='flex';
+  document.getElementById('puIcon').textContent=item.data.emoji;
+  document.getElementById('puName').textContent=item.data.name;
+  document.getElementById('puFill').style.background=puColor;
+  document.getElementById('puFill').style.width='100%';
+  if(particles.length<MAX_PARTICLES) spawnParticles(item.x+item.w/2,item.y+item.h/2,puColor,14,'burst');
+  showFeedback('✨ '+item.data.name+'!',item.x+item.w/2,item.y,puColor);
+  sfx('powerup');
+}
+function expirePowerup(){
+  if(activePowerup==='shield') player.shielded=false;
+  activePowerup=null; playerTrail=[];
+  document.getElementById('puSlot').style.display='none';
+}
+
+// =============================================
+//  PARTICLES — capped
+// =============================================
+function spawnParticles(x,y,color,count=8,type='spark'){
+  const space=MAX_PARTICLES-particles.length;
+  if(space<=0) return;
+  const n=Math.min(count,space);
+  for(let i=0;i<n;i++){
+    const a=Math.random()*Math.PI*2;
+    const spd=type==='burst'?2+Math.random()*3:1.2+Math.random()*2;
+    particles.push({x,y,vx:Math.cos(a)*spd,vy:Math.sin(a)*spd-(type==='burst'?1.5:0),color,size:type==='dust'?4+Math.random()*4:2+Math.random()*3,life:type==='dust'?16:26,maxLife:type==='dust'?16:26,gravity:type==='dust'?.06:.14});
+  }
+}
+function spawnDust(x,y,count=6){
+  const space=MAX_PARTICLES-particles.length; if(space<=0) return;
+  for(let i=0;i<Math.min(count,space);i++){
+    const a=Math.PI+(Math.random()-.5)*Math.PI;
+    particles.push({x,y,vx:Math.cos(a)*(1+Math.random()*2),vy:Math.sin(a)*.5-Math.random()*.8,color:'#c8a96e',size:4+Math.random()*5,life:18,maxLife:18,gravity:.05});
+  }
+}
+function spawnRunDust(){
+  if(particles.length>=MAX_PARTICLES) return;
+  particles.push({x:player.x+8+Math.random()*20,y:GROUND_Y+1,vx:-(0.4+Math.random()*.6),vy:-(0.2+Math.random()*.4),color:'rgba(200,169,110,0.5)',size:2+Math.random()*2.5,life:14,maxLife:14,gravity:.04});
+}
+
+// =============================================
+//  QUIZ
+// =============================================
+function triggerQuiz(foodData,fx,fy){
+  gameState='quiz'; quizAnswered=false;
+  showFeedback('😱 '+foodData.name+'!',fx,fy,'#e74c3c'); sfx('junk');
+
+  // Pick random question from pool
+  const q=QUESTION_POOL[Math.floor(Math.random()*QUESTION_POOL.length)];
+
+  // Fisher-Yates shuffle indices to randomize answer order
+  const idx=[0,1,2,3];
+  for(let i=3;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [idx[i],idx[j]]=[idx[j],idx[i]]; }
+  const shuffledOpts=idx.map(i=>q.options[i]);
+  const newCorrect=idx.indexOf(q.correct);
+
+  currentQuizFood={ emoji:foodData.emoji, question:q.question, options:shuffledOpts, correct:newCorrect, fact:q.fact };
+
+  document.getElementById('quizFoodIcon').textContent=foodData.emoji;
+  document.getElementById('quizQuestion').textContent=q.question;
+  document.getElementById('quizFact').style.display='none';
+  const optsEl=document.getElementById('quizOptions'); optsEl.innerHTML='';
+  shuffledOpts.forEach((opt,i)=>{ const btn=document.createElement('button'); btn.className='quiz-opt'; btn.textContent=opt; btn.onclick=()=>answerQuiz(i,btn); optsEl.appendChild(btn); });
+  quizTimerVal=100; document.getElementById('quizTimerFill').style.width='100%';
+  show('quizOverlay',true);
+  clearInterval(quizTimerInterval);
+  quizTimerInterval=setInterval(()=>{
+    if(quizAnswered) return;
+    quizTimerVal-=1.4;
+    document.getElementById('quizTimerFill').style.width=quizTimerVal+'%';
+    if(quizTimerVal<=0){ clearInterval(quizTimerInterval); quizTimeUp(); }
+  },100);
+}
+function answerQuiz(idx,btn){
+  if(quizAnswered) return; quizAnswered=true; clearInterval(quizTimerInterval);
+  const food=currentQuizFood,allBtns=document.querySelectorAll('.quiz-opt');
+  document.getElementById('quizFact').style.display='block';
+  document.getElementById('quizFact').textContent='💡 '+food.fact;
+  if(idx===food.correct){ btn.classList.add('correct'); combo=Math.max(combo-1,1); sfx('correct'); setTimeout(closeQuiz,2200); }
+  else { btn.classList.add('wrong'); allBtns[food.correct].classList.add('correct'); sfx('wrong'); loseLife(); setTimeout(()=>{ if(lives>0) closeQuiz(); },2400); }
+}
+function quizTimeUp(){
+  if(quizAnswered) return; quizAnswered=true;
+  document.querySelectorAll('.quiz-opt')[currentQuizFood.correct]?.classList.add('correct');
+  document.getElementById('quizFact').style.display='block';
+  document.getElementById('quizFact').textContent="⏰ Time's up! "+currentQuizFood.fact;
+  sfx('wrong'); loseLife();
+  setTimeout(()=>{ if(lives>0) closeQuiz(); },2400);
+}
+function closeQuiz(){
+  show('quizOverlay',false); player.invincible=120; gameState='playing';
+  lastTs=0; requestAnimationFrame(loop);
+}
+
+// =============================================
+//  LIVES & GAME END
+// =============================================
+function loseLife(){
+  lives--; combo=1; player.hitAnim=45;
+  const w=document.getElementById('gameWrapper');
+  w.classList.remove('shake'); void w.offsetWidth; w.classList.add('shake');
+  flashVignette('vhit');
+  document.getElementById(['h1','h2','h3'][lives])?.classList.add('lost');
+  if(lives<=0) setTimeout(triggerGameOver,1800);
+}
+function triggerGameOver(){
+  clearInterval(quizTimerInterval); show('quizOverlay',false);
+  gameState='gameover';
+  const rec=checkHiScore();
+  document.getElementById('finalScore').textContent=score;
+  document.getElementById('finalDist').textContent='Distance: '+Math.floor(distance)+'m';
+  document.getElementById('newRecGO').style.display=rec?'inline-block':'none';
+  show('gameOverScreen',true); sfx('lose');
+}
+function triggerWin(){
+  gameState='win';
+  const rec=checkHiScore();
+  document.getElementById('winScore').textContent=score;
+  document.getElementById('winDist').textContent='Distance: '+Math.floor(distance)+'m';
+  document.getElementById('newRecWin').style.display=rec?'inline-block':'none';
+  show('winScreen',true); sfx('win'); spawnConfetti();
+}
+function checkHiScore(){
+  if(score>highScore){ highScore=score; localStorage.setItem('nrHiScore',highScore); return true; }
+  return false;
+}
+
+// =============================================
+//  MILESTONES — fixed: use style.display
+// =============================================
+function triggerMilestone(m){
+  sfx('milestone');
+  if(particles.length<MAX_PARTICLES) spawnParticles(W/2,H/2,'#FFB800',18,'burst');
+  const el=document.getElementById('milestoneBanner');
+  document.getElementById('mileEmoji').textContent=m.emoji;
+  document.getElementById('mileText').textContent=m.text;
+
+  el.style.display='block';        // show
+  el.className='';                  // reset any previous animation class
+  void el.offsetWidth;              // force reflow to restart animation
+  el.className='banner-anim';       // apply animation
+
+  clearTimeout(milestoneTO);
+  milestoneTO=setTimeout(()=>{
+    el.style.display='none';        // ← FIXED: direct style, not class
+    el.className='';
+  },2700);
+}
+
+// =============================================
+//  ACHIEVEMENTS — fixed: use style.display
+// =============================================
+function checkAchievement(comboLevel){
+  if(!shownAchievements.has(comboLevel)&&ACHIEVEMENTS[comboLevel]){
+    shownAchievements.add(comboLevel);
+    const a=ACHIEVEMENTS[comboLevel],el=document.getElementById('achievePopup');
+    document.getElementById('achIcon').textContent=a.icon;
+    document.getElementById('achText').textContent=a.text;
+    el.style.display='block';
+    el.className='ach-show';
+    sfx('combo');
+    clearTimeout(achieveTO);
+    achieveTO=setTimeout(()=>{
+      el.className='ach-hide';
+      setTimeout(()=>{ el.style.display='none'; el.className=''; },450); // ← FIXED
+    },2000);
+  }
+}
+
+// =============================================
+//  RENDER — quality-adaptive
+// =============================================
+function render(){
+  ctx.clearRect(0,0,W,H);
+  drawSky();
+  if(ql>=1) drawSun();
+  drawMountains();
+  drawClouds();
+  if(ql>=1) drawBirds();
+  drawGround();
+  drawPalmTrees();
+  if(ql>=1) drawFireflies();
+  if(playerTrail.length>0) drawTurboTrail();
+  drawItems();
+  if(particles.length>0) drawParticles();
+  drawPlayer();
+  if(player.shielded||activePowerup==='shield') drawShieldAura();
+  if(activePowerup==='magnet') drawMagnetAura();
+  drawJumpIndicator();
+}
+
+function drawSky(){
+  ctx.fillStyle=getSkyGrad();
+  ctx.fillRect(0,0,W,GROUND_Y);
+}
+
+function drawSun(){
+  const sx=810,sy=65,sr=36;
+  ctx.save();
+  ctx.translate(sx|0,sy|0);
+  ctx.rotate(frameCount*.004);
+  for(let i=0;i<10;i++){
+    const a=(i/10)*Math.PI*2;
+    ctx.save(); ctx.rotate(a);
+    const rg=ctx.createLinearGradient(0,0,0,sr+28);
+    rg.addColorStop(0,'rgba(255,220,80,.2)'); rg.addColorStop(1,'rgba(255,180,0,0)');
+    ctx.fillStyle=rg;
+    ctx.beginPath(); ctx.moveTo(-3,0); ctx.lineTo(3,0); ctx.lineTo(0,sr+28); ctx.fill();
+    ctx.restore();
+  }
+  ctx.restore();
+  ctx.save();
+  if(ql>=2){
+    const halo=ctx.createRadialGradient(sx,sy,sr*.6,sx,sy,sr*2.2);
+    halo.addColorStop(0,'rgba(255,230,100,.2)'); halo.addColorStop(1,'rgba(255,180,0,0)');
+    ctx.fillStyle=halo; ctx.beginPath(); ctx.arc(sx,sy,sr*2.2,0,Math.PI*2); ctx.fill();
+  }
+  const disc=ctx.createRadialGradient(sx-6,sy-6,2,sx,sy,sr);
+  disc.addColorStop(0,'#FFF0A0'); disc.addColorStop(.6,'#FFDD00'); disc.addColorStop(1,'#FFB800');
+  ctx.fillStyle=disc;
+  if(ql>=2){ setShadow('rgba(255,200,0,.6)',24); }
+  ctx.beginPath(); ctx.arc(sx,sy,sr,0,Math.PI*2); ctx.fill();
+  clearShadow();
+  ctx.restore();
+}
+
+function drawMountains(){
+  drawMtnRange(mtnOffset1,[
+    [0,.62],[60,.42],[140,.52],[230,.36],[320,.50],[410,.40],[510,.58],[590,.33],[680,.46],[770,.38],[870,.44],[940,.60],[W+10,.62]
+  ],'rgba(40,55,110,.44)');
+  drawMtnRange(mtnOffset2,[
+    [0,.74],[50,.58],[120,.66],[210,.50],[300,.62],[400,.53],[490,.68],[580,.47],[660,.60],[750,.52],[840,.64],[W+10,.74]
+  ],'rgba(18,72,45,.60)');
+}
+function drawMtnRange(offset,peaks,color){
+  const drawRow=(dx)=>{
+    ctx.beginPath(); ctx.moveTo((peaks[0][0]+dx)|0,H); ctx.lineTo((peaks[0][0]+dx)|0,(GROUND_Y*peaks[0][1])|0);
+    for(let i=1;i<peaks.length;i++){
+      const px0=(peaks[i-1][0]+dx)|0,py0=(GROUND_Y*peaks[i-1][1])|0;
+      const px1=(peaks[i][0]+dx)|0,py1=(GROUND_Y*peaks[i][1])|0;
+      ctx.quadraticCurveTo(px0,py0,((px0+px1)/2)|0,((py0+py1)/2)|0);
+    }
+    const last=peaks[peaks.length-1]; ctx.lineTo((last[0]+dx)|0,H); ctx.closePath(); ctx.fill();
+  };
+  ctx.save(); ctx.fillStyle=color; drawRow(-offset); drawRow(W-offset); ctx.restore();
+}
+
+function drawClouds(){
+  ctx.fillStyle='rgba(255,255,255,.86)';
+  clouds.forEach(c=>{
+    ctx.beginPath();
+    ctx.ellipse((c.x+c.w*.5)|0,(c.y+c.h*.62)|0,c.w*.5,c.h*.38,0,0,Math.PI*2);
+    ctx.ellipse((c.x+c.w*.3)|0,(c.y+c.h*.46)|0,c.w*.28,c.h*.35,0,0,Math.PI*2);
+    ctx.ellipse((c.x+c.w*.72)|0,(c.y+c.h*.50)|0,c.w*.26,c.h*.30,0,0,Math.PI*2);
+    ctx.fill();
+  });
+}
+
+function drawBirds(){
+  ctx.strokeStyle='rgba(28,50,95,.55)'; ctx.lineWidth=1.8; ctx.lineCap='round';
+  birds.forEach(b=>{
+    const flap=Math.sin(b.phase)*.35;
+    ctx.save(); ctx.translate(b.x|0,b.y|0); ctx.scale(b.size,b.size);
+    ctx.beginPath();
+    ctx.moveTo(-9,flap*7); ctx.quadraticCurveTo(-4,0,0,0);
+    ctx.quadraticCurveTo(4,0,9,flap*7);
+    ctx.stroke(); ctx.restore();
+  });
+}
+
+function drawGround(){
+  const soil=ctx.createLinearGradient(0,GROUND_Y,0,H);
+  soil.addColorStop(0,'#7abe48'); soil.addColorStop(.08,'#5a8a3c');
+  soil.addColorStop(.1,'#c8a96e'); soil.addColorStop(1,'#8b6340');
+  ctx.fillStyle=soil; ctx.fillRect(0,GROUND_Y|0,W,H-GROUND_Y);
+  ctx.fillStyle='#8ccc50'; ctx.fillRect(0,GROUND_Y|0,W,7);
+  ctx.fillStyle='#6ab040'; ctx.fillRect(0,(GROUND_Y+7)|0,W,5);
+  // grass tufts (skip on low quality)
+  if(ql>=1){
+    const tOff=(frameCount*worldSpeed*speedMultiplier*(activePowerup==='turbo'?1.45:1)*.7)%60;
+    ctx.fillStyle='#6ab040';
+    for(let i=0;i<16;i++){
+      const tx=(i*60-tOff+W)%W|0;
+      ctx.fillRect(tx,(GROUND_Y-3)|0,4,5);
+      ctx.fillRect(tx+8,(GROUND_Y-5)|0,3,7);
+      ctx.fillRect(tx+16,(GROUND_Y-2)|0,4,4);
+    }
+  }
+  // track dashes
+  ctx.fillStyle='rgba(255,255,255,.15)';
+  const dOff=(frameCount*worldSpeed*speedMultiplier*(activePowerup==='turbo'?1.45:1)*.7)%160;
+  for(let i=0;i<7;i++) ctx.fillRect((i*160-dOff+20)|0,(GROUND_Y+18)|0,72,3);
+}
+
+function drawPalmTrees(){ palmTrees.forEach(t=>drawPalm(t.x|0,GROUND_Y|0,t.h)); }
+function drawPalm(bx,by,h){
+  ctx.save();
+  ctx.strokeStyle='#8b5e2e'; ctx.lineWidth=h*.09; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(bx,by); ctx.bezierCurveTo(bx+h*.12,by-h*.3,bx-h*.08,by-h*.7,bx+h*.05,by-h); ctx.stroke();
+  const tx=bx+h*.05|0,ty=by-h|0;
+  const fronds=[[-1.1,.3],[-.6,-.2],[-.1,-.7],[.4,-.5],[.9,-.1],[1.2,.4]];
+  fronds.forEach(([dx,dy])=>{
+    const len=h*.48,ex=tx+dx*len,ey=ty+dy*len*.55;
+    const cx1=tx+dx*len*.4,cy1=ty+dy*len*.2-10,cx2=tx+dx*len*.75,cy2=ty+dy*len*.4;
+    ctx.strokeStyle='#2d8a2d'; ctx.lineWidth=5+Math.abs(dx)*2;
+    ctx.beginPath(); ctx.moveTo(tx,ty); ctx.bezierCurveTo(cx1,cy1,cx2,cy2,ex,ey); ctx.stroke();
+  });
+  ctx.fillStyle='#8b5e2e';
+  [-.12,.08,.22].forEach(ox=>{ ctx.beginPath(); ctx.arc(tx+ox*h*.3|0,ty+h*.06|0,h*.04,0,Math.PI*2); ctx.fill(); });
+  ctx.restore();
+}
+
+function drawFireflies(){
+  fireflies.forEach(f=>{
+    const flicker=.35+Math.sin(frameCount*.12+f.phase)*.35;
+    ctx.fillStyle=`hsla(${f.hue},100%,72%,${flicker})`;
+    if(ql>=2){ setShadow(`hsl(${f.hue},100%,70%)`,7); }
+    ctx.beginPath(); ctx.arc(f.x|0,f.y|0,2,0,Math.PI*2); ctx.fill();
+    if(ql>=2){ clearShadow(); }
+  });
+}
+
+function drawTurboTrail(){
+  playerTrail.forEach((pos,i)=>{
+    ctx.save();
+    ctx.globalAlpha=(i/playerTrail.length)*0.3;
+    ctx.fillStyle='#FFB800';
+    if(ql>=2){ setShadow('#FFB800',10); }
+    const s=1-(i/playerTrail.length)*.4;
+    const cx=pos.x+player.w/2,cy=pos.y+player.h/2;
+    ctx.translate(cx,cy); ctx.scale(s,s);
+    ctx.fillRect(-player.w/2+8,-player.h/2,player.w-16,player.h);
+    clearShadow();
+    ctx.restore();
+  });
+}
+
+function drawShieldAura(){
+  const cx=(player.x+player.w/2)|0,cy=(player.y+player.h/2)|0;
+  const r=40+Math.sin(frameCount*.08)*4;
+  ctx.save(); ctx.translate(cx,cy);
+  ctx.globalAlpha=.22*(puTimer/puMaxTimer);
+  ctx.fillStyle='#00bcd4';
+  ctx.beginPath(); ctx.arc(0,0,r+8,0,Math.PI*2); ctx.fill();
+  ctx.globalAlpha=1;
+  ctx.rotate(frameCount*.05);
+  const sparkA=(ql>=2?10:6);
+  for(let i=0;i<sparkA;i++){
+    const a=(i/sparkA)*Math.PI*2;
+    const bri=.4+Math.sin(frameCount*.1+i)*.3;
+    ctx.fillStyle=`rgba(0,220,240,${bri*(puTimer/puMaxTimer)})`;
+    ctx.beginPath(); ctx.arc(Math.cos(a)*r|0,Math.sin(a)*r|0,3,0,Math.PI*2); ctx.fill();
+  }
+  ctx.restore();
+}
+
+function drawMagnetAura(){
+  const cx=(player.x+player.w/2)|0,cy=(player.y+player.h/2)|0;
+  ctx.save();
+  ctx.globalAlpha=.15*(puTimer/puMaxTimer);
+  ctx.fillStyle='#ce93d8';
+  ctx.beginPath(); ctx.arc(cx,cy,210,0,Math.PI*2); ctx.fill();
+  ctx.globalAlpha=.25*(puTimer/puMaxTimer);
+  ctx.strokeStyle='#ce93d8'; ctx.lineWidth=1.5; ctx.setLineDash([6,8]);
+  ctx.beginPath(); ctx.arc(cx,cy,130,0,Math.PI*2); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.restore();
+}
+
+function drawItems(){
+  items.forEach(item=>{
+    if(item.collected) return;
+    const iy=item.y+item.floatY;
+    const cx=(item.x+item.w/2)|0,cy=(iy+item.h/2)|0;
+    const pulse=.8+Math.sin(frameCount*.1+item.seed)*.2;
+    ctx.save();
+
+    // Glow — radial gradient on high quality, simple alpha on medium, skip on low
+    if(ql>=2){
+      const gc=item.isPowerup?item.puColor:(item.isJunk?'rgba(141,21,58,':'rgba(46,204,113,');
+      const grad=ctx.createRadialGradient(cx,cy,8,cx,cy,30*pulse);
+      grad.addColorStop(0,item.isPowerup?item.puColor+'99':(item.isJunk?'rgba(141,21,58,.33)':'rgba(46,204,113,.33)'));
+      grad.addColorStop(1,item.isPowerup?item.puColor+'00':(item.isJunk?'rgba(141,21,58,0)':'rgba(46,204,113,0)'));
+      ctx.fillStyle=grad; ctx.beginPath(); ctx.arc(cx,cy,30*pulse,0,Math.PI*2); ctx.fill();
+    } else if(ql===1){
+      ctx.globalAlpha=.2*pulse;
+      ctx.fillStyle=item.isPowerup?item.puColor:(item.isJunk?'#8D153A':'#4CAF50');
+      ctx.beginPath(); ctx.arc(cx,cy,22,0,Math.PI*2); ctx.fill();
+      ctx.globalAlpha=1;
+    }
+
+    // Emoji
+    ctx.font='30px serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    if(ql>=2){
+      setShadow(item.isPowerup?item.puColor:(item.isJunk?'rgba(141,21,58,.6)':'rgba(46,204,113,.6)'),9);
+    }
+    ctx.fillText(item.data.emoji,cx,cy);
+    clearShadow();
+
+    // Label
+    ctx.font='bold 8.5px Nunito,sans-serif';
+    ctx.fillStyle=item.isPowerup?item.puColor:(item.isJunk?'#ff7a9a':'#4CAF50');
+    ctx.fillText(item.data.name,cx,(iy+item.h+11)|0);
+    ctx.restore();
+  });
+}
+
+function drawParticles(){
+  particles.forEach(p=>{
+    const a=p.life/p.maxLife;
+    if(a<=0) return;
+    ctx.save();
+    ctx.globalAlpha=a;
+    if(p.color.startsWith('rgba')){
+      ctx.fillStyle=p.color;
+      ctx.beginPath(); ctx.ellipse(p.x|0,p.y|0,p.size*1.4,p.size*.7,0,0,Math.PI*2); ctx.fill();
+    } else {
+      if(ql>=2){ setShadow(p.color,5); }
+      ctx.fillStyle=p.color;
+      ctx.beginPath(); ctx.arc(p.x|0,p.y|0,p.size,0,Math.PI*2); ctx.fill();
+      clearShadow();
+    }
+    ctx.restore();
+  });
+}
+
+function drawPlayer(){
+  const px=player.x|0,py=player.y|0,pw=player.w,ph=player.h;
+  if(player.invincible>0&&!player.shielded&&Math.floor(player.invincible/5)%2===0) return;
+  ctx.save();
+
+  const leg=Math.sin(frameCount*.28)*12;
+  const comboGlow=combo>=8?'#ff3333':combo>=5?'#FF8C00':null;
+  if(player.hitAnim>0&&ql>=1){ setShadow('#e74c3c',18); }
+  else if(comboGlow&&ql>=2)  { setShadow(comboGlow,14); }
+
+  // Shadow
+  ctx.fillStyle='rgba(0,0,0,.2)'; ctx.beginPath();
+  ctx.ellipse(px+pw/2,(GROUND_Y+3)|0,pw*.38,6,0,0,Math.PI*2); ctx.fill();
+  clearShadow();
+
+  // Legs
+  const drawLeg=(ox,swing)=>{
+    ctx.save(); ctx.translate(px+pw/2+ox,(py+ph*.66)|0); ctx.rotate(swing*Math.PI/180);
+    ctx.fillStyle='#2b4abf'; ctx.fillRect(-5,0,10,14);
+    ctx.translate(0,14); ctx.rotate(Math.max(0,swing)*Math.PI/200);
+    ctx.fillRect(-4,0,8,13);
+    ctx.fillStyle='#1a1a1a'; ctx.beginPath(); ctx.roundRect(-5,12,14,5,2); ctx.fill();
+    ctx.restore();
+  };
+  drawLeg(-8,leg); drawLeg(8,-leg);
+
+  // Body
+  const bg=ctx.createLinearGradient(px+8,py+ph*.34,px+pw-8,py+ph*.66);
+  bg.addColorStop(0,'#e09020'); bg.addColorStop(1,'#b07010');
+  ctx.fillStyle=bg; ctx.beginPath(); ctx.roundRect(px+8,(py+ph*.34)|0,pw-16,ph*.38,5); ctx.fill();
+  ctx.fillStyle='rgba(255,255,255,.15)'; ctx.beginPath(); ctx.roundRect(px+9,(py+ph*.35)|0,pw-18,5,3); ctx.fill();
+
+  // Arms
+  const drawArm=(ox,swing)=>{
+    ctx.save(); ctx.translate(px+ox,(py+ph*.40)|0); ctx.rotate(swing*Math.PI/180);
+    ctx.fillStyle='#e09020'; ctx.fillRect(-4,0,8,15);
+    ctx.fillStyle='#f5c99a'; ctx.beginPath(); ctx.arc(0,16,4,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+  };
+  drawArm(7,-leg); drawArm(pw-7,leg);
+
+  // Head
+  ctx.fillStyle='#f5c99a';
+  ctx.beginPath(); ctx.ellipse(px+pw/2,(py+ph*.21)|0,15,16,0,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#e8b580'; ctx.fillRect((px+pw/2-5)|0,(py+ph*.32)|0,10,6);
+
+  // Hat brim
+  ctx.fillStyle='#c07818'; ctx.beginPath(); ctx.ellipse(px+pw/2,(py+ph*.09)|0,24,6,0,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#e09020'; ctx.beginPath();
+  ctx.moveTo(px+pw/2-11,(py+ph*.09)|0); ctx.lineTo(px+pw/2+11,(py+ph*.09)|0);
+  ctx.lineTo(px+pw/2+8,(py+ph*.02)|0); ctx.lineTo(px+pw/2-8,(py+ph*.02)|0); ctx.fill();
+  ctx.fillStyle='#8D153A'; ctx.fillRect((px+pw/2-10)|0,(py+ph*.07)|0,20,3);
+
+  // Face
+  ctx.fillStyle='#2a1a0a'; ctx.beginPath();
+  ctx.arc(px+pw/2-5.5,(py+ph*.20)|0,2.5,0,Math.PI*2);
+  ctx.arc(px+pw/2+5.5,(py+ph*.20)|0,2.5,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='rgba(255,255,255,.7)'; ctx.beginPath();
+  ctx.arc(px+pw/2-4.5,(py+ph*.19)|0,1,0,Math.PI*2);
+  ctx.arc(px+pw/2+6.5,(py+ph*.19)|0,1,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle='#8b4513'; ctx.lineWidth=1.8; ctx.lineCap='round';
+  ctx.beginPath(); ctx.arc(px+pw/2,(py+ph*.245)|0,4.5,.15,Math.PI-.15); ctx.stroke();
+
+  // Turbo glow outline
+  if(activePowerup==='turbo'&&ql>=1){
+    setShadow('#FFB800',16); ctx.strokeStyle='rgba(255,184,0,.35)'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.roundRect(px+6,(py+ph*.30)|0,pw-12,ph*.72,6); ctx.stroke(); clearShadow();
+  }
+  ctx.restore();
+}
+
+function drawJumpIndicator(){
+  const cx=(player.x+player.w/2)|0;
+  const y=(player.y-13)|0;
+  for(let i=0;i<2;i++){
+    const avail=i<jumpsLeft;
+    ctx.beginPath(); ctx.arc(cx-7+i*14,y,4,0,Math.PI*2);
+    ctx.fillStyle=avail?'#FFB800':'rgba(255,255,255,.2)';
+    if(avail&&ql>=2){ setShadow('#FFB800',7); }
+    ctx.fill();
+    if(avail&&ql>=2){ clearShadow(); }
+  }
+}
+
+// =============================================
+//  HUD & FEEDBACK
+// =============================================
+function updateHUD(){
+  document.getElementById('scoreDisplay').textContent=score;
+  document.getElementById('distDisplay').textContent=Math.floor(distance)+'m';
+  document.getElementById('speedVal').textContent=speedMultiplier.toFixed(1);
+  document.getElementById('progressFill').style.width=Math.min(distance/MAX_DIST*100,100)+'%';
+}
+function updateComboDisplay(){
+  const el=document.getElementById('comboDisplay');
+  el.textContent='x'+combo;
+  el.style.color=combo>=8?'#ff3333':combo>=5?'#FF8C00':'#FFB800';
+  el.style.fontSize=combo>=5?'.95rem':'.82rem';
+  el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop');
+  sfx('combo'); checkAchievement(combo);
+}
+function flashVignette(cls){
+  const v=document.getElementById('vignette'); v.className=''; void v.offsetWidth; v.className=cls;
+}
+function showFeedback(text,x,y,color){
+  const el=document.createElement('div');
+  el.className='float-feedback'; el.textContent=text; el.style.color=color;
+  el.style.left=Math.min(Math.max(x-40,0),W-120)+'px';
+  el.style.top=(y-20)+'px';
+  document.getElementById('gameWrapper').appendChild(el);
+  setTimeout(()=>el.remove(),1300);
+}
+function spawnConfetti(){
+  const colors=['#FFB800','#FF8C00','#4CAF50','#8D153A','#2ecc71','#fff8e7','#ff6b8a'];
+  const ws=document.getElementById('winScreen');
+  for(let i=0;i<60;i++){
+    const d=document.createElement('div'); d.className='cpiece';
+    d.style.cssText=`left:${Math.random()*100}%;background:${colors[i%colors.length]};--cd:${1.4+Math.random()*1.8}s;--ca:${Math.random()*1.5}s`;
+    ws.appendChild(d);
+  }
+}
+
+// =============================================
+//  UTILS
+// =============================================
+function show(id,visible){
+  const el=document.getElementById(id);
+  if(visible){ el.classList.remove('hidden'); el.classList.add('active'); }
+  else        { el.classList.add('hidden');   el.classList.remove('active'); }
+}
+if(!CanvasRenderingContext2D.prototype.roundRect){
+  CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h,r){
+    this.beginPath(); this.moveTo(x+r,y);
+    this.lineTo(x+w-r,y); this.quadraticCurveTo(x+w,y,x+w,y+r);
+    this.lineTo(x+w,y+h-r); this.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+    this.lineTo(x+r,y+h); this.quadraticCurveTo(x,y+h,x,y+h-r);
+    this.lineTo(x,y+r); this.quadraticCurveTo(x,y,x+r,y);
+    this.closePath(); return this;
+  };
+}
+
+// Init
+document.getElementById('hsDisplay').textContent=highScore;
+document.getElementById('pauseBtn').style.display='none';
+(function initBG(){
+  ctx.fillStyle=getSkyGrad(); ctx.fillRect(0,0,W,GROUND_Y);
+  const soil=ctx.createLinearGradient(0,GROUND_Y,0,H);
+  soil.addColorStop(0,'#7abe48'); soil.addColorStop(.08,'#5a8a3c');
+  soil.addColorStop(.1,'#c8a96e'); soil.addColorStop(1,'#8b6340');
+  ctx.fillStyle=soil; ctx.fillRect(0,GROUND_Y,W,H-GROUND_Y);
+  ctx.fillStyle='#8ccc50'; ctx.fillRect(0,GROUND_Y|0,W,7);
+  drawPalm(200,GROUND_Y,110); drawPalm(600,GROUND_Y,130);
+})();
+</script>
+</body>
+</html>
