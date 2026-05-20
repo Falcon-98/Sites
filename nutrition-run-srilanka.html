@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Nutrition Run 🇱🇰 — Sri Lanka Nutrition Day</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root {
+    --sky: #87CEEB;
+    --ground: #5a8a3c;
+    --ground-dark: #3d6b28;
+    --track: #c8a96e;
+    --track-dark: #a8844e;
+    --sun: #FFD700;
+    --leaf: #2ecc71;
+    --danger: #e74c3c;
+    --gold: #f39c12;
+    --white: #fffef5;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: #1a1a2e;
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #gameWrapper {
+    position: relative;
+    width: 900px;
+    height: 520px;
+    overflow: hidden;
+    border-radius: 20px;
+    box-shadow: 0 0 60px rgba(0,0,0,0.8), 0 0 120px rgba(255,200,50,0.15);
+    border: 3px solid #f39c12;
+  }
+
+  /* ===== CANVAS ===== */
+  #gameCanvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, #87CEEB 0%, #b8e4f5 55%, #5a8a3c 55%, #3d6b28 100%);
+  }
+
+  /* ===== SCREENS ===== */
+  .screen {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    pointer-events: none;
+  }
+  .screen.active { pointer-events: all; }
+  .screen.hidden { display: none !important; }
+
+  /* ===== START SCREEN ===== */
+  #startScreen {
+    background: linear-gradient(160deg, #0f4c2a 0%, #1a7a42 40%, #0d3b1e 100%);
+  }
+  #startScreen::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(255,200,50,0.18) 0%, transparent 70%);
+  }
+
+  .start-badge {
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+    color: #fff;
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.85rem;
+    padding: 6px 18px;
+    border-radius: 999px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    box-shadow: 0 4px 20px rgba(243,156,18,0.5);
+  }
+
+  .game-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 3.4rem;
+    color: #fff;
+    text-align: center;
+    line-height: 1.1;
+    text-shadow: 0 4px 20px rgba(0,0,0,0.5), 3px 3px 0 #0d3b1e;
+    margin-bottom: 6px;
+  }
+  .game-title span { color: #FFD700; }
+
+  .subtitle {
+    color: #a8e6c0;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 30px;
+    letter-spacing: 1px;
+  }
+
+  .food-icons-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 32px;
+    font-size: 2rem;
+    animation: floatRow 3s ease-in-out infinite;
+  }
+  @keyframes floatRow {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  .how-to-box {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 16px;
+    padding: 16px 28px;
+    color: #d4f5e2;
+    font-size: 0.88rem;
+    font-weight: 600;
+    line-height: 1.8;
+    margin-bottom: 28px;
+    max-width: 480px;
+    text-align: center;
+    backdrop-filter: blur(6px);
+  }
+  .how-to-box strong { color: #FFD700; }
+
+  .btn-start {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.5rem;
+    background: linear-gradient(135deg, #FFD700, #f39c12);
+    color: #1a1a2e;
+    border: none;
+    padding: 14px 52px;
+    border-radius: 999px;
+    cursor: pointer;
+    box-shadow: 0 6px 30px rgba(255,215,0,0.5), 0 0 0 4px rgba(255,215,0,0.15);
+    transition: all 0.2s;
+    letter-spacing: 1px;
+  }
+  .btn-start:hover {
+    transform: scale(1.06) translateY(-2px);
+    box-shadow: 0 10px 40px rgba(255,215,0,0.7), 0 0 0 6px rgba(255,215,0,0.2);
+  }
+
+  /* ===== HUD ===== */
+  #hud {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    padding: 10px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 5;
+    pointer-events: none;
+  }
+  .hud-pill {
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(6px);
+    border-radius: 999px;
+    padding: 5px 14px;
+    color: #fff;
+    font-weight: 800;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+  .hud-pill .icon { font-size: 1.1rem; }
+  #comboDisplay {
+    color: #FFD700;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.1rem;
+    transition: all 0.3s;
+  }
+  #comboDisplay.pop {
+    animation: comboPop 0.4s ease;
+  }
+  @keyframes comboPop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.5); color: #ff6b35; }
+    100% { transform: scale(1); }
+  }
+
+  /* ===== LIVES ===== */
+  #livesDisplay { display: flex; gap: 4px; }
+  .heart { font-size: 1.2rem; transition: all 0.3s; }
+  .heart.lost { opacity: 0.25; filter: grayscale(1); }
+
+  /* ===== QUIZ OVERLAY ===== */
+  #quizOverlay {
+    background: rgba(0,0,0,0.82);
+    backdrop-filter: blur(10px);
+  }
+
+  .quiz-card {
+    background: linear-gradient(145deg, #1a1a2e, #16213e);
+    border: 2px solid #e74c3c;
+    border-radius: 20px;
+    padding: 30px 36px;
+    max-width: 520px;
+    width: 90%;
+    box-shadow: 0 0 60px rgba(231,76,60,0.4);
+    animation: quizSlideIn 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes quizSlideIn {
+    from { transform: scale(0.7) translateY(30px); opacity: 0; }
+    to { transform: scale(1) translateY(0); opacity: 1; }
+  }
+
+  .quiz-danger-tag {
+    background: #e74c3c;
+    color: #fff;
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.8rem;
+    padding: 4px 14px;
+    border-radius: 999px;
+    letter-spacing: 2px;
+    display: inline-block;
+    margin-bottom: 12px;
+    animation: pulse-tag 1s ease-in-out infinite;
+  }
+  @keyframes pulse-tag {
+    0%,100% { box-shadow: 0 0 0 0 rgba(231,76,60,0.5); }
+    50% { box-shadow: 0 0 0 8px rgba(231,76,60,0); }
+  }
+
+  .quiz-food-icon {
+    font-size: 3.5rem;
+    text-align: center;
+    margin-bottom: 10px;
+    animation: wobble 0.5s ease-in-out;
+  }
+  @keyframes wobble {
+    0%,100%{transform:rotate(0)} 25%{transform:rotate(-12deg)} 75%{transform:rotate(12deg)}
+  }
+
+  .quiz-question {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.3rem;
+    color: #fff;
+    text-align: center;
+    margin-bottom: 20px;
+    line-height: 1.4;
+  }
+
+  .quiz-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .quiz-opt {
+    background: rgba(255,255,255,0.07);
+    border: 2px solid rgba(255,255,255,0.15);
+    border-radius: 12px;
+    color: #fff;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 0.92rem;
+    padding: 12px 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+  }
+  .quiz-opt:hover {
+    background: rgba(255,255,255,0.14);
+    border-color: #FFD700;
+    transform: translateY(-2px);
+    color: #FFD700;
+  }
+  .quiz-opt.correct {
+    background: rgba(46,204,113,0.3);
+    border-color: #2ecc71;
+    color: #2ecc71;
+    animation: correctFlash 0.5s ease;
+  }
+  .quiz-opt.wrong {
+    background: rgba(231,76,60,0.3);
+    border-color: #e74c3c;
+    color: #e74c3c;
+    animation: shake 0.4s ease;
+  }
+  @keyframes correctFlash {
+    0%,100%{transform:scale(1)} 50%{transform:scale(1.06)}
+  }
+  @keyframes shake {
+    0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)}
+  }
+
+  .quiz-timer-bar {
+    height: 6px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-bottom: 18px;
+  }
+  .quiz-timer-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #2ecc71, #f39c12, #e74c3c);
+    border-radius: 999px;
+    transition: width 0.1s linear;
+  }
+
+  .quiz-fact {
+    margin-top: 14px;
+    background: rgba(255,215,0,0.1);
+    border-left: 3px solid #FFD700;
+    padding: 10px 14px;
+    border-radius: 0 8px 8px 0;
+    color: #FFD700;
+    font-size: 0.82rem;
+    font-weight: 600;
+    line-height: 1.5;
+    display: none;
+  }
+
+  /* ===== GAME OVER / WIN ===== */
+  #gameOverScreen {
+    background: linear-gradient(160deg, #1a0a0a 0%, #3d0f0f 50%, #1a0a0a 100%);
+  }
+  #winScreen {
+    background: linear-gradient(160deg, #0a1a0a 0%, #0f3d1a 50%, #0a1a0a 100%);
+  }
+
+  .result-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 3rem;
+    text-align: center;
+    text-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    margin-bottom: 10px;
+  }
+  .result-score {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.8rem;
+    color: #FFD700;
+    margin-bottom: 6px;
+  }
+  .result-sub {
+    color: rgba(255,255,255,0.6);
+    font-size: 0.95rem;
+    margin-bottom: 28px;
+  }
+
+  /* ===== FLOATING FEEDBACK ===== */
+  .float-feedback {
+    position: absolute;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.6rem;
+    pointer-events: none;
+    z-index: 20;
+    animation: floatUp 1.2s ease forwards;
+    text-shadow: 2px 2px 6px rgba(0,0,0,0.5);
+  }
+  @keyframes floatUp {
+    0%   { opacity: 1; transform: translateY(0) scale(1); }
+    60%  { opacity: 1; transform: translateY(-60px) scale(1.1); }
+    100% { opacity: 0; transform: translateY(-100px) scale(0.8); }
+  }
+
+  /* ===== PARALLAX LAYERS ===== */
+  #cloudLayer, #treeLayer {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* ===== SPEED INDICATOR ===== */
+  #speedBar {
+    position: absolute;
+    bottom: 12px;
+    right: 14px;
+    background: rgba(0,0,0,0.5);
+    border-radius: 999px;
+    padding: 4px 12px;
+    color: #FFD700;
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.82rem;
+    z-index: 5;
+    pointer-events: none;
+  }
+
+  /* ===== DISTANCE PROGRESS ===== */
+  #progressBar {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 5px;
+    background: rgba(255,255,255,0.1);
+    z-index: 5;
+  }
+  #progressFill {
+    height: 100%;
+    background: linear-gradient(90deg, #2ecc71, #FFD700);
+    transition: width 0.3s ease;
+  }
+
+  /* Responsive shrink for small screens */
+  @media (max-width: 960px) {
+    #gameWrapper { width: 98vw; height: 56vw; min-height: 300px; }
+    .game-title { font-size: 2.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<div id="gameWrapper">
+  <canvas id="gameCanvas" width="900" height="520"></canvas>
+
+  <!-- HUD -->
+  <div id="hud">
+    <div style="display:flex;gap:8px">
+      <div class="hud-pill"><span class="icon">⭐</span><span id="scoreDisplay">0</span></div>
+      <div class="hud-pill"><span class="icon">🔥</span><span id="comboDisplay">x1</span></div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <div class="hud-pill"><span class="icon">📏</span><span id="distDisplay">0m</span></div>
+      <div class="hud-pill" id="livesDisplay">
+        <span class="heart" id="h1">❤️</span>
+        <span class="heart" id="h2">❤️</span>
+        <span class="heart" id="h3">❤️</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="speedBar">🏃 SPEED x<span id="speedVal">1.0</span></div>
+
+  <div id="progressBar"><div id="progressFill" style="width:0%"></div></div>
+
+  <!-- START SCREEN -->
+  <div id="startScreen" class="screen active">
+    <div class="start-badge">🇱🇰 Sri Lanka Nutrition Day</div>
+    <div class="game-title">Nutrition<br/><span>Run!</span></div>
+    <div class="subtitle">Farm to Fork — Myth Buster Edition</div>
+    <div class="food-icons-row">🥥 🌿 🍚 🍌 🧅 🐟 🌶️ 🍋</div>
+    <div class="how-to-box">
+      <strong>⬆ JUMP</strong> to collect healthy foods &amp; avoid junk!<br/>
+      If you eat <strong>unhealthy food</strong>, answer a nutrition quiz<br/>
+      to save yourself — or <strong>lose a life</strong>!<br/>
+      Reach <strong>2000m</strong> to win the run! 🏆
+    </div>
+    <button class="btn-start" onclick="startGame()">🌾 START RUN!</button>
+  </div>
+
+  <!-- QUIZ OVERLAY -->
+  <div id="quizOverlay" class="screen hidden">
+    <div class="quiz-card">
+      <div class="quiz-danger-tag">⚠️ UNHEALTHY FOOD ALERT</div>
+      <div class="quiz-food-icon" id="quizFoodIcon">🍟</div>
+      <div class="quiz-timer-bar"><div class="quiz-timer-fill" id="quizTimerFill" style="width:100%"></div></div>
+      <div class="quiz-question" id="quizQuestion">Loading question...</div>
+      <div class="quiz-options" id="quizOptions"></div>
+      <div class="quiz-fact" id="quizFact"></div>
+    </div>
+  </div>
+
+  <!-- GAME OVER -->
+  <div id="gameOverScreen" class="screen hidden">
+    <div style="font-size:4rem;margin-bottom:10px;animation:wobble 1s ease infinite">💀</div>
+    <div class="result-title" style="color:#e74c3c">Game Over!</div>
+    <div class="result-score">Score: <span id="finalScore">0</span></div>
+    <div class="result-sub" id="finalDist">Distance: 0m</div>
+    <div class="result-sub" style="color:#e88">Your nutrition knowledge needs work!<br/>Learn and try again! 🇱🇰</div>
+    <button class="btn-start" style="margin-top:8px" onclick="restartGame()">🔄 TRY AGAIN</button>
+  </div>
+
+  <!-- WIN SCREEN -->
+  <div id="winScreen" class="screen hidden">
+    <div style="font-size:4rem;margin-bottom:10px;animation:floatRow 1.5s ease-in-out infinite">🏆</div>
+    <div class="result-title" style="color:#FFD700">You Win!</div>
+    <div class="result-score">Score: <span id="winScore">0</span></div>
+    <div class="result-sub" id="winDist">Distance: 2000m</div>
+    <div class="result-sub" style="color:#8ef0a2">You're a Sri Lankan Nutrition Champion! 🌿🥥</div>
+    <button class="btn-start" style="margin-top:8px" onclick="restartGame()">🎮 PLAY AGAIN</button>
+  </div>
+</div>
+
+<script>
+// =============================================
+//  DATA
+// =============================================
+const HEALTHY_FOODS = [
+  { emoji:'🥥', name:'King Coconut', pts:15, msg:'Superhydrator!' },
+  { emoji:'🌿', name:'Gotukola', pts:20, msg:'Brain Boost!' },
+  { emoji:'🍌', name:'Banana', pts:10, msg:'Energy Up!' },
+  { emoji:'🐟', name:'Fish', pts:18, msg:'Omega-3 Power!' },
+  { emoji:'🧅', name:'Red Onion', pts:12, msg:'Antioxidant!' },
+  { emoji:'🌶️', name:'Green Chilli', pts:10, msg:'Vitamin C!' },
+  { emoji:'🍋', name:'Lime', pts:10, msg:'Fresh Boost!' },
+  { emoji:'🥬', name:'Mukunuwenna', pts:22, msg:'Iron Rich!' },
+  { emoji:'🫘', name:'Dhal', pts:14, msg:'Protein Power!' },
+  { emoji:'🍠', name:'Sweet Potato', pts:12, msg:'Fibre Rich!' },
+];
+
+const UNHEALTHY_FOODS = [
+  { emoji:'🍟', name:'French Fries',
+    question:'What is the main health risk of deep-fried foods?',
+    options:['High in Trans Fats','Rich in Protein','Good for Heart','Low Calories'],
+    correct:0, fact:'Deep-fried foods are high in trans fats and saturated fats, which raise bad cholesterol and increase heart disease risk.' },
+  { emoji:'🥤', name:'Soda',
+    question:'How much sugar is in an average can of soda?',
+    options:['About 2 tsp','About 10 tsp','About 1 tsp','None at all'],
+    correct:1, fact:'A single 330ml can of soda contains around 35g (7-10 tsp) of sugar — far exceeding the daily recommendation!' },
+  { emoji:'🍔', name:'Burger',
+    question:'Which nutrient is excessive in processed fast food?',
+    options:['Fibre','Vitamin C','Sodium','Calcium'],
+    correct:2, fact:'Fast food burgers are extremely high in sodium (salt), contributing to high blood pressure and kidney issues.' },
+  { emoji:'🍩', name:'Donut',
+    question:'Donuts are high in which harmful type of fat?',
+    options:['Omega-3','Trans Fat','Monounsaturated','Polyunsaturated'],
+    correct:1, fact:'Donuts made with partially hydrogenated oils contain trans fats, the most harmful dietary fat for your heart.' },
+  { emoji:'🧁', name:'Cupcake',
+    question:'Excess sugar consumption primarily contributes to?',
+    options:['Strong Bones','Diabetes & Obesity','Better Vision','More Energy'],
+    correct:1, fact:'High sugar intake is a leading cause of type 2 diabetes, obesity, and dental decay. Sri Lanka has rising diabetes rates!' },
+  { emoji:'🍕', name:'Junk Pizza',
+    question:'What is "empty calories" in junk food?',
+    options:['Calories with nutrients','Calories without nutrients','Zero calorie food','Healthy fast food'],
+    correct:1, fact:'Empty calories provide energy but zero nutritional value — common in chips, pizza, and sweets.' },
+  { emoji:'🍭', name:'Candy',
+    question:'Which local Sri Lankan fruit is a HEALTHY sweet alternative?',
+    options:['Wood Apple','Bubblegum','Toffee','Cola Nut'],
+    correct:0, fact:'Wood apple (Beli mal) is a traditional Sri Lankan fruit rich in vitamins and antioxidants — a perfect natural sweet!' },
+  { emoji:'🥨', name:'Salted Snack',
+    question:'High sodium intake is most directly linked to?',
+    options:['Good eyesight','Hypertension (High BP)','Strong muscles','Clear skin'],
+    correct:1, fact:'Excess sodium raises blood pressure, a major risk factor for stroke and heart disease. Gotukola sambol is a healthier Sri Lankan snack!' },
+];
+
+// =============================================
+//  GAME STATE
+// =============================================
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const W = 900, H = 520;
+
+let gameState = 'start'; // start | playing | quiz | gameover | win
+let score = 0, combo = 1, lives = 3, distance = 0;
+const MAX_DIST = 2000;
+
+// Player
+let player = {
+  x: 120, y: 0, w: 52, h: 64,
+  vy: 0, onGround: true,
+  frame: 0, frameTimer: 0,
+  invincible: 0,
+  hitAnim: 0,
+};
+const GROUND_Y = H * 0.56; // pixel Y of ground surface
+const GRAVITY = 0.6;
+const JUMP_FORCE = -14;
+
+// World speed
+let worldSpeed = 4;
+let speedMultiplier = 1;
+let frameCount = 0;
+
+// Objects
+let items = [];
+let spawnTimer = 0;
+
+// Clouds
+let clouds = [
+  {x:100, y:40, w:120, h:50, s:0.4},
+  {x:400, y:65, w:90, h:40, s:0.3},
+  {x:700, y:35, w:140, h:55, s:0.5},
+];
+// Trees (background)
+let trees = [
+  {x:200, y: GROUND_Y - 90, h:90},
+  {x:500, y: GROUND_Y - 110, h:110},
+  {x:750, y: GROUND_Y - 80, h:80},
+];
+
+// Quiz state
+let currentQuizFood = null;
+let quizTimerVal = 100;
+let quizTimerInterval = null;
+let quizAnswered = false;
+
+// =============================================
+//  INPUT
+// =============================================
+document.addEventListener('keydown', e => {
+  if ((e.code === 'Space' || e.code === 'ArrowUp') && gameState === 'playing') {
+    doJump();
+    e.preventDefault();
+  }
+});
+canvas.addEventListener('click', () => {
+  if (gameState === 'playing') doJump();
+});
+// Touch
+canvas.addEventListener('touchstart', e => {
+  if (gameState === 'playing') { doJump(); e.preventDefault(); }
+}, {passive:false});
+
+function doJump() {
+  if (player.onGround) {
+    player.vy = JUMP_FORCE;
+    player.onGround = false;
+  }
+}
+
+// =============================================
+//  GAME LIFECYCLE
+// =============================================
+function startGame() {
+  show('startScreen', false);
+  gameState = 'playing';
+  score = 0; combo = 1; lives = 3; distance = 0;
+  worldSpeed = 4; speedMultiplier = 1; frameCount = 0;
+  player.y = GROUND_Y - player.h;
+  player.vy = 0; player.onGround = true;
+  player.invincible = 0;
+  items = []; spawnTimer = 0;
+  updateHUD();
+  requestAnimationFrame(loop);
+}
+
+function restartGame() {
+  show('gameOverScreen', false);
+  show('winScreen', false);
+  startGame();
+}
+
+// =============================================
+//  MAIN LOOP
+// =============================================
+function loop() {
+  if (gameState !== 'playing') return;
+  frameCount++;
+
+  update();
+  render();
+  updateHUD();
+
+  requestAnimationFrame(loop);
+}
+
+function update() {
+  // Speed ramp
+  speedMultiplier = 1 + distance / 1000 * 0.5;
+  const spd = worldSpeed * speedMultiplier;
+
+  // Distance
+  distance += spd * 0.05;
+  if (distance >= MAX_DIST) { triggerWin(); return; }
+
+  // Player physics
+  player.vy += GRAVITY;
+  player.y += player.vy;
+  const groundLevel = GROUND_Y - player.h;
+  if (player.y >= groundLevel) {
+    player.y = groundLevel;
+    player.vy = 0;
+    player.onGround = true;
+  }
+  if (player.invincible > 0) player.invincible--;
+  if (player.hitAnim > 0) player.hitAnim--;
+
+  // Run animation frame
+  player.frameTimer++;
+  if (player.frameTimer > 8) { player.frame = (player.frame + 1) % 4; player.frameTimer = 0; }
+
+  // Clouds
+  clouds.forEach(c => { c.x -= c.s * spd * 0.3; if (c.x + c.w < 0) c.x = W + 20; });
+
+  // Trees
+  trees.forEach(t => { t.x -= spd * 0.5; if (t.x < -80) t.x = W + Math.random()*200; });
+
+  // Spawn items
+  spawnTimer++;
+  const spawnInterval = Math.max(55, 90 - distance / 40);
+  if (spawnTimer >= spawnInterval) {
+    spawnTimer = 0;
+    spawnItem(spd);
+  }
+
+  // Move items
+  items.forEach(item => { item.x -= spd; item.floatY = Math.sin(frameCount * 0.08 + item.seed) * 5; });
+  items = items.filter(i => i.x > -60);
+
+  // Collision
+  checkCollisions();
+}
+
+function spawnItem(spd) {
+  const isJunk = Math.random() < 0.32;
+  const data = isJunk
+    ? UNHEALTHY_FOODS[Math.floor(Math.random() * UNHEALTHY_FOODS.length)]
+    : HEALTHY_FOODS[Math.floor(Math.random() * HEALTHY_FOODS.length)];
+
+  const onGround = Math.random() < 0.4;
+  const yPos = onGround
+    ? GROUND_Y - 48
+    : GROUND_Y - 48 - Math.random() * 120 - 30;
+
+  items.push({
+    x: W + 40,
+    y: yPos,
+    w: 44, h: 44,
+    data,
+    isJunk,
+    seed: Math.random() * Math.PI * 2,
+    floatY: 0,
+    collected: false,
+  });
+}
+
+function checkCollisions() {
+  if (player.invincible > 0) return;
+  for (let item of items) {
+    if (item.collected) continue;
+    const px = player.x + 8, pw = player.w - 16;
+    const py = player.y + 8, ph = player.h - 12;
+    const ix = item.x, iw = item.w;
+    const iy = item.y + item.floatY, ih = item.h;
+
+    if (px < ix + iw && px + pw > ix && py < iy + ih && py + ph > iy) {
+      item.collected = true;
+      if (item.isJunk) {
+        triggerQuiz(item.data, item.x + item.w / 2, item.y);
+      } else {
+        collectHealthy(item);
+      }
+      break;
+    }
+  }
+}
+
+function collectHealthy(item) {
+  score += item.data.pts * combo;
+  combo = Math.min(combo + 1, 8);
+  showFeedback('+' + (item.data.pts * combo), item.x + item.w/2, item.y, '#2ecc71');
+  showFeedback(item.data.msg, item.x + item.w/2, item.y - 35, '#FFD700');
+  updateComboDisplay();
+}
+
+// =============================================
+//  QUIZ
+// =============================================
+function triggerQuiz(foodData, fx, fy) {
+  gameState = 'quiz';
+  currentQuizFood = foodData;
+  quizAnswered = false;
+  showFeedback('😱 ' + foodData.name + '!', fx, fy, '#e74c3c');
+
+  document.getElementById('quizFoodIcon').textContent = foodData.emoji;
+  document.getElementById('quizQuestion').textContent = foodData.question;
+  document.getElementById('quizFact').style.display = 'none';
+
+  const optsEl = document.getElementById('quizOptions');
+  optsEl.innerHTML = '';
+  foodData.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-opt';
+    btn.textContent = opt;
+    btn.onclick = () => answerQuiz(i, btn);
+    optsEl.appendChild(btn);
+  });
+
+  quizTimerVal = 100;
+  document.getElementById('quizTimerFill').style.width = '100%';
+  show('quizOverlay', true);
+
+  clearInterval(quizTimerInterval);
+  quizTimerInterval = setInterval(() => {
+    if (quizAnswered) return;
+    quizTimerVal -= 1.4;
+    document.getElementById('quizTimerFill').style.width = quizTimerVal + '%';
+    if (quizTimerVal <= 0) {
+      clearInterval(quizTimerInterval);
+      quizTimeUp();
+    }
+  }, 100);
+}
+
+function answerQuiz(idx, btn) {
+  if (quizAnswered) return;
+  quizAnswered = true;
+  clearInterval(quizTimerInterval);
+
+  const food = currentQuizFood;
+  const allBtns = document.querySelectorAll('.quiz-opt');
+
+  if (idx === food.correct) {
+    btn.classList.add('correct');
+    combo = Math.max(combo - 1, 1);
+    document.getElementById('quizFact').style.display = 'block';
+    document.getElementById('quizFact').textContent = '💡 ' + food.fact;
+    setTimeout(closeQuiz, 2200);
+  } else {
+    btn.classList.add('wrong');
+    allBtns[food.correct].classList.add('correct');
+    document.getElementById('quizFact').style.display = 'block';
+    document.getElementById('quizFact').textContent = '💡 ' + food.fact;
+    loseLife();
+    setTimeout(() => {
+      if (lives > 0) closeQuiz();
+    }, 2400);
+  }
+}
+
+function quizTimeUp() {
+  if (quizAnswered) return;
+  quizAnswered = true;
+  const allBtns = document.querySelectorAll('.quiz-opt');
+  allBtns[currentQuizFood.correct].classList.add('correct');
+  document.getElementById('quizFact').style.display = 'block';
+  document.getElementById('quizFact').textContent = '⏰ Time\'s up! ' + currentQuizFood.fact;
+  loseLife();
+  setTimeout(() => { if (lives > 0) closeQuiz(); }, 2400);
+}
+
+function closeQuiz() {
+  show('quizOverlay', false);
+  player.invincible = 120;
+  gameState = 'playing';
+  requestAnimationFrame(loop);
+}
+
+function loseLife() {
+  lives--;
+  combo = 1;
+  player.hitAnim = 40;
+  const hearts = ['h1','h2','h3'];
+  document.getElementById(hearts[lives])?.classList.add('lost');
+  if (lives <= 0) {
+    setTimeout(triggerGameOver, 1800);
+  }
+}
+
+function triggerGameOver() {
+  clearInterval(quizTimerInterval);
+  show('quizOverlay', false);
+  gameState = 'gameover';
+  document.getElementById('finalScore').textContent = score;
+  document.getElementById('finalDist').textContent = 'Distance: ' + Math.floor(distance) + 'm';
+  show('gameOverScreen', true);
+}
+
+function triggerWin() {
+  gameState = 'win';
+  document.getElementById('winScore').textContent = score;
+  document.getElementById('winDist').textContent = 'Distance: ' + Math.floor(distance) + 'm';
+  show('winScreen', true);
+}
+
+// =============================================
+//  RENDER
+// =============================================
+function render() {
+  ctx.clearRect(0, 0, W, H);
+
+  // Sky gradient
+  const sky = ctx.createLinearGradient(0, 0, 0, H * 0.56);
+  sky.addColorStop(0, '#4aa8d8');
+  sky.addColorStop(1, '#b8e4f5');
+  ctx.fillStyle = sky;
+  ctx.fillRect(0, 0, W, H * 0.56);
+
+  // Sun
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(820, 60, 38, 0, Math.PI * 2);
+  const sunGrad = ctx.createRadialGradient(820, 60, 5, 820, 60, 38);
+  sunGrad.addColorStop(0, '#FFE566');
+  sunGrad.addColorStop(1, '#FFD700');
+  ctx.fillStyle = sunGrad;
+  ctx.shadowColor = '#FFD70077';
+  ctx.shadowBlur = 30;
+  ctx.fill();
+  ctx.restore();
+
+  // Clouds
+  clouds.forEach(c => drawCloud(c));
+
+  // Ground
+  const groundGrad = ctx.createLinearGradient(0, GROUND_Y, 0, H);
+  groundGrad.addColorStop(0, '#6ab040');
+  groundGrad.addColorStop(0.12, '#5a8a3c');
+  groundGrad.addColorStop(0.13, '#c8a96e');
+  groundGrad.addColorStop(1, '#8b6340');
+  ctx.fillStyle = groundGrad;
+  ctx.fillRect(0, GROUND_Y, W, H - GROUND_Y);
+
+  // Ground line detail
+  ctx.fillStyle = '#82c050';
+  ctx.fillRect(0, GROUND_Y, W, 6);
+
+  // Track dashes
+  ctx.fillStyle = 'rgba(255,255,255,0.18)';
+  for (let i = 0; i < 6; i++) {
+    const tx = ((frameCount * worldSpeed * speedMultiplier * 0.8) % 180);
+    ctx.fillRect(i * 180 - tx + 20, GROUND_Y + 18, 80, 4);
+  }
+
+  // Trees (background)
+  trees.forEach(t => drawTree(t));
+
+  // Items
+  items.forEach(item => {
+    if (item.collected) return;
+    const iy = item.y + item.floatY;
+
+    // Glow ring
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(item.x + item.w/2, iy + item.h/2, 28, 0, Math.PI * 2);
+    ctx.fillStyle = item.isJunk
+      ? 'rgba(231,76,60,0.18)'
+      : 'rgba(46,204,113,0.18)';
+    ctx.fill();
+    ctx.restore();
+
+    // Emoji
+    ctx.font = '32px serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(item.data.emoji, item.x + item.w/2, iy + item.h/2);
+
+    // Label
+    ctx.font = 'bold 9px Nunito, sans-serif';
+    ctx.fillStyle = item.isJunk ? '#ff6b6b' : '#2ecc71';
+    ctx.fillText(item.data.name, item.x + item.w/2, iy + item.h + 10);
+  });
+
+  // Player
+  drawPlayer();
+}
+
+function drawCloud(c) {
+  ctx.save();
+  ctx.fillStyle = 'rgba(255,255,255,0.9)';
+  ctx.shadowColor = 'rgba(255,255,255,0.5)';
+  ctx.shadowBlur = 10;
+  const cx = c.x, cy = c.y, cw = c.w, ch = c.h;
+  ctx.beginPath();
+  ctx.ellipse(cx + cw*0.5, cy + ch*0.6, cw*0.5, ch*0.4, 0, 0, Math.PI*2);
+  ctx.ellipse(cx + cw*0.3, cy + ch*0.45, cw*0.28, ch*0.38, 0, 0, Math.PI*2);
+  ctx.ellipse(cx + cw*0.7, cy + ch*0.5, cw*0.25, ch*0.32, 0, 0, Math.PI*2);
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawTree(t) {
+  ctx.save();
+  // Trunk
+  ctx.fillStyle = '#7a5c38';
+  ctx.fillRect(t.x + 12, t.y + t.h * 0.55, 14, t.h * 0.45);
+  // Canopy
+  ctx.fillStyle = '#2d7a2d';
+  ctx.beginPath();
+  ctx.ellipse(t.x + 19, t.y + t.h * 0.35, 26, t.h * 0.45, 0, 0, Math.PI*2);
+  ctx.fill();
+  ctx.fillStyle = '#3a9e3a';
+  ctx.beginPath();
+  ctx.ellipse(t.x + 26, t.y + t.h * 0.25, 20, t.h * 0.35, 0, 0, Math.PI*2);
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawPlayer() {
+  const px = player.x, py = player.y;
+  const pw = player.w, ph = player.h;
+
+  // Invincibility flicker
+  if (player.invincible > 0 && Math.floor(player.invincible / 5) % 2 === 0) return;
+
+  ctx.save();
+
+  // Hit flash
+  if (player.hitAnim > 0) {
+    ctx.shadowColor = '#e74c3c';
+    ctx.shadowBlur = 20;
+  }
+
+  // Body (farmer outfit)
+  // Legs animation
+  const legSwing = Math.sin(frameCount * 0.25) * 10;
+
+  // Shadow
+  ctx.fillStyle = 'rgba(0,0,0,0.2)';
+  ctx.beginPath();
+  ctx.ellipse(px + pw/2, py + ph + 4, pw*0.4, 7, 0, 0, Math.PI*2);
+  ctx.fill();
+
+  // Left leg
+  ctx.fillStyle = '#3b5bdb';
+  ctx.save();
+  ctx.translate(px + pw/2 - 8, py + ph * 0.65);
+  ctx.rotate((legSwing * Math.PI) / 180);
+  ctx.fillRect(-5, 0, 10, 20);
+  ctx.restore();
+
+  // Right leg
+  ctx.save();
+  ctx.translate(px + pw/2 + 8, py + ph * 0.65);
+  ctx.rotate((-legSwing * Math.PI) / 180);
+  ctx.fillRect(-5, 0, 10, 20);
+  ctx.restore();
+
+  // Body / shirt
+  const bodyGrad = ctx.createLinearGradient(px+8, py+ph*0.35, px+pw-8, py+ph*0.65);
+  bodyGrad.addColorStop(0, '#e8a020');
+  bodyGrad.addColorStop(1, '#c07010');
+  ctx.fillStyle = bodyGrad;
+  ctx.beginPath();
+  ctx.roundRect(px + 8, py + ph * 0.35, pw - 16, ph * 0.38, 4);
+  ctx.fill();
+
+  // Arm swing
+  ctx.fillStyle = '#e8a020';
+  ctx.save();
+  ctx.translate(px + 6, py + ph * 0.4);
+  ctx.rotate((-legSwing * Math.PI) / 180);
+  ctx.fillRect(-4, 0, 8, 16);
+  ctx.restore();
+
+  ctx.save();
+  ctx.translate(px + pw - 6, py + ph * 0.4);
+  ctx.rotate((legSwing * Math.PI) / 180);
+  ctx.fillRect(-4, 0, 8, 16);
+  ctx.restore();
+
+  // Head
+  ctx.fillStyle = '#f5c99a';
+  ctx.beginPath();
+  ctx.ellipse(px + pw/2, py + ph * 0.22, 15, 16, 0, 0, Math.PI*2);
+  ctx.fill();
+
+  // Hat (farmer hat)
+  ctx.fillStyle = '#c8963c';
+  ctx.beginPath();
+  ctx.ellipse(px + pw/2, py + ph * 0.1, 21, 5, 0, 0, Math.PI*2);
+  ctx.fill();
+  ctx.fillStyle = '#b07820';
+  ctx.beginPath();
+  ctx.moveTo(px + pw/2 - 10, py + ph * 0.1);
+  ctx.lineTo(px + pw/2 + 10, py + ph * 0.1);
+  ctx.lineTo(px + pw/2 + 7, py + ph * 0.03);
+  ctx.lineTo(px + pw/2 - 7, py + ph * 0.03);
+  ctx.fill();
+
+  // Eyes
+  ctx.fillStyle = '#222';
+  ctx.beginPath();
+  ctx.arc(px + pw/2 - 5, py + ph*0.21, 2.5, 0, Math.PI*2);
+  ctx.arc(px + pw/2 + 5, py + ph*0.21, 2.5, 0, Math.PI*2);
+  ctx.fill();
+
+  // Smile
+  ctx.strokeStyle = '#8b4513';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.arc(px + pw/2, py + ph*0.25, 5, 0.2, Math.PI - 0.2);
+  ctx.stroke();
+
+  ctx.restore();
+}
+
+// =============================================
+//  HUD UPDATE
+// =============================================
+function updateHUD() {
+  document.getElementById('scoreDisplay').textContent = score;
+  document.getElementById('distDisplay').textContent = Math.floor(distance) + 'm';
+  document.getElementById('speedVal').textContent = speedMultiplier.toFixed(1);
+  document.getElementById('progressFill').style.width = Math.min(distance / MAX_DIST * 100, 100) + '%';
+}
+
+function updateComboDisplay() {
+  const el = document.getElementById('comboDisplay');
+  el.textContent = 'x' + combo;
+  el.classList.remove('pop');
+  void el.offsetWidth;
+  el.classList.add('pop');
+}
+
+// =============================================
+//  FLOATING FEEDBACK
+// =============================================
+function showFeedback(text, x, y, color) {
+  const el = document.createElement('div');
+  el.className = 'float-feedback';
+  el.textContent = text;
+  el.style.color = color;
+  el.style.left = Math.min(Math.max(x - 40, 0), W - 100) + 'px';
+  el.style.top = (y - 20) + 'px';
+  document.getElementById('gameWrapper').appendChild(el);
+  setTimeout(() => el.remove(), 1300);
+}
+
+// =============================================
+//  UTILS
+// =============================================
+function show(id, visible) {
+  const el = document.getElementById(id);
+  if (visible) {
+    el.classList.remove('hidden');
+    el.classList.add('active');
+  } else {
+    el.classList.add('hidden');
+    el.classList.remove('active');
+  }
+}
+
+// Polyfill roundRect if needed
+if (!CanvasRenderingContext2D.prototype.roundRect) {
+  CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
+    this.beginPath();
+    this.moveTo(x + r, y);
+    this.lineTo(x + w - r, y);
+    this.quadraticCurveTo(x + w, y, x + w, y + r);
+    this.lineTo(x + w, y + h - r);
+    this.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    this.lineTo(x + r, y + h);
+    this.quadraticCurveTo(x, y + h, x, y + h - r);
+    this.lineTo(x, y + r);
+    this.quadraticCurveTo(x, y, x + r, y);
+    this.closePath();
+    return this;
+  };
+}
+
+// Draw start screen canvas background while on start
+(function initBG() {
+  const sky = ctx.createLinearGradient(0, 0, 0, H * 0.56);
+  sky.addColorStop(0, '#4aa8d8'); sky.addColorStop(1, '#b8e4f5');
+  ctx.fillStyle = sky;
+  ctx.fillRect(0, 0, W, H * 0.56);
+  const groundGrad = ctx.createLinearGradient(0, GROUND_Y, 0, H);
+  groundGrad.addColorStop(0, '#6ab040'); groundGrad.addColorStop(0.12, '#5a8a3c');
+  groundGrad.addColorStop(0.13, '#c8a96e'); groundGrad.addColorStop(1, '#8b6340');
+  ctx.fillStyle = groundGrad;
+  ctx.fillRect(0, GROUND_Y, W, H - GROUND_Y);
+})();
+</script>
+</body>
+</html>
