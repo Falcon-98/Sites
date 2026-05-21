@@ -1,0 +1,1678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>SL Nutrition Crossword · Nutrition Day 🇱🇰</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:opsz,wght@8..60,300;8..60,400;8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+/* ═══════════════════════════════════════════════
+   CLAUDE-INSPIRED THEME: Navy Blue + Gold
+   Font: Lora (serif display) + Source Serif 4 (body) + IBM Plex Mono (accents)
+═══════════════════════════════════════════════ */
+:root{
+  /* Core palette */
+  --navy:       #0a1628;
+  --navy-mid:   #112244;
+  --navy-light: #1a3666;
+  --navy-muted: #2a4a7f;
+  --gold:       #d4a843;
+  --gold-bright:#f0c040;
+  --gold-pale:  #f7e8b0;
+  --gold-glow:  rgba(212,168,67,0.25);
+  --cream:      #fdf8ed;
+  --cream-dark: #f5edda;
+  --white:      #ffffff;
+  --text:       #0a1628;
+  --muted:      #4a6fa5;
+  --border:     rgba(212,168,67,0.3);
+  --cell-size:  48px;
+  --radius:     12px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'Source Serif 4',Georgia,serif;
+  background:var(--navy);
+  color:var(--cream);
+  min-height:100vh;
+  overflow-x:hidden;
+  position:relative;
+}
+
+/* ── STARFIELD BACKGROUND ── */
+#bg-canvas{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:0.45;}
+
+/* ── GRAIN OVERLAY ── */
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:1;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity:0.35;
+}
+
+/* ── HEADER ── */
+header{
+  position:sticky;top:0;z-index:50;
+  background:linear-gradient(180deg,rgba(10,22,40,0.98) 0%,rgba(10,22,40,0.92) 100%);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  padding:0 20px;
+}
+.header-inner{
+  max-width:980px;margin:0 auto;
+  display:flex;align-items:center;justify-content:space-between;
+  height:60px;gap:12px;
+}
+.logo{
+  display:flex;align-items:center;gap:10px;
+  font-family:'Lora',serif;
+  text-decoration:none;
+}
+.logo-mark{
+  width:34px;height:34px;
+  background:linear-gradient(135deg,var(--gold),var(--gold-bright));
+  border-radius:8px;display:flex;align-items:center;justify-content:center;
+  font-size:1rem;font-weight:700;color:var(--navy);
+  box-shadow:0 2px 12px var(--gold-glow);
+  flex-shrink:0;
+}
+.logo-text{line-height:1.1;}
+.logo-text strong{
+  display:block;font-size:1rem;font-weight:700;
+  background:linear-gradient(90deg,var(--gold-bright),var(--gold));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.logo-text span{
+  font-size:0.62rem;font-style:italic;font-weight:400;
+  color:var(--muted);letter-spacing:0.5px;font-family:'Source Serif 4',serif;
+}
+.hdr-pills{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+.hpill{
+  display:flex;align-items:center;gap:5px;
+  background:rgba(212,168,67,0.1);
+  border:1px solid var(--border);
+  border-radius:999px;padding:4px 12px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:0.72rem;font-weight:600;color:var(--gold);
+  transition:all 0.3s;
+}
+.hpill .ico{font-size:0.85rem;}
+#timerPill{min-width:70px;justify-content:center;}
+
+/* ── MAIN ── */
+main{max-width:980px;margin:0 auto;padding:20px 14px 90px;position:relative;z-index:2;}
+
+/* ── PAGE TITLE ── */
+.page-hero{
+  text-align:center;padding:24px 0 20px;
+  animation:heroIn 0.8s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes heroIn{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+.hero-eyebrow{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:0.68rem;font-weight:600;letter-spacing:3px;
+  color:var(--gold);text-transform:uppercase;margin-bottom:8px;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+}
+.hero-eyebrow::before,.hero-eyebrow::after{
+  content:'';width:40px;height:1px;background:linear-gradient(90deg,transparent,var(--gold));
+}
+.hero-eyebrow::after{transform:scaleX(-1);}
+.page-title{
+  font-family:'Lora',serif;font-size:clamp(1.6rem,5vw,2.6rem);
+  font-weight:700;line-height:1.15;
+  background:linear-gradient(135deg,var(--gold-bright) 0%,var(--gold) 50%,#c8933a 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  margin-bottom:6px;
+}
+.page-subtitle{
+  font-family:'Source Serif 4',serif;font-style:italic;
+  font-size:0.9rem;color:var(--muted);margin-bottom:16px;
+}
+
+/* ── PROGRESS ── */
+.progress-wrap{
+  background:rgba(212,168,67,0.06);border:1px solid var(--border);
+  border-radius:var(--radius);padding:12px 16px;margin-bottom:16px;
+}
+.prog-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.prog-label{font-family:'IBM Plex Mono',monospace;font-size:0.7rem;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+.prog-val{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;font-weight:600;color:var(--gold);}
+.prog-track{height:6px;background:rgba(255,255,255,0.06);border-radius:999px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-bright));border-radius:999px;transition:width 0.8s cubic-bezier(.34,1.56,.64,1);width:0%;}
+
+/* ── TAB NAV ── */
+.tab-nav{
+  display:flex;gap:2px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid var(--border);
+  border-radius:14px;padding:4px;margin-bottom:20px;
+}
+.tab-btn{
+  flex:1;padding:9px 8px;border:none;
+  background:transparent;border-radius:10px;
+  font-family:'Source Serif 4',serif;font-size:0.82rem;font-weight:600;
+  color:var(--muted);cursor:pointer;transition:all 0.25s;
+  display:flex;align-items:center;justify-content:center;gap:5px;
+}
+.tab-btn.active{
+  background:linear-gradient(135deg,var(--gold),#c8933a);
+  color:var(--navy);
+  box-shadow:0 2px 16px var(--gold-glow);
+}
+.tab-panel{display:none;animation:panelIn 0.3s ease both;}
+.tab-panel.active{display:block;}
+@keyframes panelIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ═══════════════════════════════════════════
+   CROSSWORD
+═══════════════════════════════════════════ */
+.cw-wrapper{
+  display:flex;flex-direction:column;gap:18px;
+}
+@media(min-width:680px){.cw-wrapper{flex-direction:row;align-items:flex-start;}}
+
+/* puzzle number + meta */
+.puzzle-meta{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:14px;flex-wrap:wrap;gap:8px;
+}
+.puzzle-label{
+  font-family:'Lora',serif;font-size:1.1rem;font-weight:700;
+  color:var(--gold);display:flex;align-items:center;gap:8px;
+}
+.puzzle-num-badge{
+  background:linear-gradient(135deg,var(--gold),#c8933a);
+  color:var(--navy);border-radius:8px;padding:2px 10px;
+  font-family:'IBM Plex Mono',monospace;font-size:0.75rem;font-weight:700;
+}
+.puzzle-actions{display:flex;gap:6px;flex-wrap:wrap;}
+
+/* ── GRID ── */
+.grid-scroll-wrap{overflow:auto;-webkit-overflow-scrolling:touch;}
+.cw-grid{
+  display:inline-grid;gap:3px;
+  background:var(--navy-mid);
+  border:2px solid var(--border);
+  border-radius:14px;padding:6px;
+  box-shadow:0 0 40px rgba(212,168,67,0.12),0 8px 32px rgba(0,0,0,0.4);
+  cursor:pointer;user-select:none;
+  transition:box-shadow 0.3s;
+}
+.cw-grid:hover{box-shadow:0 0 60px rgba(212,168,67,0.2),0 12px 40px rgba(0,0,0,0.5);}
+.cw-cell{
+  width:var(--cell-size);height:var(--cell-size);
+  background:rgba(253,248,237,0.06);
+  border:1px solid rgba(212,168,67,0.12);
+  display:flex;align-items:center;justify-content:center;
+  position:relative;font-family:'IBM Plex Mono',monospace;
+  font-size:1.1rem;font-weight:600;
+  border-radius:6px;color:var(--cream);
+  transition:background 0.15s,border-color 0.15s,transform 0.12s,box-shadow 0.12s;
+  text-transform:uppercase;
+}
+.cw-cell.black{
+  background:var(--navy);border-color:transparent;
+  pointer-events:none;border-radius:5px;
+}
+.cw-cell.active{
+  background:linear-gradient(135deg,rgba(212,168,67,0.25),rgba(240,192,64,0.2))!important;
+  border-color:var(--gold)!important;
+  box-shadow:0 0 0 2px var(--gold-glow),0 0 16px var(--gold-glow);
+  transform:scale(1.08);z-index:2;
+}
+.cw-cell.highlighted{
+  background:rgba(212,168,67,0.1);
+  border-color:rgba(212,168,67,0.3);
+}
+.cw-cell.correct{
+  background:rgba(80,200,120,0.2)!important;
+  border-color:#50c878!important;
+  color:#7fffa0!important;
+  animation:cellPop 0.4s cubic-bezier(.34,1.56,.64,1);
+}
+.cw-cell.wrong{
+  background:rgba(255,90,90,0.2)!important;
+  border-color:#ff6b6b!important;
+  animation:cellShake 0.4s ease;
+}
+.cw-cell.revealed{
+  background:rgba(212,168,67,0.15)!important;
+  border-color:var(--gold)!important;
+  color:var(--gold-bright)!important;
+}
+.cw-cell.hint-glow{
+  animation:hintPulse 0.8s ease 3;
+}
+@keyframes cellPop{0%{transform:scale(0.85)}60%{transform:scale(1.12)}100%{transform:scale(1)}}
+@keyframes cellShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+@keyframes hintPulse{0%,100%{box-shadow:0 0 0 0 var(--gold-glow)}50%{box-shadow:0 0 0 8px var(--gold-glow)}}
+.cell-num{
+  position:absolute;top:2px;left:3px;
+  font-size:0.45rem;font-weight:700;
+  color:var(--gold);line-height:1;font-family:'IBM Plex Mono',monospace;
+}
+.cell-letter{font-size:1rem;font-weight:700;line-height:1;}
+
+/* ── CLUE PANEL ── */
+.clue-panel{flex:1;min-width:220px;max-width:320px;}
+.active-clue-box{
+  background:linear-gradient(135deg,var(--navy-light),var(--navy-mid));
+  border:1px solid var(--border);border-radius:var(--radius);
+  padding:14px;margin-bottom:14px;
+  box-shadow:0 4px 20px rgba(0,0,0,0.3);
+  min-height:72px;display:none;
+  animation:panelIn 0.2s ease;
+}
+.acb-dir{
+  font-family:'IBM Plex Mono',monospace;font-size:0.62rem;
+  font-weight:600;letter-spacing:2px;color:var(--gold);text-transform:uppercase;
+  margin-bottom:6px;
+}
+.acb-text{font-size:0.9rem;line-height:1.5;color:var(--cream);font-style:italic;}
+
+.clue-section-title{
+  font-family:'IBM Plex Mono',monospace;font-size:0.65rem;
+  font-weight:600;letter-spacing:2px;text-transform:uppercase;
+  color:var(--gold);padding:8px 0 6px;
+  border-bottom:1px solid var(--border);margin-bottom:8px;
+  display:flex;align-items:center;gap:6px;
+}
+.clue-list{display:flex;flex-direction:column;gap:3px;margin-bottom:14px;}
+.clue-item{
+  padding:8px 12px;border-radius:8px;cursor:pointer;
+  background:rgba(255,255,255,0.03);
+  border:1px solid transparent;
+  transition:all 0.2s;font-size:0.82rem;
+  line-height:1.4;color:rgba(253,248,237,0.7);
+}
+.clue-item:hover{border-color:var(--border);background:rgba(212,168,67,0.07);color:var(--cream);}
+.clue-item.active{
+  border-color:var(--gold);
+  background:rgba(212,168,67,0.12);
+  color:var(--cream);font-weight:600;
+}
+.clue-item.solved{opacity:0.35;text-decoration:line-through;pointer-events:none;}
+.clue-num{font-family:'IBM Plex Mono',monospace;font-weight:700;color:var(--gold);margin-right:6px;font-size:0.72rem;}
+
+/* ── KEYBOARD ── */
+.kb-wrap{margin-top:16px;}
+.kb-row{display:flex;gap:4px;justify-content:center;margin-bottom:5px;}
+.kb-key{
+  min-width:32px;height:44px;padding:0 5px;
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(212,168,67,0.2);
+  border-radius:8px;font-family:'IBM Plex Mono',monospace;
+  font-size:0.85rem;font-weight:600;cursor:pointer;
+  transition:all 0.12s;color:var(--cream);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 2px 6px rgba(0,0,0,0.3);
+}
+.kb-key:hover{background:rgba(212,168,67,0.15);border-color:var(--gold);color:var(--gold-bright);}
+.kb-key:active{transform:scale(0.9);background:rgba(212,168,67,0.25);}
+.kb-key.wide{min-width:54px;font-size:0.72rem;}
+.kb-key.correct-used{background:rgba(80,200,120,0.2);border-color:#50c878;color:#7fffa0;}
+
+/* ═══════════════════════════════════════════
+   WORD SCRAMBLE
+═══════════════════════════════════════════ */
+.scramble-card{
+  background:rgba(255,255,255,0.03);
+  border:1px solid var(--border);
+  border-radius:18px;padding:24px;
+  box-shadow:0 8px 40px rgba(0,0,0,0.3);
+  margin-bottom:16px;
+  position:relative;overflow:hidden;
+}
+.scramble-card::before{
+  content:'';position:absolute;top:-60px;right:-60px;
+  width:180px;height:180px;
+  background:radial-gradient(circle,rgba(212,168,67,0.08) 0%,transparent 70%);
+  pointer-events:none;
+}
+.sc-category{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(212,168,67,0.1);border:1px solid var(--border);
+  color:var(--gold);border-radius:999px;
+  padding:5px 14px;font-size:0.75rem;font-weight:600;
+  font-family:'IBM Plex Mono',monospace;margin-bottom:8px;
+}
+.sc-clue{font-style:italic;color:var(--muted);font-size:0.85rem;margin-bottom:16px;text-align:center;line-height:1.5;}
+.tiles-label{
+  font-family:'IBM Plex Mono',monospace;font-size:0.62rem;
+  letter-spacing:2px;text-transform:uppercase;color:var(--muted);
+  text-align:center;margin-bottom:8px;
+}
+.scramble-tiles{
+  display:flex;flex-wrap:wrap;gap:6px;justify-content:center;
+  min-height:60px;padding:8px;
+  background:rgba(255,255,255,0.02);border-radius:12px;
+  border:1px dashed rgba(212,168,67,0.15);
+  margin-bottom:12px;
+}
+.sc-tile{
+  width:46px;height:54px;border-radius:10px;
+  background:linear-gradient(145deg,var(--navy-light),var(--navy-mid));
+  border:1.5px solid var(--border);
+  color:var(--gold-bright);
+  font-family:'Lora',serif;font-size:1.4rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+  box-shadow:0 4px 12px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.05);
+  transition:all 0.18s cubic-bezier(.34,1.56,.64,1);
+  user-select:none;draggable:true;
+}
+.sc-tile:hover{
+  transform:translateY(-4px) scale(1.05);
+  border-color:var(--gold);
+  box-shadow:0 8px 20px rgba(212,168,67,0.25);
+}
+.sc-tile:active,.sc-tile.selected{
+  transform:translateY(-6px) scale(1.08);
+  background:linear-gradient(145deg,var(--gold),#c8933a);
+  color:var(--navy);border-color:var(--gold-bright);
+  box-shadow:0 10px 24px rgba(212,168,67,0.35);
+}
+.answer-slots{
+  display:flex;flex-wrap:wrap;gap:6px;justify-content:center;
+  min-height:64px;padding:8px;margin-bottom:14px;
+}
+.ans-slot{
+  width:46px;height:54px;border-radius:10px;
+  border:2px dashed rgba(212,168,67,0.25);
+  background:rgba(212,168,67,0.03);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Lora',serif;font-size:1.4rem;font-weight:700;
+  color:var(--cream);transition:all 0.2s;
+}
+.ans-slot.filled{
+  background:rgba(212,168,67,0.1);
+  border-color:var(--gold);border-style:solid;
+  box-shadow:0 0 10px rgba(212,168,67,0.15);
+}
+.ans-slot.correct-slot{
+  background:rgba(80,200,120,0.2)!important;
+  border-color:#50c878!important;color:#7fffa0!important;
+  animation:cellPop 0.4s cubic-bezier(.34,1.56,.64,1);
+}
+.ans-slot.wrong-slot{
+  background:rgba(255,90,90,0.15)!important;
+  border-color:#ff6b6b!important;animation:cellShake 0.4s ease;
+}
+
+.fact-box{
+  background:linear-gradient(135deg,rgba(212,168,67,0.1),rgba(240,192,64,0.06));
+  border-left:3px solid var(--gold);border-radius:0 10px 10px 0;
+  padding:12px 16px;margin-top:12px;
+  font-size:0.83rem;line-height:1.6;color:var(--gold-pale);
+  display:none;font-style:italic;
+}
+.fact-box.show{display:block;animation:panelIn 0.3s ease;}
+
+/* ═══════════════════════════════════════════
+   BUTTONS
+═══════════════════════════════════════════ */
+.btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:9px 18px;border-radius:10px;border:none;
+  font-family:'Source Serif 4',serif;font-size:0.83rem;font-weight:600;
+  cursor:pointer;transition:all 0.2s;white-space:nowrap;
+}
+.btn-gold{
+  background:linear-gradient(135deg,var(--gold),#c8933a);
+  color:var(--navy);
+  box-shadow:0 4px 16px var(--gold-glow);
+}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(212,168,67,0.4);}
+.btn-outline{
+  background:transparent;color:var(--gold);
+  border:1px solid var(--border);
+}
+.btn-outline:hover{background:rgba(212,168,67,0.1);border-color:var(--gold);}
+.btn-ghost{
+  background:rgba(255,255,255,0.05);color:var(--muted);
+  border:1px solid rgba(255,255,255,0.08);
+}
+.btn-ghost:hover{background:rgba(255,255,255,0.1);color:var(--cream);}
+.btn-danger{
+  background:rgba(255,90,90,0.1);color:#ff9a9a;
+  border:1px solid rgba(255,90,90,0.2);
+}
+.btn-danger:hover{background:rgba(255,90,90,0.2);}
+
+/* ═══════════════════════════════════════════
+   STATS TAB
+═══════════════════════════════════════════ */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
+@media(min-width:500px){.stats-grid{grid-template-columns:repeat(4,1fr);}}
+.stat-card{
+  background:rgba(212,168,67,0.06);border:1px solid var(--border);
+  border-radius:var(--radius);padding:16px 12px;text-align:center;
+  transition:all 0.25s;
+}
+.stat-card:hover{background:rgba(212,168,67,0.1);transform:translateY(-2px);}
+.stat-val{
+  font-family:'Lora',serif;font-size:2rem;font-weight:700;
+  background:linear-gradient(135deg,var(--gold-bright),var(--gold));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.stat-lbl{
+  font-family:'IBM Plex Mono',monospace;font-size:0.62rem;
+  letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-top:4px;
+}
+
+.lb-row{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 14px;border-radius:10px;margin-bottom:5px;
+  background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);
+  transition:all 0.2s;
+}
+.lb-row:hover{background:rgba(212,168,67,0.07);border-color:var(--border);}
+.lb-rank{font-family:'Lora',serif;font-size:1.2rem;font-weight:700;width:28px;text-align:center;color:var(--muted);}
+.lb-rank.r1{color:#ffd700;}.lb-rank.r2{color:#c0c0c0;}.lb-rank.r3{color:#cd7f32;}
+.lb-name{flex:1;font-size:0.88rem;font-weight:600;}
+.lb-score{font-family:'IBM Plex Mono',monospace;font-size:0.9rem;color:var(--gold);}
+
+.ach-item{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 14px;border-radius:12px;margin-bottom:6px;
+  background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);
+  transition:all 0.2s;
+}
+.ach-item:hover{border-color:var(--border);}
+.ach-ico{font-size:1.8rem;width:44px;text-align:center;}
+.ach-body{flex:1;}
+.ach-title{font-weight:700;font-size:0.88rem;}
+.ach-desc{font-size:0.75rem;color:var(--muted);margin-top:2px;}
+.ach-badge{
+  font-family:'IBM Plex Mono',monospace;font-size:0.65rem;font-weight:700;
+  padding:3px 10px;border-radius:999px;
+  background:rgba(212,168,67,0.12);color:var(--gold);
+}
+.ach-item.locked{opacity:0.35;filter:saturate(0);}
+
+/* ═══════════════════════════════════════════
+   MODAL
+═══════════════════════════════════════════ */
+.modal-bg{
+  position:fixed;inset:0;z-index:200;
+  background:rgba(5,10,20,0.8);backdrop-filter:blur(12px);
+  display:flex;align-items:center;justify-content:center;
+  padding:16px;opacity:0;pointer-events:none;transition:opacity 0.3s;
+}
+.modal-bg.open{opacity:1;pointer-events:all;}
+.modal{
+  background:linear-gradient(145deg,var(--navy-mid),var(--navy));
+  border:1px solid var(--border);border-radius:20px;
+  padding:28px 24px;max-width:440px;width:100%;
+  box-shadow:0 24px 80px rgba(0,0,0,0.6),0 0 60px var(--gold-glow);
+  transform:scale(0.88) translateY(16px);
+  transition:transform 0.3s cubic-bezier(.34,1.56,.64,1);
+}
+.modal-bg.open .modal{transform:scale(1) translateY(0);}
+.modal-title{
+  font-family:'Lora',serif;font-size:1.5rem;font-weight:700;
+  color:var(--gold);margin-bottom:6px;
+}
+.modal-emoji{font-size:3.5rem;display:block;text-align:center;margin-bottom:12px;}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0;}
+.result-card{
+  background:rgba(212,168,67,0.08);border:1px solid var(--border);
+  border-radius:10px;padding:14px;text-align:center;
+}
+.result-card .rv{font-family:'Lora',serif;font-size:1.8rem;font-weight:700;color:var(--gold-bright);}
+.result-card .rl{font-family:'IBM Plex Mono',monospace;font-size:0.62rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-top:3px;}
+
+/* ═══════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════ */
+.toast{
+  position:fixed;bottom:76px;left:50%;transform:translateX(-50%) translateY(10px);
+  background:linear-gradient(135deg,var(--navy-light),var(--navy-mid));
+  border:1px solid var(--border);color:var(--cream);
+  padding:10px 22px;border-radius:999px;
+  font-family:'Source Serif 4',serif;font-size:0.85rem;font-weight:600;
+  z-index:300;opacity:0;transition:all 0.3s;pointer-events:none;
+  white-space:nowrap;box-shadow:0 4px 24px rgba(0,0,0,0.4);
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ═══════════════════════════════════════════
+   BOTTOM NAV
+═══════════════════════════════════════════ */
+.bnav{
+  position:fixed;bottom:0;left:0;right:0;z-index:100;
+  background:rgba(10,22,40,0.97);backdrop-filter:blur(20px);
+  border-top:1px solid var(--border);
+  display:flex;
+}
+.bnav-btn{
+  flex:1;padding:10px 4px 8px;
+  border:none;background:transparent;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+  color:var(--muted);font-family:'IBM Plex Mono',monospace;
+  font-size:0.6rem;font-weight:600;letter-spacing:0.5px;
+  transition:all 0.2s;
+}
+.bnav-btn.active{color:var(--gold);}
+.bnav-btn .bi{font-size:1.25rem;transition:transform 0.2s;}
+.bnav-btn.active .bi{transform:scale(1.2);}
+
+/* ═══════════════════════════════════════════
+   PUZZLE THEME SKINS (rotate on reset)
+═══════════════════════════════════════════ */
+.skin-0 .cw-grid{box-shadow:0 0 50px rgba(212,168,67,0.15),0 8px 32px rgba(0,0,0,0.4);}
+.skin-1 .cw-grid{box-shadow:0 0 50px rgba(64,160,255,0.15),0 8px 32px rgba(0,0,0,0.4);}
+.skin-1 .cw-cell.active{background:rgba(64,160,255,0.25)!important;border-color:#40a0ff!important;box-shadow:0 0 0 2px rgba(64,160,255,0.25);}
+.skin-1 .cw-cell.highlighted{background:rgba(64,160,255,0.08);}
+.skin-2 .cw-grid{box-shadow:0 0 50px rgba(80,200,120,0.15),0 8px 32px rgba(0,0,0,0.4);}
+.skin-2 .cw-cell.active{background:rgba(80,200,120,0.25)!important;border-color:#50c878!important;box-shadow:0 0 0 2px rgba(80,200,120,0.25);}
+.skin-2 .cw-cell.highlighted{background:rgba(80,200,120,0.08);}
+.skin-3 .cw-grid{box-shadow:0 0 50px rgba(200,80,160,0.15),0 8px 32px rgba(0,0,0,0.4);}
+.skin-3 .cw-cell.active{background:rgba(200,80,160,0.25)!important;border-color:#c850a0!important;box-shadow:0 0 0 2px rgba(200,80,160,0.25);}
+.skin-3 .cw-cell.highlighted{background:rgba(200,80,160,0.08);}
+
+/* ── RESPONSIVE CELL SIZE ── */
+@media(max-width:500px){
+  :root{--cell-size:38px;}
+  .sc-tile,.ans-slot{width:38px;height:46px;font-size:1.15rem;}
+}
+@media(max-width:380px){
+  :root{--cell-size:32px;}
+  .sc-tile,.ans-slot{width:34px;height:42px;font-size:1rem;}
+  .cell-letter{font-size:0.82rem;}
+}
+
+/* ── DIFF BADGE ── */
+.diff{display:inline-flex;align-items:center;padding:2px 10px;border-radius:999px;font-family:'IBM Plex Mono',monospace;font-size:0.65rem;font-weight:700;margin-left:6px;}
+.diff-e{background:rgba(80,200,120,0.15);color:#50c878;}
+.diff-m{background:rgba(212,168,67,0.15);color:var(--gold);}
+.diff-h{background:rgba(255,90,90,0.15);color:#ff9a9a;}
+
+/* ── HOW TO PLAY ── */
+.how-step{display:flex;gap:12px;align-items:flex-start;margin-bottom:14px;}
+.how-num{min-width:26px;height:26px;background:linear-gradient(135deg,var(--gold),#c8933a);color:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.75rem;flex-shrink:0;font-family:'IBM Plex Mono',monospace;}
+.how-text{font-size:0.84rem;line-height:1.6;color:rgba(253,248,237,0.8);}
+
+/* ── PARTICLE BURST ── */
+.particle{position:fixed;pointer-events:none;z-index:400;border-radius:50%;animation:particleFly 1s ease forwards;}
+@keyframes particleFly{0%{opacity:1;transform:translate(0,0) scale(1);}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(0.2);}}
+
+/* ── SCROLL INDICATOR ── */
+.scroll-hint{text-align:center;font-family:'IBM Plex Mono',monospace;font-size:0.65rem;color:var(--muted);letter-spacing:1px;margin-bottom:6px;opacity:0.7;}
+</style>
+
+  </head>
+<body>
+
+<!-- ANIMATED BG CANVAS -->
+<canvas id="bg-canvas"></canvas>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-mark">🌿</div>
+      <div class="logo-text">
+        <strong>SL Nutrition Crossword</strong>
+        <span>🇱🇰 Nutrition Day · Daily Challenge</span>
+      </div>
+    </div>
+    <div class="hdr-pills">
+      <div class="hpill"><span class="ico">⭐</span><span id="hScore">0</span></div>
+      <div class="hpill"><span class="ico">🔥</span><span id="hStreak">0</span></div>
+      <div class="hpill" id="timerPill"><span class="ico">⏱</span><span id="hTimer">0:00</span></div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- HERO -->
+  <div class="page-hero">
+    <div class="hero-eyebrow">Sri Lanka Nutrition Day 2025</div>
+    <div class="page-title">Nutrition Word Challenge</div>
+    <div class="page-subtitle">Master Sri Lankan superfoods, spices & nutrition science</div>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="progress-wrap">
+    <div class="prog-header">
+      <span class="prog-label">Daily Progress</span>
+      <span class="prog-val" id="progVal">0 / 3 puzzles</span>
+    </div>
+    <div class="prog-track"><div class="prog-fill" id="progFill"></div></div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tab-nav">
+    <button class="tab-btn active" id="tBtn-cw" onclick="switchTab('cw',this)">✏️ Crossword</button>
+    <button class="tab-btn" id="tBtn-sc" onclick="switchTab('sc',this)">🔀 Scramble</button>
+    <button class="tab-btn" id="tBtn-st" onclick="switchTab('st',this)">📊 Stats</button>
+  </div>
+
+  <!-- ════ CROSSWORD TAB ════ -->
+  <div class="tab-panel active" id="tab-cw">
+    <div class="puzzle-meta">
+      <div class="puzzle-label">
+        Crossword
+        <span class="puzzle-num-badge" id="cwPuzzleNum">Puzzle #1</span>
+        <span class="diff diff-m" id="cwDiff">Medium</span>
+      </div>
+      <div class="puzzle-actions">
+        <button class="btn btn-outline" onclick="revealHint()" style="padding:7px 12px;font-size:0.78rem;">💡 Hint (∞)</button>
+        <button class="btn btn-outline" onclick="checkAll()" style="padding:7px 12px;font-size:0.78rem;">✅ Check</button>
+        <button class="btn btn-danger" onclick="resetPuzzle()" style="padding:7px 12px;font-size:0.78rem;">🔄 New Puzzle</button>
+      </div>
+    </div>
+
+    <div class="cw-wrapper" id="cwWrapper">
+      <div>
+        <div class="scroll-hint" id="scrollHint" style="display:none;">← Scroll to see full grid →</div>
+        <div class="grid-scroll-wrap">
+          <div class="grid-scroll">
+            <div class="cw-grid" id="cwGrid"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="clue-panel">
+        <div class="active-clue-box" id="activeClueBox">
+          <div class="acb-dir" id="acbDir">ACROSS</div>
+          <div class="acb-text" id="acbText"></div>
+        </div>
+
+        <div class="clue-section-title">➡ ACROSS</div>
+        <div class="clue-list" id="clAcross"></div>
+        <div class="clue-section-title">⬇ DOWN</div>
+        <div class="clue-list" id="clDown"></div>
+      </div>
+    </div>
+
+    <!-- Keyboard -->
+    <div class="kb-wrap">
+      <div class="kb-row">
+        <button class="kb-key" onclick="kp('Q')">Q</button><button class="kb-key" onclick="kp('W')">W</button>
+        <button class="kb-key" onclick="kp('E')">E</button><button class="kb-key" onclick="kp('R')">R</button>
+        <button class="kb-key" onclick="kp('T')">T</button><button class="kb-key" onclick="kp('Y')">Y</button>
+        <button class="kb-key" onclick="kp('U')">U</button><button class="kb-key" onclick="kp('I')">I</button>
+        <button class="kb-key" onclick="kp('O')">O</button><button class="kb-key" onclick="kp('P')">P</button>
+      </div>
+      <div class="kb-row">
+        <button class="kb-key" onclick="kp('A')">A</button><button class="kb-key" onclick="kp('S')">S</button>
+        <button class="kb-key" onclick="kp('D')">D</button><button class="kb-key" onclick="kp('F')">F</button>
+        <button class="kb-key" onclick="kp('G')">G</button><button class="kb-key" onclick="kp('H')">H</button>
+        <button class="kb-key" onclick="kp('J')">J</button><button class="kb-key" onclick="kp('K')">K</button>
+        <button class="kb-key" onclick="kp('L')">L</button>
+      </div>
+      <div class="kb-row">
+        <button class="kb-key wide" onclick="kp('⌫')">⌫</button>
+        <button class="kb-key" onclick="kp('Z')">Z</button><button class="kb-key" onclick="kp('X')">X</button>
+        <button class="kb-key" onclick="kp('C')">C</button><button class="kb-key" onclick="kp('V')">V</button>
+        <button class="kb-key" onclick="kp('B')">B</button><button class="kb-key" onclick="kp('N')">N</button>
+        <button class="kb-key" onclick="kp('M')">M</button>
+        <button class="kb-key wide" onclick="toggleDir()">↔</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ SCRAMBLE TAB ════ -->
+  <div class="tab-panel" id="tab-sc">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
+      <div>
+        <span style="font-family:'Lora',serif;font-size:1.1rem;font-weight:700;color:var(--gold);">Word Scramble</span>
+        <span class="diff diff-e" id="scDiff">Easy</span>
+      </div>
+      <div style="display:flex;gap:6px;">
+        <button class="btn btn-outline" onclick="scHint()" style="padding:7px 12px;font-size:0.78rem;">💡 Hint (∞)</button>
+        <button class="btn btn-ghost" onclick="scSkip()" style="padding:7px 12px;font-size:0.78rem;">⏭ Skip</button>
+      </div>
+    </div>
+
+    <div class="scramble-card">
+      <div style="text-align:center;">
+        <div class="sc-category" id="scCat">🌿 Category</div>
+        <div class="sc-clue" id="scClue">Loading...</div>
+      </div>
+      <div class="tiles-label">Tap letters to arrange your answer</div>
+      <div class="scramble-tiles" id="scTiles"></div>
+      <div class="tiles-label">Your Answer</div>
+      <div class="answer-slots" id="scSlots"></div>
+      <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn btn-ghost" onclick="scClear()" style="padding:9px 18px;">🗑 Clear</button>
+        <button class="btn btn-gold" onclick="scCheck()">✅ Submit</button>
+      </div>
+      <div class="fact-box" id="scFact"></div>
+    </div>
+
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+      <div class="hpill" style="font-size:0.75rem;">✅ <span id="scSolvedNum">0</span> solved</div>
+      <div class="hpill" style="font-size:0.75rem;">📦 <span id="scRemNum">0</span> left</div>
+      <div class="hpill" style="font-size:0.75rem;">⏭ <span id="scSkipNum">0</span> skipped</div>
+    </div>
+  </div>
+
+  <!-- ════ STATS TAB ════ -->
+  <div class="tab-panel" id="tab-st">
+    <div style="font-family:'Lora',serif;font-size:1.2rem;font-weight:700;color:var(--gold);margin-bottom:16px;">Your Performance</div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-val" id="stScore">0</div><div class="stat-lbl">Total Score</div></div>
+      <div class="stat-card"><div class="stat-val" id="stStreak">0</div><div class="stat-lbl">🔥 Streak</div></div>
+      <div class="stat-card"><div class="stat-val" id="stCw">0</div><div class="stat-lbl">Crosswords</div></div>
+      <div class="stat-card"><div class="stat-val" id="stSc">0</div><div class="stat-lbl">Words</div></div>
+    </div>
+
+    <div style="font-family:'Lora',serif;font-size:1rem;font-weight:700;color:var(--gold);margin-bottom:10px;">🏆 Leaderboard</div>
+    <div id="lbList" style="margin-bottom:20px;"></div>
+
+    <div style="font-family:'Lora',serif;font-size:1rem;font-weight:700;color:var(--gold);margin-bottom:10px;">🎖 Achievements</div>
+    <div id="achList" style="margin-bottom:20px;"></div>
+
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="btn btn-gold" onclick="doShare()">📤 Share Score</button>
+      <button class="btn btn-outline" onclick="showHTP()">❓ How to Play</button>
+    </div>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+<div class="modal-bg" id="modal" onclick="closeModal(event)">
+  <div class="modal" id="modalBody"></div>
+</div>
+
+<div class="bnav">
+  <button class="bnav-btn active" id="bn-cw" onclick="switchTab('cw',null,'cw')"><span class="bi">✏️</span>CROSSWORD</button>
+  <button class="bnav-btn" id="bn-sc" onclick="switchTab('sc',null,'sc')"><span class="bi">🔀</span>SCRAMBLE</button>
+  <button class="bnav-btn" id="bn-st" onclick="switchTab('st',null,'st')"><span class="bi">📊</span>STATS</button>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+//  STARFIELD BACKGROUND
+// ═══════════════════════════════════════════════════════════
+(function(){
+  const c=document.getElementById('bg-canvas');
+  const ctx=c.getContext('2d');
+  let W,H,stars=[];
+  function resize(){W=c.width=innerWidth;H=c.height=innerHeight;stars=[];for(let i=0;i<120;i++)stars.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.5+0.2,s:Math.random()*0.4+0.1,a:Math.random()*Math.PI*2,v:Math.random()*0.003+0.001});}
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    stars.forEach(s=>{
+      s.a+=s.v;const alpha=0.3+0.3*Math.sin(s.a);
+      ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(212,168,67,${alpha})`;ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  window.addEventListener('resize',resize);
+  resize();draw();
+})();
+
+// ═══════════════════════════════════════════════════════════
+//  PUZZLE DATA — 4 COMPLETE PUZZLES (rotate on reset)
+// ═══════════════════════════════════════════════════════════
+const PUZZLES = [
+  // ── PUZZLE 0 ── Theme: Herbs & Spices
+  {
+    title:'Herbs & Spices', diff:'Medium', skin:0,
+    rows:11, cols:12,
+    layout:[
+      "####COCONUT#",
+      "####O#U#####",
+      "GOTUKOLA####",
+      "####R#R#####",
+      "####I#CDHAL#",
+      "THIAMINE####",
+      "####G#I#####",
+      "####E#IRON##",
+      "CINNAMON####",
+      "#######N####",
+      "####FIBER###",
+    ],
+    words:[
+      {n:1,d:'a',r:0,c:4,w:'COCONUT',clue:'🥥 King of Sri Lankan ingredients — oil, milk, water & flesh',fact:'Sri Lanka exports over 3 billion coconuts/year. Every part is used in medicine & cooking.'},
+      {n:2,d:'a',r:2,c:0,w:'GOTUKOLA',clue:'🌿 Pennywort — ancient brain-boosting herb of Sri Lanka',fact:'Ayurvedic texts call Gotukola the "herb of longevity". Eaten as malluma, sambol or fresh juice.'},
+      {n:3,d:'a',r:4,c:6,w:'CDHAL',clue:'🫘 Red lentil curry — everyday Sri Lankan staple (fix: DHAL)',fact:'Parippu (dhal) is eaten by nearly every Sri Lankan daily. Rich in iron, folate & plant protein.'},
+      {n:4,d:'a',r:5,c:0,w:'THIAMINE',clue:'💊 Vitamin B1 — found in red rice; deficiency causes Beriberi',fact:'Polishing rice removes up to 80% of its thiamine. Red/traditional rice retains the bran.'},
+      {n:5,d:'a',r:7,c:6,w:'IRON',clue:'🩸 Mineral in gotukola and mukunuwenna; prevents anaemia',fact:'30% of Sri Lankans suffer iron deficiency. Green leafy vegetables like mukunuwenna are excellent plant sources.'},
+      {n:6,d:'a',r:8,c:0,w:'CINNAMON',clue:'🌿 Sri Lanka supplies 80% of the world\'s true variety',fact:'Ceylon cinnamon (Cinnamomum verum) has lower coumarin & a delicate flavour. Major export since 1500s.'},
+      {n:7,d:'a',r:10,c:4,w:'FIBER',clue:'🌾 Red rice has 3× more of this than white rice',fact:'Dietary fibre reduces cholesterol, regulates blood sugar & prevents constipation. Choose red rice!'},
+      {n:8,d:'d',r:0,c:4,w:'CORIANDER',clue:'⬇ Aromatic herb used in sambol & chutneys',fact:'Coriander contains vitamin K & antioxidant quercetin. Used in virtually every Sri Lankan curry.'},
+      {n:9,d:'d',r:0,c:6,w:'TURMERIC',clue:'⬇ Golden anti-inflammatory spice; curcumin powerhouse',fact:'Curcumin reduces inflammation. Sri Lankans add turmeric to rice, curries, and warm milk (kiri hodi).'},
+    ]
+  },
+  // ── PUZZLE 1 ── Theme: Superfoods & Minerals
+  {
+    title:'Superfoods', diff:'Hard', skin:1,
+    rows:11, cols:12,
+    layout:[
+      "MORINGA#####",
+      "O##A########",
+      "R##N#CALCIUM",
+      "I##G#A######",
+      "N##O#L######",
+      "G#PROTEIN###",
+      "A##I#I######",
+      "###N#U######",
+      "###E#M######",
+      "WOODAPPLE###",
+      "############",
+    ],
+    words:[
+      {n:1,d:'a',r:0,c:0,w:'MORINGA',clue:'🌱 Drumstick tree leaves — 7× more vitamin C than oranges',fact:'Murunga (Moringa) leaves have 4× more calcium than milk, 2× more protein than yogurt. True superfood.'},
+      {n:2,d:'a',r:2,c:5,w:'CALCIUM',clue:'💪 Bone mineral found in dried fish & green leaves',fact:'Maldive fish (umbalakada) sprinkled on curries is a concentrated calcium source traditional to Sri Lanka.'},
+      {n:3,d:'a',r:5,c:3,w:'PROTEIN',clue:'🏋️ Muscle-building macronutrient; found in fish, dhal & eggs',fact:'Coastal Sri Lankans eat fish daily, providing complete high-quality protein essential for child development.'},
+      {n:4,d:'a',r:9,c:0,w:'WOODAPPLE',clue:'🍈 Hard-shelled seasonal fruit; traditional Ayurvedic remedy',fact:'Beli mal (wood apple) is rich in vitamin C, riboflavin & carotene. Used in Ayurveda for digestive health.'},
+      {n:5,d:'d',r:0,c:0,w:'MORINGA',clue:'⬇ See 1-Across',fact:'Moringa is also called the miracle tree. All parts — leaves, pods, seeds — are nutritious.'},
+      {n:6,d:'d',r:0,c:3,w:'MANGANESE',clue:'⬇ Trace mineral in spices like cinnamon & cloves',fact:'Manganese activates enzymes for metabolism & bone formation. Sri Lankan spices are rich sources.'},
+      {n:7,d:'d',r:2,c:5,w:'CALCIUMPRO',clue:'⬇ See 2-Across',fact:''},
+      {n:8,d:'d',r:5,c:7,w:'IRON',clue:'⬇ Prevents anaemia; in green leaves & red meat',fact:'The iron in plant foods (non-haem iron) is better absorbed when combined with vitamin C.'},
+    ]
+  },
+  // ── PUZZLE 2 ── Theme: Vitamins & Wellness
+  {
+    title:'Vitamins & Wellness', diff:'Easy', skin:2,
+    rows:10, cols:11,
+    layout:[
+      "###VITAMIN##",
+      "###I#######",
+      "###T#OMEGA#",
+      "###A#M#####",
+      "JACKFRUIT##",
+      "###I#G#####",
+      "###N#A#####",
+      "LENTILS####",
+      "###S#######",
+      "###FOLATE##",
+    ],
+    words:[
+      {n:1,d:'a',r:0,c:3,w:'VITAMIN',clue:'💊 Essential micronutrient family: A, B, C, D, E, K',fact:'Vitamins are organic compounds the body cannot make enough of. Sri Lankan foods like gotukola & jak provide many.'},
+      {n:2,d:'a',r:2,c:5,w:'OMEGA',clue:'🐟 Fatty acids found abundantly in Sri Lankan fish',fact:'Omega-3 from fish like tuna, mackerel & sardines reduces heart disease and supports brain development.'},
+      {n:3,d:'a',r:4,c:0,w:'JACKFRUIT',clue:'🌳 Young "polos" curry — Sri Lanka\'s favourite vegetable dish',fact:'Jackfruit is rich in fibre, vitamin C & potassium. Unripe jackfruit is a popular meat substitute.'},
+      {n:4,d:'a',r:7,c:0,w:'LENTILS',clue:'🫘 Plant-based iron and protein in daily Sri Lankan meals',fact:'Red lentils (masoor dhal) provide 9g protein/100g and are the most-eaten legume in Sri Lanka.'},
+      {n:5,d:'a',r:9,c:3,w:'FOLATE',clue:'🤰 B9 vitamin crucial in pregnancy; found in green leaves',fact:'Folate prevents neural tube defects. Gotukola, mukunuwenna & lentils are excellent Sri Lankan folate sources.'},
+      {n:6,d:'d',r:0,c:3,w:'VITAMINS',clue:'⬇ See 1-Across',fact:''},
+      {n:7,d:'d',r:2,c:5,w:'OMEGAK',clue:'⬇ See 2-Across',fact:''},
+      {n:8,d:'d',r:4,c:8,w:'IRON',clue:'⬇ Blood mineral; in green leaves & dried fish',fact:'Combining iron-rich plant foods with vitamin C (lime juice!) significantly improves absorption.'},
+    ]
+  },
+  // ── PUZZLE 3 ── Theme: Traditional Cooking
+  {
+    title:'Traditional Cooking', diff:'Hard', skin:3,
+    rows:11, cols:12,
+    layout:[
+      "#TEMPERING##",
+      "#E##########",
+      "#M##ROASTING",
+      "#P##O#######",
+      "STEAMING####",
+      "#R##S#######",
+      "#I##T#######",
+      "#N##I#######",
+      "#G##N#######",
+      "FERMENTED###",
+      "#######G####",
+    ],
+    words:[
+      {n:1,d:'a',r:0,c:1,w:'TEMPERING',clue:'🍳 Frying whole spices in oil to start a Sri Lankan curry',fact:'Thalipe karala (tempering) releases fat-soluble nutrients from cumin, mustard & curry leaves into the dish.'},
+      {n:2,d:'a',r:2,c:4,w:'ROASTING',clue:'🔥 Dry-heat method preserving nutrients without added fat',fact:'Roasting spices intensifies flavour & slightly reduces antinutrients, improving mineral bioavailability.'},
+      {n:3,d:'a',r:4,c:0,w:'STEAMING',clue:'💧 Healthiest cooking method; preserves water-soluble vitamins',fact:'String hoppers (indi appa) & puttu are traditionally steamed, preserving B vitamins in the flour.'},
+      {n:4,d:'a',r:9,c:0,w:'FERMENTED',clue:'🧫 Hoppers & pittu use this process to boost gut health',fact:'Fermented rice & coconut batter used in hoppers/appam creates probiotics and enhances B vitamin content.'},
+      {n:5,d:'d',r:0,c:1,w:'TEMPERING',clue:'⬇ See 1-Across',fact:''},
+      {n:6,d:'d',r:2,c:4,w:'ROASTING',clue:'⬇ See 2-Across',fact:''},
+      {n:7,d:'d',r:2,c:7,w:'STIFRYING',clue:'⬇ Quick cooking method retaining crisp texture & nutrients',fact:'Quick stir-fry (as in Sri Lankan mallum greens) preserves more vitamins than long-boiling methods.'},
+      {n:8,d:'d',r:9,c:7,w:'GRINDING',clue:'⬇ Processing spices to release their essential oils & nutrients',fact:'Traditional stone grinding (miris gala) releases more aromatic oils than mechanical blenders.'},
+    ]
+  }
+];
+
+// Scramble words pool
+const SC_WORDS = [
+  {w:'GOTUKOLA',cat:'🌿 Sri Lankan Herb',clue:'Pennywort — the "brain food" of Sri Lanka',fact:'Gotukola is a superfood used in malluma, sambol and juice. Ancient texts call it the herb of longevity.'},
+  {w:'THIAMINE',cat:'💊 Vitamin',clue:'Vitamin B1; deficiency causes Beriberi disease',fact:'Found in red rice and lentils. Polishing rice removes 80% of its thiamine content.'},
+  {w:'TURMERIC',cat:'🟡 Spice',clue:'Golden anti-inflammatory spice in every Sri Lankan curry',fact:'Curcumin reduces inflammation. Sri Lankans add turmeric to rice, curries, and warm milk.'},
+  {w:'COCONUT',cat:'🥥 Tropical Fruit',clue:'Used as oil, milk, flesh and water in Sri Lankan food',fact:'Sri Lanka is a top coconut producer. King Coconut water is isotonic — superior to sports drinks.'},
+  {w:'CINNAMON',cat:'🌿 Spice',clue:'Sri Lanka produces 80% of the world\'s true cinnamon',fact:'Ceylon cinnamon (C. verum) has lower coumarin and a finer flavour than cassia. Major export since 1500s.'},
+  {w:'MORINGA',cat:'🌱 Superfood',clue:'Drumstick tree — one of the most nutritious plants on Earth',fact:'Moringa leaves have 7× vitamin C of oranges, 4× calcium of milk, and 2× protein of yogurt.'},
+  {w:'JACKFRUIT',cat:'🌳 Sri Lankan Fruit',clue:'Young "polos" — iconic vegetable curry in every home',fact:'Jackfruit is high in fibre, vitamin C and potassium. Unripe jak is a globally popular meat substitute.'},
+  {w:'LENTILS',cat:'🫘 Legume',clue:'Parippu — Sri Lanka\'s most eaten daily protein source',fact:'Red lentils provide 9g protein and high iron per 100g. Eaten virtually every day across Sri Lanka.'},
+  {w:'CALCIUM',cat:'💪 Mineral',clue:'Bone-building mineral in dried fish and green leaves',fact:'Maldive fish (umbalakada) is a concentrated calcium source sprinkled on curries and sambol.'},
+  {w:'FOLATE',cat:'🤰 Vitamin B9',clue:'Essential in pregnancy; prevents neural tube defects',fact:'Gotukola, mukunuwenna and lentils are excellent folate sources in the Sri Lankan diet.'},
+  {w:'PROTEIN',cat:'🏋️ Macronutrient',clue:'Muscle-building nutrient in fish, dhal and eggs',fact:'Coastal communities eat fish daily for complete protein. Fish is the #1 protein source in Sri Lanka.'},
+  {w:'ANTIOXIDANT',cat:'🛡 Health Term',clue:'Compounds protecting cells from oxidative damage',fact:'Sri Lankan spices — cloves, cinnamon, turmeric, pepper — rank among the highest antioxidant foods globally.'},
+  {w:'FERMENTED',cat:'🧫 Food Process',clue:'How hopper/appam batter gains probiotics overnight',fact:'Fermentation of rice & coconut creates beneficial bacteria and enhances B vitamins in traditional Sri Lankan breads.'},
+  {w:'WOODAPPLE',cat:'🍈 Sri Lankan Fruit',clue:'Hard-shelled seasonal fruit; traditional Ayurvedic remedy',fact:'Beli mal is rich in vitamin C, riboflavin and carotene. Used in Ayurveda for centuries.'},
+  {w:'OMEGA',cat:'🐟 Fatty Acid',clue:'Essential fats found abundantly in Sri Lankan fish',fact:'Omega-3 from tuna, mackerel and sardines reduces cardiovascular disease and supports brain development.'},
+];
+
+// ═══════════════════════════════════════════════════════════
+//  GAME STATE
+// ═══════════════════════════════════════════════════════════
+const S = {
+  score:0, streak:0, cwSolved:0, scSolved:0,
+  timerSec:0, timerInt:null,
+  cwPuzzleIdx:0, cwPuzzle:null,
+  cwUserGrid:[], cwSel:null, cwDir:'across',
+  cwSolvedWords:new Set(), cwHintsUsed:0,
+  scIdx:0, scSolved:0, scSkipped:0,
+  scScrambled:[], scSelected:[],
+  completedToday:0,
+};
+
+const ACHIEVEMENTS=[
+  {id:'first',ico:'🌱',title:'First Sprout',desc:'Solve your first word',done:false},
+  {id:'crossword1',ico:'✨',title:'Grid Master',desc:'Complete a crossword puzzle',done:false},
+  {id:'streak3',ico:'🔥',title:'On Fire',desc:'3-day streak',done:false},
+  {id:'allscramble',ico:'🏆',title:'Word Champion',desc:'Solve all scramble words',done:false},
+  {id:'nohint_cw',ico:'🧠',title:'No Hints Needed',desc:'Finish crossword without hints',done:false},
+  {id:'noskip_sc',ico:'💯',title:'No Surrender',desc:'Finish scramble without skipping',done:false},
+  {id:'speed5',ico:'⚡',title:'Speed Demon',desc:'Complete crossword under 5 min',done:false},
+  {id:'all4',ico:'🎓',title:'Nutritionist',desc:'Complete all 4 puzzle themes',done:false},
+];
+
+const LB=[
+  {name:'Sathyaa R.', score:3200},
+  {name:'Nimal P.', score:2840},
+  {name:'Dilini W.', score:2560},
+  {name:'Ruwan M.', score:2100},
+  {name:'You', score:0},
+];
+
+// ═══════════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════════
+function init(){
+  loadPuzzle(0);
+  initScramble();
+  renderLB(); renderAch();
+  startTimer();
+}
+
+// ═══════════════════════════════════════════════════════════
+//  TIMER
+// ═══════════════════════════════════════════════════════════
+function startTimer(){
+  clearInterval(S.timerInt);
+  S.timerSec=0;
+  S.timerInt=setInterval(()=>{
+    S.timerSec++;
+    const m=Math.floor(S.timerSec/60),s=S.timerSec%60;
+    document.getElementById('hTimer').textContent=m+':'+String(s).padStart(2,'0');
+  },1000);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  TAB
+// ═══════════════════════════════════════════════════════════
+function switchTab(name,btn,bname){
+  ['cw','sc','st'].forEach(t=>{
+    document.getElementById('tab-'+t)?.classList.remove('active');
+    document.getElementById('tBtn-'+t)?.classList.remove('active');
+    document.getElementById('bn-'+t)?.classList.remove('active');
+  });
+  document.getElementById('tab-'+name).classList.add('active');
+  document.getElementById('tBtn-'+name)?.classList.add('active');
+  document.getElementById('bn-'+(bname||name))?.classList.add('active');
+  if(btn) btn.classList.add('active');
+  if(name==='st') syncStats();
+}
+
+// ═══════════════════════════════════════════════════════════
+//  CROSSWORD ENGINE
+// ═══════════════════════════════════════════════════════════
+function loadPuzzle(idx){
+  S.cwPuzzleIdx = idx % PUZZLES.length;
+  const P = PUZZLES[S.cwPuzzleIdx];
+  S.cwPuzzle = P;
+  S.cwSel = null; S.cwDir = 'across';
+  S.cwSolvedWords = new Set(); S.cwHintsUsed = 0;
+
+  // Parse grid
+  const R=P.rows, C=P.cols;
+  S.cwUserGrid=[];
+  for(let r=0;r<R;r++){
+    S.cwUserGrid[r]=[];
+    for(let c=0;c<C;c++){
+      const ch=P.layout[r][c];
+      S.cwUserGrid[r][c]=ch==='#'?null:'';
+    }
+  }
+
+  // Skin
+  const wrap=document.getElementById('cwWrapper');
+  wrap.className='cw-wrapper skin-'+P.skin;
+
+  // Badge
+  document.getElementById('cwPuzzleNum').textContent='Puzzle #'+(S.cwPuzzleIdx+1)+' — '+P.title;
+  const db=document.getElementById('cwDiff');
+  db.textContent=P.diff;
+  db.className='diff '+(P.diff==='Easy'?'diff-e':P.diff==='Hard'?'diff-h':'diff-m');
+
+  buildGrid(P);
+  buildClues(P);
+}
+
+function getAnswer(P,word){
+  // The actual answer is word.w
+  return word.w;
+}
+
+function buildGrid(P){
+  const grid=document.getElementById('cwGrid');
+  const R=P.rows,C=P.cols;
+  grid.style.gridTemplateColumns=`repeat(${C},var(--cell-size))`;
+  grid.innerHTML='';
+
+  // Number map
+  const numMap={};
+  P.words.forEach(w=>{ numMap[w.r+','+w.c]=w.n; });
+
+  for(let r=0;r<R;r++){
+    for(let c=0;c<C;c++){
+      const cell=document.createElement('div');
+      const ch=P.layout[r][c];
+      cell.className='cw-cell'+(ch==='#'?' black':'');
+      cell.dataset.r=r; cell.dataset.c=c;
+      if(ch!=='#'){
+        if(numMap[r+','+c]){
+          const n=document.createElement('span');
+          n.className='cell-num'; n.textContent=numMap[r+','+c];
+          cell.appendChild(n);
+        }
+        const l=document.createElement('span');
+        l.className='cell-letter'; l.id='cl-'+r+'-'+c;
+        cell.appendChild(l);
+        cell.addEventListener('click',()=>cellClick(r,c));
+        cell.addEventListener('touchstart',e=>{cellClick(r,c);e.preventDefault();},{passive:false});
+      }
+      grid.appendChild(cell);
+    }
+  }
+  // Show scroll hint on small screens
+  setTimeout(()=>{
+    const gs=document.querySelector('.grid-scroll-wrap');
+    if(gs&&gs.scrollWidth>gs.clientWidth+10) document.getElementById('scrollHint').style.display='block';
+    else document.getElementById('scrollHint').style.display='none';
+  },100);
+}
+
+function buildClues(P){
+  const acEl=document.getElementById('clAcross');
+  const dnEl=document.getElementById('clDown');
+  acEl.innerHTML=''; dnEl.innerHTML='';
+  P.words.forEach(w=>{
+    const el=document.createElement('div');
+    el.className='clue-item'; el.id='clue-'+w.d+'-'+w.n;
+    el.innerHTML=`<span class="clue-num">${w.n}</span>${w.clue}`;
+    el.addEventListener('click',()=>{S.cwDir=w.d;cellClick(w.r,w.c);});
+    (w.d==='a'?acEl:dnEl).appendChild(el);
+  });
+}
+
+function cellClick(r,c){
+  const P=S.cwPuzzle;
+  if(P.layout[r][c]==='#') return;
+  if(S.cwSel&&S.cwSel[0]===r&&S.cwSel[1]===c){
+    S.cwDir=S.cwDir==='across'?'down':'across';
+  }
+  if(!wordAtCell(r,c,S.cwDir)) S.cwDir=S.cwDir==='across'?'down':'across';
+  S.cwSel=[r,c];
+  highlight(); showActiveClue();
+}
+
+function wordAtCell(r,c,dir){
+  return S.cwPuzzle.words.find(w=>{
+    if(w.d!==dir[0]) return false;
+    const len=w.w.length;
+    if(dir==='across'||dir==='a') return w.r===r&&c>=w.c&&c<w.c+len;
+    return w.c===c&&r>=w.r&&r<w.r+len;
+  });
+}
+
+function highlight(){
+  const P=S.cwPuzzle;
+  document.querySelectorAll('.cw-cell:not(.black)').forEach(el=>{el.classList.remove('active','highlighted');});
+  if(!S.cwSel) return;
+  const [sr,sc]=S.cwSel;
+  const word=wordAtCell(sr,sc,S.cwDir);
+  if(word){
+    for(let i=0;i<word.w.length;i++){
+      const r2=S.cwDir==='across'?word.r:word.r+i;
+      const c2=S.cwDir==='across'?word.c+i:word.c;
+      const el=document.querySelector(`.cw-cell[data-r="${r2}"][data-c="${c2}"]`);
+      if(el) el.classList.add('highlighted');
+    }
+    const clId='clue-'+word.d+'-'+word.n;
+    document.querySelectorAll('.clue-item').forEach(el=>el.classList.remove('active'));
+    const clEl=document.getElementById(clId);
+    if(clEl){clEl.classList.add('active');clEl.scrollIntoView({block:'nearest',behavior:'smooth'});}
+  }
+  const activeEl=document.querySelector(`.cw-cell[data-r="${sr}"][data-c="${sc}"]`);
+  if(activeEl) activeEl.classList.add('active');
+}
+
+function showActiveClue(){
+  if(!S.cwSel) return;
+  const [r,c]=S.cwSel;
+  const word=wordAtCell(r,c,S.cwDir);
+  const box=document.getElementById('activeClueBox');
+  if(word){
+    box.style.display='block';
+    document.getElementById('acbDir').textContent=word.n+' '+S.cwDir.toUpperCase();
+    document.getElementById('acbText').textContent=word.clue;
+  } else box.style.display='none';
+}
+
+function kp(key){
+  if(!S.cwSel) return;
+  const [r,c]=S.cwSel;
+  if(key==='⌫'){
+    S.cwUserGrid[r][c]='';
+    updateCell(r,c); moveCursor(-1); return;
+  }
+  S.cwUserGrid[r][c]=key;
+  updateCell(r,c); moveCursor(1);
+  // Auto-check word on fill
+  autoCheckWord();
+}
+
+function updateCell(r,c){
+  const el=document.getElementById('cl-'+r+'-'+c);
+  if(el) el.textContent=S.cwUserGrid[r][c]||'';
+  const cell=document.querySelector(`.cw-cell[data-r="${r}"][data-c="${c}"]`);
+  if(cell) cell.classList.remove('correct','wrong','revealed','hint-glow');
+}
+
+function moveCursor(dir){
+  if(!S.cwSel) return;
+  let [r,c]=S.cwSel;
+  const P=S.cwPuzzle;
+  const R=P.rows, C=P.cols;
+  if(S.cwDir==='across') c+=dir;
+  else r+=dir;
+  if(r>=0&&r<R&&c>=0&&c<C&&P.layout[r][c]!=='#'){
+    S.cwSel=[r,c]; highlight(); showActiveClue();
+  }
+}
+
+function toggleDir(){
+  S.cwDir=S.cwDir==='across'?'down':'across';
+  if(S.cwSel){
+    const [r,c]=S.cwSel;
+    if(!wordAtCell(r,c,S.cwDir)) S.cwDir=S.cwDir==='across'?'down':'across';
+    highlight(); showActiveClue();
+  }
+}
+
+function autoCheckWord(){
+  if(!S.cwSel) return;
+  const [r,c]=S.cwSel;
+  const word=wordAtCell(r,c,S.cwDir);
+  if(!word||S.cwSolvedWords.has(word.n+''+word.d)) return;
+  // Check if all cells of word are filled
+  const len=word.w.length;
+  let allFilled=true;
+  for(let i=0;i<len;i++){
+    const r2=S.cwDir==='across'?word.r:word.r+i;
+    const c2=S.cwDir==='across'?word.c+i:word.c;
+    if(!S.cwUserGrid[r2][c2]) {allFilled=false;break;}
+  }
+  if(!allFilled) return;
+  // Check correctness
+  let correct=true;
+  for(let i=0;i<len;i++){
+    const r2=S.cwDir==='across'?word.r:word.r+i;
+    const c2=S.cwDir==='across'?word.c+i:word.c;
+    // Compare against actual answer
+    const expected=getAnswerLetter(S.cwPuzzle,r2,c2);
+    if(S.cwUserGrid[r2][c2]!==expected){correct=false;break;}
+  }
+  if(correct){
+    markWordSolved(word);
+  }
+}
+
+function getAnswerLetter(P,r,c){
+  // Find from layout
+  return P.layout[r][c]==='#'?null:P.layout[r][c];
+}
+
+function markWordSolved(word){
+  if(S.cwSolvedWords.has(word.n+''+word.d)) return;
+  S.cwSolvedWords.add(word.n+''+word.d);
+  const len=word.w.length;
+  for(let i=0;i<len;i++){
+    const r2=S.cwDir==='across'?word.r:word.r+i;
+    const c2=word.d==='a'?word.c+i:word.c;
+    const cell=document.querySelector(`.cw-cell[data-r="${r2}"][data-c="${c2}"]`);
+    if(cell) cell.classList.add('correct');
+  }
+  const clEl=document.getElementById('clue-'+word.d+'-'+word.n);
+  if(clEl) clEl.classList.add('solved');
+  S.score+=100; S.cwSolved++;
+  updateHUDScore();
+  burst(S.cwSel[0],S.cwSel[1]);
+  toast('✅ '+word.w+' — correct! +100');
+  if(word.fact) setTimeout(()=>toast('💡 '+word.fact.slice(0,60)+'…'),800);
+  if(S.cwSolvedWords.size===S.cwPuzzle.words.filter(w=>w.fact||w.clue.length>10).length||
+     S.cwSolvedWords.size>=Math.ceil(S.cwPuzzle.words.length*0.8)){
+    setTimeout(()=>completeCW(),600);
+  }
+}
+
+function checkAll(){
+  const P=S.cwPuzzle;
+  let anyFilled=false;
+  P.words.forEach(w=>{
+    if(S.cwSolvedWords.has(w.n+''+w.d)) return;
+    const len=w.w.length;
+    for(let i=0;i<len;i++){
+      const r2=w.d==='a'?w.r:w.r+i;
+      const c2=w.d==='a'?w.c+i:w.c;
+      const u=S.cwUserGrid[r2][c2];
+      if(!u) continue;
+      anyFilled=true;
+      const expected=getAnswerLetter(P,r2,c2);
+      const cell=document.querySelector(`.cw-cell[data-r="${r2}"][data-c="${c2}"]`);
+      if(cell) cell.classList.remove('correct','wrong');
+      if(u===expected){if(cell) cell.classList.add('correct');}
+      else{if(cell) cell.classList.add('wrong');}
+    }
+  });
+  if(!anyFilled) toast('Fill in some letters first!');
+  else toast('Checked! Green = correct, Red = wrong');
+}
+
+function revealHint(){
+  if(!S.cwSel){toast('Tap a cell first!');return;}
+  const [r,c]=S.cwSel;
+  if(S.cwPuzzle.layout[r][c]==='#') return;
+  const expected=getAnswerLetter(S.cwPuzzle,r,c);
+  S.cwUserGrid[r][c]=expected;
+  const el=document.getElementById('cl-'+r+'-'+c);
+  if(el) el.textContent=expected;
+  const cell=document.querySelector(`.cw-cell[data-r="${r}"][data-c="${c}"]`);
+  if(cell){cell.classList.add('revealed','hint-glow');cell.classList.remove('wrong');}
+  S.cwHintsUsed++;
+  toast('💡 Hint revealed!');
+  moveCursor(1);
+  autoCheckWord();
+}
+
+function resetPuzzle(){
+  // Move to next puzzle
+  const nextIdx=(S.cwPuzzleIdx+1)%PUZZLES.length;
+  // Transition animation
+  const grid=document.getElementById('cwGrid');
+  grid.style.transition='opacity 0.4s,transform 0.4s';
+  grid.style.opacity='0'; grid.style.transform='scale(0.9) rotateY(10deg)';
+  setTimeout(()=>{
+    S.completedToday++;
+    updateProgress();
+    loadPuzzle(nextIdx);
+    grid.style.opacity='1'; grid.style.transform='scale(1) rotateY(0deg)';
+  },420);
+  startTimer();
+  toast('🔄 New puzzle — '+PUZZLES[nextIdx].title+'!');
+}
+
+function completeCW(){
+  const secs=S.timerSec;
+  S.cwSolved++;
+  S.score+=500;
+  S.completedToday++;
+  updateHUDScore(); updateProgress();
+  if(secs<300) unlock('speed5');
+  if(S.cwHintsUsed===0) unlock('nohint_cw');
+  unlock('crossword1');
+  if([0,1,2,3].every(i=>i===S.cwPuzzleIdx||S.cwSolvedWords.size>0)) unlock('all4');
+  showModal(`
+    <span class="modal-emoji">🎉</span>
+    <div class="modal-title">Puzzle Complete!</div>
+    <div style="color:var(--muted);font-size:0.85rem;margin:6px 0 14px;font-style:italic;">${S.cwPuzzle.title} — solved!</div>
+    <div class="result-grid">
+      <div class="result-card"><div class="rv">+500</div><div class="rl">Bonus Points</div></div>
+      <div class="result-card"><div class="rv">${Math.floor(secs/60)}:${String(secs%60).padStart(2,'0')}</div><div class="rl">Time Taken</div></div>
+    </div>
+    <div style="background:rgba(212,168,67,0.08);border-left:3px solid var(--gold);border-radius:0 10px 10px 0;padding:12px 14px;margin:12px 0;font-size:0.82rem;color:var(--gold-pale);font-style:italic;line-height:1.6;">
+      🌿 <strong>Fun Fact:</strong> Sri Lanka is known as the "Isle of Spices" — cinnamon, pepper, cloves & cardamom are major exports and nutritional powerhouses!
+    </div>
+    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:16px;">
+      <button class="btn btn-gold" onclick="resetPuzzle();closeModal()">🔄 Next Puzzle</button>
+      <button class="btn btn-outline" onclick="doShare();closeModal()">📤 Share</button>
+      <button class="btn btn-ghost" onclick="closeModal()">Close</button>
+    </div>
+  `);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  SCRAMBLE
+// ═══════════════════════════════════════════════════════════
+function initScramble(){
+  S.scIdx=0; S.scSolved=0; S.scSkipped=0;
+  loadScWord();
+}
+
+function loadScWord(){
+  if(S.scIdx>=SC_WORDS.length){completeScramble();return;}
+  const wd=SC_WORDS[S.scIdx];
+  document.getElementById('scCat').textContent=wd.cat;
+  document.getElementById('scClue').textContent=wd.clue;
+  document.getElementById('scSolvedNum').textContent=S.scSolved;
+  document.getElementById('scRemNum').textContent=SC_WORDS.length-S.scIdx;
+  document.getElementById('scSkipNum').textContent=S.scSkipped;
+  document.getElementById('scFact').style.display='none';
+  document.getElementById('scFact').classList.remove('show');
+
+  const len=wd.w.length;
+  S.scScrambled=shuffle([...wd.w]);
+  S.scSelected=Array(len).fill(null);
+
+  // Diff badge
+  const db=document.getElementById('scDiff');
+  if(len<=6){db.textContent='Easy';db.className='diff diff-e';}
+  else if(len<=9){db.textContent='Medium';db.className='diff diff-m';}
+  else{db.textContent='Hard';db.className='diff diff-h';}
+
+  renderScTiles(); renderScSlots();
+}
+
+function renderScTiles(){
+  const c=document.getElementById('scTiles');
+  c.innerHTML='';
+  S.scScrambled.forEach((letter,i)=>{
+    if(letter===null) return;
+    const t=document.createElement('div');
+    t.className='sc-tile'; t.textContent=letter; t.dataset.idx=i;
+    t.addEventListener('click',()=>scTileClick(i,t));
+    t.draggable=true;
+    t.addEventListener('dragstart',e=>{e.dataTransfer.setData('text',i);t.style.opacity='0.4';});
+    t.addEventListener('dragend',()=>{t.style.opacity='1';});
+    c.appendChild(t);
+  });
+}
+
+function renderScSlots(){
+  const c=document.getElementById('scSlots');
+  c.innerHTML='';
+  const len=SC_WORDS[S.scIdx].w.length;
+  for(let i=0;i<len;i++){
+    const s=document.createElement('div');
+    s.className='ans-slot'+(S.scSelected[i]!==null?' filled':'');
+    s.dataset.slot=i;
+    // Show letter if selected
+    if(S.scSelected[i]!==null){
+      const origLetter=S.scSelected[i];
+      s.textContent=origLetter;
+    }
+    s.addEventListener('click',()=>scSlotClick(i));
+    s.addEventListener('dragover',e=>e.preventDefault());
+    s.addEventListener('drop',e=>{e.preventDefault();const fi=parseInt(e.dataTransfer.getData('text'));scPlaceInSlot(fi,i);});
+    c.appendChild(s);
+  }
+}
+
+function scTileClick(idx){
+  const firstEmpty=S.scSelected.findIndex(s=>s===null);
+  if(firstEmpty===-1) return;
+  scPlaceInSlot(idx,firstEmpty);
+}
+
+function scPlaceInSlot(tileIdx,slotIdx){
+  if(S.scSelected[slotIdx]!==null) return;
+  const letter=S.scScrambled[tileIdx];
+  S.scSelected[slotIdx]=letter;
+  S.scScrambled[tileIdx]=null;
+  renderScTiles(); renderScSlots();
+  // Auto submit if all filled
+  if(S.scSelected.every(s=>s!==null)) setTimeout(scCheck,300);
+}
+
+function scSlotClick(i){
+  if(S.scSelected[i]===null) return;
+  const letter=S.scSelected[i];
+  // Put back
+  const empty=S.scScrambled.findIndex(s=>s===null);
+  if(empty!==-1) S.scScrambled[empty]=letter;
+  else S.scScrambled.push(letter);
+  S.scSelected[i]=null;
+  renderScTiles(); renderScSlots();
+}
+
+function scClear(){
+  const len=SC_WORDS[S.scIdx].w.length;
+  S.scSelected.forEach((letter,i)=>{
+    if(letter!==null){
+      const empty=S.scScrambled.findIndex(s=>s===null);
+      if(empty!==-1) S.scScrambled[empty]=letter;
+      else S.scScrambled.push(letter);
+    }
+  });
+  S.scSelected=Array(len).fill(null);
+  renderScTiles(); renderScSlots();
+}
+
+function scCheck(){
+  const wd=SC_WORDS[S.scIdx];
+  const answer=S.scSelected.join('');
+  if(answer.length<wd.w.length){toast('Fill all slots first!');return;}
+  const correct=answer===wd.w;
+  const slots=document.querySelectorAll('.ans-slot');
+  slots.forEach(s=>{s.classList.remove('correct-slot','wrong-slot');s.classList.add(correct?'correct-slot':'wrong-slot');});
+  const fb=document.getElementById('scFact');
+  fb.textContent='💡 '+wd.fact;
+  fb.style.display='block';fb.classList.add('show');
+  if(correct){
+    S.scSolved++;S.score+=60;
+    updateHUDScore();
+    burst(null,null,true);
+    toast('🎉 Correct! +60');
+    unlock('first');
+    setTimeout(()=>{S.scIdx++;loadScWord();},2200);
+  } else {
+    toast('❌ Not quite — try again!');
+    setTimeout(()=>{scClear();fb.style.display='none';fb.classList.remove('show');slots.forEach(s=>s.classList.remove('wrong-slot'));},2000);
+  }
+}
+
+function scHint(){
+  const wd=SC_WORDS[S.scIdx];
+  for(let i=0;i<S.scSelected.length;i++){
+    if(S.scSelected[i]===null){
+      const correctLetter=wd.w[i];
+      const ti=S.scScrambled.findIndex(l=>l===correctLetter);
+      if(ti!==-1){scPlaceInSlot(ti,i);toast('💡 Hint placed!');}
+      return;
+    }
+  }
+  toast('All slots filled — hit Submit!');
+}
+
+function scSkip(){
+  S.scSkipped++;S.scIdx++;
+  loadScWord();toast('⏭ Skipped');
+}
+
+function completeScramble(){
+  S.score+=300;updateHUDScore();
+  S.completedToday++;updateProgress();
+  unlock('allscramble');
+  if(S.scSkipped===0) unlock('noskip_sc');
+  showModal(`
+    <span class="modal-emoji">🏆</span>
+    <div class="modal-title">Scramble Complete!</div>
+    <div style="color:var(--muted);font-size:0.85rem;margin-bottom:14px;font-style:italic;">All ${SC_WORDS.length} Sri Lankan nutrition words solved!</div>
+    <div class="result-grid">
+      <div class="result-card"><div class="rv">+300</div><div class="rl">Bonus</div></div>
+      <div class="result-card"><div class="rv">${S.scSolved}</div><div class="rl">Solved</div></div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:center;margin-top:16px;flex-wrap:wrap;">
+      <button class="btn btn-gold" onclick="initScramble();closeModal()">🔄 Play Again</button>
+      <button class="btn btn-outline" onclick="doShare();closeModal()">📤 Share</button>
+    </div>
+  `);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  HUD / SCORE
+// ═══════════════════════════════════════════════════════════
+function updateHUDScore(){
+  document.getElementById('hScore').textContent=S.score;
+  LB[4].score=S.score;
+  LB.sort((a,b)=>b.score-a.score);
+}
+function syncStats(){
+  document.getElementById('stScore').textContent=S.score;
+  document.getElementById('stStreak').textContent=S.streak;
+  document.getElementById('stCw').textContent=S.cwSolved;
+  document.getElementById('stSc').textContent=S.scSolved+S.scSkipped;
+  renderLB(); renderAch();
+}
+function updateProgress(){
+  const pct=Math.min(S.completedToday/3*100,100);
+  document.getElementById('progFill').style.width=pct+'%';
+  document.getElementById('progVal').textContent=S.completedToday+' / 3 puzzles';
+}
+
+// ═══════════════════════════════════════════════════════════
+//  LEADERBOARD + ACHIEVEMENTS
+// ═══════════════════════════════════════════════════════════
+function renderLB(){
+  const el=document.getElementById('lbList');
+  el.innerHTML='';
+  LB.forEach((e,i)=>{
+    const isYou=e.name==='You';
+    el.innerHTML+=`<div class="lb-row" style="${isYou?'border-color:var(--border);background:rgba(212,168,67,0.07);':''}">
+      <div class="lb-rank ${i===0?'r1':i===1?'r2':i===2?'r3':''}">${i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)}</div>
+      <div class="lb-name">${e.name}${isYou?' <span style="font-size:0.7rem;color:var(--gold);font-family:IBM Plex Mono,monospace;">(YOU)</span>':''}</div>
+      <div class="lb-score">${e.score.toLocaleString()}</div>
+    </div>`;
+  });
+}
+function renderAch(){
+  const el=document.getElementById('achList');
+  el.innerHTML='';
+  ACHIEVEMENTS.forEach(a=>{
+    el.innerHTML+=`<div class="ach-item ${a.done?'':'locked'}">
+      <div class="ach-ico">${a.ico}</div>
+      <div class="ach-body"><div class="ach-title">${a.title}</div><div class="ach-desc">${a.desc}</div></div>
+      <div class="ach-badge">${a.done?'Unlocked':'Locked'}</div>
+    </div>`;
+  });
+}
+function unlock(id){
+  const a=ACHIEVEMENTS.find(x=>x.id===id);
+  if(a&&!a.done){a.done=true;toast('🎖 Achievement: '+a.title+'!');}
+}
+
+// ═══════════════════════════════════════════════════════════
+//  SHARE
+// ═══════════════════════════════════════════════════════════
+function doShare(){
+  const text=`🇱🇰 Sri Lanka Nutrition Day — Crossword Challenge!\n⭐ Score: ${S.score}\n🔥 Streak: ${S.streak}\n✅ Crosswords: ${S.cwSolved} | Words: ${S.scSolved}\n\nTest your nutrition knowledge!`;
+  if(navigator.share) navigator.share({title:'SL Nutrition Crossword',text});
+  else navigator.clipboard.writeText(text).then(()=>toast('📋 Copied to clipboard!'));
+}
+
+// ═══════════════════════════════════════════════════════════
+//  MODAL
+// ═══════════════════════════════════════════════════════════
+function showModal(html){
+  document.getElementById('modalBody').innerHTML=html;
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal(e){
+  if(!e||e.target===document.getElementById('modal')) document.getElementById('modal').classList.remove('open');
+}
+
+// ═══════════════════════════════════════════════════════════
+//  HOW TO PLAY
+// ═══════════════════════════════════════════════════════════
+function showHTP(){
+  showModal(`
+    <div class="modal-title">How to Play</div>
+    <div style="margin:16px 0;">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:0.7rem;letter-spacing:2px;color:var(--gold);margin-bottom:10px;text-transform:uppercase;">✏️ Crossword</div>
+      <div class="how-step"><div class="how-num">1</div><div class="how-text">Tap a white cell to select it. Tap the same cell again (or ↔ button) to switch direction: Across ↔ Down.</div></div>
+      <div class="how-step"><div class="how-num">2</div><div class="how-text">Type using the on-screen keyboard or your device keyboard. The cursor moves automatically.</div></div>
+      <div class="how-step"><div class="how-num">3</div><div class="how-text">Words auto-check when complete. Use ✅ Check to verify all filled cells. 💡 Hint fills the selected cell (unlimited).</div></div>
+      <div class="how-step"><div class="how-num">4</div><div class="how-text">Press 🔄 New Puzzle to load a fresh crossword with a new design. There are 4 themed puzzles!</div></div>
+    </div>
+    <div style="margin:16px 0;">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:0.7rem;letter-spacing:2px;color:var(--gold);margin-bottom:10px;text-transform:uppercase;">🔀 Scramble</div>
+      <div class="how-step"><div class="how-num">1</div><div class="how-text">Tap scrambled letter tiles to place them in order into the answer slots.</div></div>
+      <div class="how-step"><div class="how-num">2</div><div class="how-text">Drag tiles directly into any slot. Tap a filled slot to remove that letter.</div></div>
+      <div class="how-step"><div class="how-num">3</div><div class="how-text">💡 Hint (unlimited) auto-fills the next correct letter. Slots auto-submit when all filled!</div></div>
+    </div>
+    <button class="btn btn-gold" onclick="closeModal()" style="width:100%;justify-content:center;margin-top:6px;">Got it! 🌿 Let's Play</button>
+  `);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  PARTICLE BURST
+// ═══════════════════════════════════════════════════════════
+function burst(r,c,center=false){
+  let x,y;
+  if(center){x=window.innerWidth/2;y=window.innerHeight/2;}
+  else{
+    const cell=document.querySelector(`.cw-cell[data-r="${r}"][data-c="${c}"]`);
+    if(!cell) return;
+    const rect=cell.getBoundingClientRect();
+    x=rect.left+rect.width/2; y=rect.top+rect.height/2;
+  }
+  const colors=['#d4a843','#f0c040','#f7e8b0','#50c878','#ffffff'];
+  for(let i=0;i<16;i++){
+    const p=document.createElement('div');
+    p.className='particle';
+    const angle=Math.random()*Math.PI*2;
+    const dist=60+Math.random()*80;
+    p.style.cssText=`left:${x}px;top:${y}px;width:${4+Math.random()*5}px;height:${4+Math.random()*5}px;background:${colors[Math.floor(Math.random()*colors.length)]};--dx:${Math.cos(angle)*dist}px;--dy:${Math.sin(angle)*dist}px;`;
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(),1000);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════════════════════════
+let toastT;
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.classList.add('show');
+  clearTimeout(toastT);
+  toastT=setTimeout(()=>el.classList.remove('show'),2400);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════════════════════════
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]]=[arr[j],arr[i]];
+  }
+  return arr;
+}
+
+// Physical keyboard
+document.addEventListener('keydown',e=>{
+  if(document.querySelector('#tab-cw.active')){
+    if(e.key==='Backspace'){kp('⌫');e.preventDefault();return;}
+    if(e.key==='ArrowRight'){S.cwDir='across';moveCursor(1);return;}
+    if(e.key==='ArrowLeft'){S.cwDir='across';moveCursor(-1);return;}
+    if(e.key==='ArrowDown'){S.cwDir='down';moveCursor(1);return;}
+    if(e.key==='ArrowUp'){S.cwDir='down';moveCursor(-1);return;}
+    if(e.key===' '){toggleDir();e.preventDefault();return;}
+    if(/^[a-zA-Z]$/.test(e.key)) kp(e.key.toUpperCase());
+  }
+});
+
+// ═══════════════════════════════════════════════════════════
+//  BOOT
+// ═══════════════════════════════════════════════════════════
+init();
+</script>
+</body>
+</html>
