@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lucky Draw — Random Item Picker</title>
+
+<!-- Tailwind CSS (CDN build) -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          display: ['"Bricolage Grotesque"', 'sans-serif'],
+          body: ['Inter', 'system-ui', 'sans-serif'],
+        },
+        colors: {
+          ink:    '#16213A',
+          paper:  '#F7F8FC',
+          card:   '#FFFFFF',
+          accent: '#2F5FE3',
+          gold:   '#F4B400',
+          mint:   '#0E9F6E',
+        },
+      },
+    },
+  };
+</script>
+
+<style>
+  body { font-family: 'Inter', system-ui, sans-serif; }
+
+  /* Result reveal animation */
+  @keyframes popIn {
+    0%   { opacity: 0; transform: translateY(14px) scale(.96); }
+    60%  { opacity: 1; transform: translateY(-3px) scale(1.02); }
+    100% { opacity: 1; transform: translateY(0)    scale(1); }
+  }
+  .pop-in { animation: popIn .4s cubic-bezier(.2,.8,.3,1) both; }
+
+  /* Shuffling flicker on the button while drawing */
+  @keyframes shake {
+    0%,100% { transform: rotate(0deg); }
+    25%     { transform: rotate(-2deg); }
+    75%     { transform: rotate(2deg); }
+  }
+  .shaking { animation: shake .25s linear infinite; }
+
+  /* Ticket-stub notch effect on result rows */
+  .ticket { position: relative; }
+  .ticket::before, .ticket::after {
+    content: '';
+    position: absolute;
+    width: 14px; height: 14px;
+    background: #F7F8FC;
+    border-radius: 9999px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .ticket::before { left: -7px; }
+  .ticket::after  { right: -7px; }
+
+  /* Scrollable item list */
+  .scroll-slim::-webkit-scrollbar { width: 8px; }
+  .scroll-slim::-webkit-scrollbar-thumb { background: rgba(22,33,58,.2); border-radius: 9999px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pop-in, .shaking { animation: none !important; }
+  }
+</style>
+</head>
+
+<body class="bg-paper text-ink min-h-screen">
+
+<main class="max-w-2xl mx-auto px-4 py-10 sm:py-14">
+
+  <!-- Header -->
+  <header class="text-center mb-10">
+    <p class="uppercase tracking-[0.25em] text-xs font-semibold text-accent mb-2">Random Item Picker</p>
+    <h1 class="font-display font-extrabold text-4xl sm:text-5xl leading-tight">Lucky&nbsp;Draw</h1>
+    <p class="text-sm text-ink/60 mt-3">Add up to 100 items, name them, and get a randomly sorted list in one click.</p>
+  </header>
+
+  <!-- Step 1: number of items -->
+  <section class="bg-card rounded-2xl shadow-sm border border-ink/10 p-5 sm:p-6 mb-6">
+    <h2 class="font-display font-bold text-lg mb-4">1. How many items? <span class="text-ink/40 font-body text-sm font-normal">(2 – 100)</span></h2>
+    <div class="flex flex-wrap items-center gap-4">
+      <label for="itemCount" class="text-sm font-medium text-ink/70">Items:</label>
+      <input id="itemCount" type="number" min="2" max="100" value="7" inputmode="numeric"
+             class="w-24 rounded-lg border border-ink/20 bg-white px-4 py-2 text-base font-semibold text-center focus:outline-none focus:ring-2 focus:ring-accent">
+      <input id="itemSlider" type="range" min="2" max="100" value="7" aria-label="Number of items"
+             class="flex-1 min-w-[140px] accent-[#2F5FE3]">
+    </div>
+  </section>
+
+  <!-- Step 2: name the items -->
+  <section class="bg-card rounded-2xl shadow-sm border border-ink/10 p-5 sm:p-6 mb-6">
+    <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+      <h2 class="font-display font-bold text-lg">2. Name your items <span class="text-ink/40 font-body text-sm font-normal">(optional)</span></h2>
+      <button id="bulkToggle"
+              class="text-sm font-semibold border border-ink/20 rounded-full px-4 py-1.5 hover:bg-ink hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-accent">
+        Paste a list
+      </button>
+    </div>
+
+    <!-- Bulk paste panel -->
+    <div id="bulkPanel" class="hidden mb-4">
+      <textarea id="bulkText" rows="5" placeholder="Type or paste one item per line, e.g.&#10;Abc&#10;Efg&#10;Hij"
+                class="w-full rounded-lg border border-ink/20 bg-white px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-accent placeholder:text-ink/30"></textarea>
+      <div class="flex gap-2 mt-2">
+        <button id="bulkApply"
+                class="text-sm font-semibold bg-accent text-white rounded-full px-4 py-1.5 hover:bg-ink transition-colors focus:outline-none focus:ring-2 focus:ring-accent">
+          Apply names
+        </button>
+        <button id="bulkClose"
+                class="text-sm font-semibold border border-ink/20 rounded-full px-4 py-1.5 hover:bg-ink hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-accent">
+          Close
+        </button>
+      </div>
+      <p class="text-xs text-ink/50 mt-2">Each line fills the next item in order. The item count adjusts automatically (max 100).</p>
+    </div>
+
+    <div id="itemInputs" class="space-y-3 max-h-96 overflow-y-auto pr-1 scroll-slim"><!-- rows injected by JS --></div>
+  </section>
+
+  <!-- Step 3: how many to pick -->
+  <section class="bg-card rounded-2xl shadow-sm border border-ink/10 p-5 sm:p-6 mb-8">
+    <h2 class="font-display font-bold text-lg mb-4">3. How many to pick?</h2>
+    <div class="flex flex-wrap items-center gap-4">
+      <label for="pickCount" class="text-sm font-medium text-ink/70">Pick:</label>
+      <input id="pickCount" type="number" min="1" max="100" value="7" inputmode="numeric"
+             class="w-24 rounded-lg border border-ink/20 bg-white px-4 py-2 text-base font-semibold text-center focus:outline-none focus:ring-2 focus:ring-accent">
+      <span class="text-sm text-ink/50">item(s), randomly ordered, no repeats</span>
+      <button id="pickAllBtn"
+              class="text-sm font-semibold border border-ink/20 rounded-full px-4 py-1.5 hover:bg-ink hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-accent">
+        Pick all (shuffle everything)
+      </button>
+    </div>
+    <p class="text-xs text-ink/50 mt-3">Tip: set this to the total number of items to get a complete randomly sorted list — perfect for orders, turns, or rankings.</p>
+  </section>
+
+  <!-- Pick button -->
+  <div class="text-center mb-10">
+    <button id="pickBtn"
+            class="font-display font-bold text-lg sm:text-xl bg-accent text-white rounded-full px-10 py-4 shadow-lg shadow-accent/30
+                   hover:bg-ink transition-colors focus:outline-none focus:ring-4 focus:ring-accent/40 active:scale-95">
+      🎲 Random Pick
+    </button>
+  </div>
+
+  <!-- Results -->
+  <section id="resultSection" class="hidden">
+    <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+      <h2 class="font-display font-bold text-xl">Your randomly sorted list</h2>
+      <div class="flex gap-2">
+        <button id="copyBtn"
+                class="text-sm font-semibold border border-ink/20 rounded-full px-4 py-1.5 hover:bg-ink hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-accent">
+          Copy list
+        </button>
+        <button id="againBtn"
+                class="text-sm font-semibold border border-ink/20 rounded-full px-4 py-1.5 hover:bg-ink hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-accent">
+          Shuffle again
+        </button>
+      </div>
+    </div>
+    <ol id="resultList" class="space-y-3"><!-- results injected by JS --></ol>
+    <p id="copyNote" class="text-center text-sm text-mint font-semibold mt-3 opacity-0 transition-opacity">Copied to clipboard ✓</p>
+  </section>
+
+  <footer class="text-center text-xs text-ink/40 mt-14">
+    Fair shuffle (Fisher–Yates) · Runs entirely in your browser · No data leaves this page
+  </footer>
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  const MAX_ITEMS = 100;
+  const itemCountInp = document.getElementById('itemCount');
+  const itemSlider   = document.getElementById('itemSlider');
+  const pickCountInp = document.getElementById('pickCount');
+  const pickAllBtn   = document.getElementById('pickAllBtn');
+  const itemInputs   = document.getElementById('itemInputs');
+  const pickBtn      = document.getElementById('pickBtn');
+  const resultSec    = document.getElementById('resultSection');
+  const resultList   = document.getElementById('resultList');
+  const copyBtn      = document.getElementById('copyBtn');
+  const againBtn     = document.getElementById('againBtn');
+  const copyNote     = document.getElementById('copyNote');
+  const bulkToggle   = document.getElementById('bulkToggle');
+  const bulkPanel    = document.getElementById('bulkPanel');
+  const bulkText     = document.getElementById('bulkText');
+  const bulkApply    = document.getElementById('bulkApply');
+  const bulkClose    = document.getElementById('bulkClose');
+
+  // Names stored by index so they survive count changes
+  const savedNames = {};
+  let lastResults = [];
+
+  // Spreadsheet-style labels: A..Z, AA, AB, ... (index 0 = A, 26 = AA, 99 = CV)
+  function labelFor(index) {
+    let label = '';
+    let n = index;
+    do {
+      label = String.fromCharCode(65 + (n % 26)) + label;
+      n = Math.floor(n / 26) - 1;
+    } while (n >= 0);
+    return label;
+  }
+
+  function clampCount(v, min, max) {
+    v = parseInt(v, 10);
+    if (isNaN(v)) v = min;
+    return Math.max(min, Math.min(max, v));
+  }
+
+  function getItemCount() { return clampCount(itemCountInp.value, 2, MAX_ITEMS); }
+  function getPickCount() { return clampCount(pickCountInp.value, 1, getItemCount()); }
+
+  function buildItemInputs() {
+    const n = getItemCount();
+    itemInputs.innerHTML = '';
+    const frag = document.createDocumentFragment();
+    for (let i = 0; i < n; i++) {
+      const letter = labelFor(i);
+      const row = document.createElement('div');
+      row.className = 'flex items-center gap-3';
+      row.innerHTML =
+        '<span class="font-display font-bold w-10 h-9 flex items-center justify-center rounded-lg bg-ink text-gold text-sm shrink-0">' + letter + '</span>' +
+        '<input type="text" maxlength="80" data-index="' + i + '" ' +
+        'placeholder="Item ' + letter + '" ' +
+        'value="' + escapeHtml(savedNames[i] || '') + '" ' +
+        'class="item-name flex-1 rounded-lg border border-ink/20 bg-white px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-accent placeholder:text-ink/30">';
+      frag.appendChild(row);
+    }
+    itemInputs.appendChild(frag);
+    itemInputs.querySelectorAll('.item-name').forEach(inp => {
+      inp.addEventListener('input', () => { savedNames[inp.dataset.index] = inp.value; });
+    });
+  }
+
+  function syncCounts(newCount) {
+    const n = clampCount(newCount, 2, MAX_ITEMS);
+    itemCountInp.value = n;
+    itemSlider.value = n;
+    pickCountInp.max = n;
+    if (parseInt(pickCountInp.value, 10) > n || !pickCountInp.value) pickCountInp.value = n;
+    buildItemInputs();
+  }
+
+  // Cryptographically strong random integer in [0, max)
+  function randInt(max) {
+    if (window.crypto && window.crypto.getRandomValues) {
+      const buf = new Uint32Array(1);
+      const limit = Math.floor(0xFFFFFFFF / max) * max;
+      let v;
+      do { window.crypto.getRandomValues(buf); v = buf[0]; } while (v >= limit);
+      return v % max;
+    }
+    return Math.floor(Math.random() * max);
+  }
+
+  // Fisher–Yates shuffle
+  function shuffle(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = randInt(i + 1);
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function getItems() {
+    const n = getItemCount();
+    const items = [];
+    for (let i = 0; i < n; i++) {
+      const letter = labelFor(i);
+      const name = (savedNames[i] || '').trim();
+      items.push({ letter, name: name || ('Item ' + letter) });
+    }
+    return items;
+  }
+
+  function doPick() {
+    const items = getItems();
+    pickCountInp.value = getPickCount(); // normalize display
+    const k = getPickCount();
+
+    pickBtn.disabled = true;
+    pickBtn.classList.add('shaking', 'opacity-80');
+    pickBtn.textContent = 'Shuffling…';
+
+    setTimeout(() => {
+      lastResults = shuffle(items).slice(0, k);
+      renderResults(lastResults);
+      pickBtn.disabled = false;
+      pickBtn.classList.remove('shaking', 'opacity-80');
+      pickBtn.textContent = '🎲 Random Pick';
+      resultSec.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 500);
+  }
+
+  function renderResults(results) {
+    resultList.innerHTML = '';
+    const frag = document.createDocumentFragment();
+    const animLimit = 20; // stagger only the first rows so big lists appear fast
+    results.forEach((item, idx) => {
+      const li = document.createElement('li');
+      li.className = 'ticket pop-in bg-card border border-ink/10 rounded-xl shadow-sm px-5 py-3.5 flex items-center gap-4';
+      li.style.animationDelay = (Math.min(idx, animLimit) * 0.06) + 's';
+      li.innerHTML =
+        '<span class="font-display font-extrabold text-xl text-gold w-10 text-center shrink-0">' + (idx + 1) + '</span>' +
+        '<span class="w-px self-stretch bg-ink/10"></span>' +
+        '<span class="font-display font-bold w-10 h-9 flex items-center justify-center rounded-lg bg-ink text-gold text-sm shrink-0">' + item.letter + '</span>' +
+        '<span class="text-base font-semibold break-words min-w-0">' + escapeHtml(item.name) + '</span>';
+      frag.appendChild(li);
+    });
+    resultList.appendChild(frag);
+    resultSec.classList.remove('hidden');
+    copyNote.classList.add('opacity-0');
+  }
+
+  function copyResults() {
+    if (!lastResults.length) return;
+    const text = lastResults
+      .map((it, i) => (i + 1) + '. ' + it.letter + '. ' + it.name)
+      .join('\n');
+    const done = () => {
+      copyNote.classList.remove('opacity-0');
+      setTimeout(() => copyNote.classList.add('opacity-0'), 1800);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done));
+    } else {
+      fallbackCopy(text, done);
+    }
+  }
+
+  function fallbackCopy(text, done) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); done(); } catch (e) {}
+    document.body.removeChild(ta);
+  }
+
+  function applyBulkNames() {
+    const lines = bulkText.value.split('\n').map(s => s.trim()).filter(Boolean);
+    if (!lines.length) return;
+    const n = clampCount(lines.length, 2, MAX_ITEMS);
+    lines.slice(0, MAX_ITEMS).forEach((name, i) => { savedNames[i] = name; });
+    syncCounts(Math.max(n, lines.length >= 2 ? n : 2));
+  }
+
+  function escapeHtml(s) {
+    return String(s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  // Events
+  itemCountInp.addEventListener('change', () => syncCounts(itemCountInp.value));
+  itemSlider.addEventListener('input', () => syncCounts(itemSlider.value));
+  pickCountInp.addEventListener('change', () => { pickCountInp.value = getPickCount(); });
+  pickAllBtn.addEventListener('click', () => { pickCountInp.value = getItemCount(); });
+  pickBtn.addEventListener('click', doPick);
+  againBtn.addEventListener('click', doPick);
+  copyBtn.addEventListener('click', copyResults);
+  bulkToggle.addEventListener('click', () => bulkPanel.classList.toggle('hidden'));
+  bulkClose.addEventListener('click', () => bulkPanel.classList.add('hidden'));
+  bulkApply.addEventListener('click', () => { applyBulkNames(); bulkPanel.classList.add('hidden'); });
+
+  // Init
+  syncCounts(7);
+})();
+</script>
+</body>
+</html>
