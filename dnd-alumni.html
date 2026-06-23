@@ -505,6 +505,10 @@
       background: radial-gradient(circle at 35% 35%, rgba(212,150,42,0.12) 0%, transparent 65%);
     }
     .avatar.sm { width: 70px; height: 70px; font-size: 1.05rem; }
+    .avatar img {
+      width: 100%; height: 100%; object-fit: cover;
+      position: relative; z-index: 1; display: block;
+    }
 
     .bearer-name {
       font-family: var(--font-heading); font-size: .88rem; font-weight: 700;
@@ -881,7 +885,7 @@
 
       <div class="bearer-card reveal">
         <div class="avatar-wrap">
-          <div class="avatar" aria-label="GD initials">GD</div>
+          <div class="avatar" aria-label="GD initials"><img src="https://res.cloudinary.com/dkj22lm1g/image/upload/v1782198146/Gayathri_n3lfwg.webp" alt="Ms. Gayathri Dissanayaka" loading="lazy"/></div>
         </div>
         <div>
           <div class="bearer-name">Ms. Gayathri<br/>Dissanayaka</div>
@@ -891,7 +895,7 @@
 
       <div class="bearer-card reveal">
         <div class="avatar-wrap">
-          <div class="avatar" aria-label="AV initials">AV</div>
+          <div class="avatar" aria-label="AV initials"><img src="https://res.cloudinary.com/dkj22lm1g/image/upload/v1782198147/Ashen_qo7vqj.webp" alt="Mr. Ashen Viduranga" loading="lazy"/></div>
         </div>
         <div>
           <div class="bearer-name">Mr. Ashen<br/>Viduranga</div>
@@ -901,7 +905,7 @@
 
       <div class="bearer-card reveal">
         <div class="avatar-wrap">
-          <div class="avatar" aria-label="AB initials">AB</div>
+          <div class="avatar" aria-label="AB initials"><img src="https://res.cloudinary.com/dkj22lm1g/image/upload/v1782198147/Amasha_hrkdnj.webp" alt="Ms. Amasha Bandara" loading="lazy"/></div>
         </div>
         <div>
           <div class="bearer-name">Ms. Amasha<br/>Bandara</div>
@@ -911,7 +915,7 @@
 
       <div class="bearer-card reveal">
         <div class="avatar-wrap">
-          <div class="avatar" aria-label="TK initials">TK</div>
+          <div class="avatar" aria-label="TK initials"><img src="https://res.cloudinary.com/dkj22lm1g/image/upload/v1782198146/Tharaka_lo8zm9.webp" alt="Mr. Tharaka Karunarathna" loading="lazy"/></div>
         </div>
         <div>
           <div class="bearer-name">Mr. Tharaka<br/>Karunarathna</div>
@@ -921,7 +925,7 @@
 
       <div class="bearer-card reveal">
         <div class="avatar-wrap">
-          <div class="avatar" aria-label="YU initials">YU</div>
+          <div class="avatar" aria-label="YU initials"><img src="https://res.cloudinary.com/dkj22lm1g/image/upload/v1782198146/Yamini_cgbhhc.webp" alt="Ms. Yamini Umapathi" loading="lazy"/></div>
         </div>
         <div>
           <div class="bearer-name">Ms. Yamini<br/>Umapathi</div>
@@ -939,7 +943,7 @@
     <div class="committee-grid">
 
       <div class="bearer-card sm reveal">
-        <div class="avatar sm" aria-label="KT initials">KT</div>
+        <div class="avatar sm" aria-label="KT initials"><img src="https://res.cloudinary.com/dkj22lm1g/image/upload/v1782198147/Kiruthajini_ryxlcr.webp" alt="Ms. Kiruthajiny Thevarajah" loading="lazy"/></div>
         <div>
           <div class="bearer-name" style="font-size:.8rem;">Ms. Kiruthajiny<br/>Thevarajah</div>
           <div class="bearer-role role-muted" style="margin-top:6px;">Committee</div>
@@ -947,7 +951,7 @@
       </div>
 
       <div class="bearer-card sm reveal">
-        <div class="avatar sm" aria-label="TH initials">TH</div>
+        <div class="avatar sm" aria-label="TH initials"><img src="https://res.cloudinary.com/dkj22lm1g/image/upload/v1782198146/Thilini_cqiobh.webp" alt="Ms. Thilini Hirumuthugodage" loading="lazy"/></div>
         <div>
           <div class="bearer-name" style="font-size:.8rem;">Ms. Thilini<br/>Hirumuthugodage</div>
           <div class="bearer-role role-muted" style="margin-top:6px;">Committee</div>
@@ -955,7 +959,7 @@
       </div>
 
       <div class="bearer-card sm reveal">
-        <div class="avatar sm" aria-label="YA initials">YA</div>
+        <div class="avatar sm" aria-label="YA initials"><img src="https://res.cloudinary.com/dkj22lm1g/image/upload/v1782198146/Yashodaran_nieswi.webp" alt="Mr. Yashodaran" loading="lazy"/></div>
         <div>
           <div class="bearer-name" style="font-size:.8rem;">Mr.<br/>Yashodaran</div>
           <div class="bearer-role role-muted" style="margin-top:6px;">Committee</div>
@@ -972,7 +976,7 @@
     <div class="advisory-grid">
 
       <div class="bearer-card reveal">
-        <div class="avatar" style="background:linear-gradient(135deg,#1e3d80,#071228);border-color:rgba(212,150,42,0.5);" aria-label="HG initials">HG</div>
+        <div class="avatar" style="background:linear-gradient(135deg,#1e3d80,#071228);border-color:rgba(212,150,42,0.5);" aria-label="HG initials"><img src="https://res.cloudinary.com/dkj22lm1g/image/upload/v1782198147/Harshi_kksb1r.webp" alt="Dr. Harshi Gunawardena" loading="lazy"/></div>
         <div>
           <div class="bearer-name">Dr. Harshi<br/>Gunawardena</div>
           <div class="bearer-role role-gold" style="margin-top:8px;">Alumni Liaison</div>
@@ -980,7 +984,7 @@
       </div>
 
       <div class="bearer-card reveal">
-        <div class="avatar" style="background:linear-gradient(135deg,#1e3d80,#071228);border-color:rgba(212,150,42,0.5);" aria-label="TR initials">TR</div>
+        <div class="avatar" style="background:linear-gradient(135deg,#1e3d80,#071228);border-color:rgba(212,150,42,0.5);" aria-label="TR initials"><img src="https://res.cloudinary.com/dkj22lm1g/image/upload/v1782198146/Thilanka_dy2jz6.webp" alt="Dr. Thilanka Ranathunge" loading="lazy"/></div>
         <div>
           <div class="bearer-name">Dr. Thilanka<br/>Ranathunge</div>
           <div class="bearer-role role-gold" style="margin-top:8px;">Patron</div>
