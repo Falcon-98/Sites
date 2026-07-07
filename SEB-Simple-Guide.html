@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="A simple guide to downloading, verifying and installing Safe Exam Browser on Windows, macOS and iOS.">
+<title>Safe Exam Browser — Simple Download Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #ffffff;
+    --bg-soft: #f6f8fb;
+    --border: #e4e9f0;
+    --text: #1a2233;
+    --text-soft: #5b6472;
+    --blue: #2563eb;
+    --blue-dark: #1d4ed8;
+    --green: #16a34a;
+    --green-bg: #ecfdf3;
+    --amber: #b45309;
+    --amber-bg: #fffbeb;
+    --red: #b91c1c;
+    --red-bg: #fef2f2;
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { animation: none !important; transition: none !important; }
+  }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text-soft);
+    font-family: "Inter", sans-serif;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4 { color: var(--text); font-weight: 700; margin: 0; }
+  a { color: var(--blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  code, .mono { font-family: "JetBrains Mono", monospace; }
+  :focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; border-radius: 4px; }
+
+  .wrap { max-width: 780px; margin: 0 auto; padding: 0 20px; }
+
+  /* Header */
+  header {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+  }
+  header .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; color: var(--text); font-size: 15px; }
+  .brand-icon {
+    width: 32px; height: 32px; border-radius: 9px; background: var(--blue);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .official-link {
+    font-size: 13px; font-weight: 600; padding: 8px 14px; border-radius: 8px;
+    border: 1px solid var(--border); color: var(--text);
+  }
+  .official-link:hover { border-color: var(--blue); text-decoration: none; color: var(--blue); }
+
+  /* Hero */
+  .hero { padding: 56px 0 36px; text-align: center; }
+  .hero h1 { font-size: 2.1rem; line-height: 1.25; max-width: 560px; margin: 0 auto; }
+  .hero p { max-width: 480px; margin: 14px auto 0; font-size: 1.02rem; }
+
+  /* Alert banner */
+  .alert {
+    display: flex; gap: 10px; align-items: flex-start;
+    background: var(--red-bg); border: 1px solid #fecaca; color: var(--text);
+    border-radius: var(--radius); padding: 14px 16px; margin: 28px auto 0; max-width: 780px; font-size: 14px;
+  }
+  .alert svg { flex-shrink: 0; margin-top: 2px; }
+  .alert strong { color: var(--red); }
+
+  section { padding: 44px 0; }
+  .eyebrow { font-size: 12px; font-weight: 700; letter-spacing: 0.06em; color: var(--blue); text-transform: uppercase; margin-bottom: 6px; }
+  .section-title { font-size: 1.5rem; margin-bottom: 8px; }
+  .section-sub { font-size: 0.95rem; margin-bottom: 22px; }
+
+  /* Platform switch */
+  .switch {
+    display: flex; gap: 6px; background: var(--bg-soft); border: 1px solid var(--border);
+    border-radius: 12px; padding: 5px; margin-bottom: 20px;
+  }
+  .switch button {
+    flex: 1; padding: 10px 8px; border: none; background: transparent; border-radius: 8px;
+    font-family: inherit; font-weight: 600; font-size: 14px; color: var(--text-soft); cursor: pointer;
+    transition: background .15s ease, color .15s ease;
+  }
+  .switch button[aria-selected="true"] { background: #fff; color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  .switch button:hover:not([aria-selected="true"]) { color: var(--text); }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .card {
+    border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; background: #fff;
+  }
+  .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .card-top h3 { font-size: 1.3rem; }
+  .card-top .version-meta { font-size: 13px; color: var(--text-soft); margin-top: 4px; }
+  .badge {
+    font-size: 11px; font-weight: 700; padding: 5px 10px; border-radius: 999px;
+    white-space: nowrap;
+  }
+  .badge.green { background: var(--green-bg); color: var(--green); }
+  .badge.amber { background: var(--amber-bg); color: var(--amber); }
+
+  .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 12px 18px; border-radius: 10px; font-weight: 600; font-size: 14px; cursor: pointer;
+    border: 1px solid transparent; transition: transform .1s ease, background .15s ease;
+  }
+  .btn:hover { text-decoration: none; }
+  .btn.primary { background: var(--blue); color: #fff; }
+  .btn.primary:hover { background: var(--blue-dark); }
+  .btn.secondary { background: #fff; border-color: var(--border); color: var(--text); }
+  .btn.secondary:hover { border-color: var(--blue); color: var(--blue); }
+
+  .hash-box {
+    margin-top: 18px; background: var(--bg-soft); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px 16px;
+  }
+  .hash-box .label { font-size: 11px; font-weight: 700; letter-spacing: 0.04em; color: var(--text-soft); text-transform: uppercase; }
+  .hash-row { display: flex; align-items: center; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+  .hash-row code { font-size: 12px; color: var(--text); word-break: break-all; }
+  .copy-btn {
+    margin-left: auto; font-size: 12px; font-weight: 600; padding: 6px 10px; border-radius: 7px;
+    border: 1px solid var(--border); background: #fff; color: var(--text); cursor: pointer; flex-shrink: 0;
+  }
+  .copy-btn:hover { border-color: var(--blue); color: var(--blue); }
+
+  .why-check {
+    margin-top: 10px; font-size: 13px;
+  }
+  .why-check summary { cursor: pointer; font-weight: 600; color: var(--blue); }
+  .why-check pre {
+    margin: 10px 0 0; background: var(--text); color: #f6f8fb; padding: 10px 12px; border-radius: 8px;
+    font-size: 12px; overflow-x: auto;
+  }
+
+  ul.notes { list-style: none; margin: 18px 0 0; padding: 0; font-size: 14px; }
+  ul.notes li { display: flex; gap: 8px; padding: 5px 0; }
+  ul.notes li::before { content: "•"; color: var(--blue); font-weight: 700; }
+
+  .resources { margin-top: 18px; display: grid; gap: 8px; }
+  .resources a {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    border: 1px solid var(--border); border-radius: 9px; padding: 10px 14px; font-size: 13.5px;
+    color: var(--text); background: var(--bg-soft);
+  }
+  .resources a:hover { border-color: var(--blue); text-decoration: none; color: var(--blue); }
+
+  .note-box {
+    margin-top: 16px; background: var(--amber-bg); border: 1px solid #fde68a; border-radius: 10px;
+    padding: 12px 14px; font-size: 13.5px; color: var(--text);
+  }
+
+  /* Steps */
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+  .steps li {
+    display: flex; gap: 14px; align-items: flex-start;
+    border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; background: #fff;
+  }
+  .step-num {
+    flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%; background: var(--blue);
+    color: #fff; font-weight: 700; font-size: 13px; display: flex; align-items: center; justify-content: center;
+  }
+  .steps h4 { font-size: 15px; margin-bottom: 3px; }
+  .steps p { font-size: 13.5px; margin: 0; }
+
+  /* Accordion */
+  .accordion { display: grid; gap: 10px; }
+  .accordion-item { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: #fff; }
+  .accordion-item button.q {
+    width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 15px 18px; background: transparent; border: none; text-align: left; cursor: pointer;
+    font-family: inherit; font-weight: 600; font-size: 14px; color: var(--text);
+  }
+  .accordion-item .chev { transition: transform .2s ease; flex-shrink: 0; color: var(--text-soft); }
+  .accordion-item.open .chev { transform: rotate(180deg); }
+  .accordion-panel { max-height: 0; overflow: hidden; transition: max-height .3s ease; }
+  .accordion-item.open .accordion-panel { max-height: 300px; }
+  .accordion-panel p { padding: 0 18px 16px; font-size: 13.5px; margin: 0; border-top: 1px solid var(--border); padding-top: 12px; }
+
+  footer { border-top: 1px solid var(--border); padding: 32px 0; margin-top: 24px; }
+  footer .wrap { display: flex; flex-direction: column; gap: 14px; font-size: 13px; }
+  footer .links { display: flex; gap: 18px; flex-wrap: wrap; }
+
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(8px);
+    background: var(--text); color: #fff; font-size: 13px; font-weight: 600;
+    padding: 10px 16px; border-radius: 8px; opacity: 0; pointer-events: none;
+    transition: opacity .2s ease, transform .2s ease; z-index: 100;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 560px) {
+    .hero h1 { font-size: 1.6rem; }
+    .card { padding: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="brand">
+      <span class="brand-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2 4 5v6c0 5 3.4 8.7 8 11 4.6-2.3 8-6 8-11V5l-8-3Z" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+      Safe Exam Browser Guide
+    </div>
+    <a class="official-link" href="https://safeexambrowser.org/download_en.html" target="_blank" rel="noopener">Official site ↗</a>
+  </div>
+</header>
+
+<div class="hero wrap">
+  <h1>Install Safe Exam Browser in a few simple steps</h1>
+  <p>Pick your device below, download the right file, and follow the checklist. That's it.</p>
+</div>
+
+<div class="alert">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3 2 20h20L12 3Z" stroke="#b91c1c" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 9v5" stroke="#b91c1c" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="16.5" r="1" fill="#b91c1c"/></svg>
+  <span><strong>Heads up:</strong> Windows version 3.10.2 was pulled after it failed to start on some computers. If you have it installed, remove it and install 3.10.1 instead.</span>
+</div>
+
+<section id="downloads" class="wrap">
+  <p class="eyebrow">Step 1</p>
+  <h2 class="section-title">Choose your device</h2>
+  <p class="section-sub">Download the version made for your device — it's the only one that will work on your exam.</p>
+
+  <div class="switch" role="tablist" aria-label="Choose your platform">
+    <button data-tab="win" role="tab" aria-selected="true">Windows</button>
+    <button data-tab="mac" role="tab" aria-selected="false">macOS</button>
+    <button data-tab="ios" role="tab" aria-selected="false">iPhone / iPad</button>
+  </div>
+
+  <!-- WINDOWS -->
+  <div class="panel active" data-panel="win">
+    <div class="card">
+      <div class="card-top">
+        <div>
+          <h3>SEB 3.10.1</h3>
+          <p class="version-meta">For Windows 10 and Windows 11</p>
+        </div>
+        <span class="badge green">Recommended</span>
+      </div>
+
+      <div class="actions">
+        <a class="btn primary" href="https://github.com/SafeExamBrowser/seb-win-refactoring/releases/download/v3.10.1/SEB_3.10.1.864_SetupBundle.exe">Download for Windows</a>
+        <a class="btn secondary" href="https://sourceforge.net/projects/seb/files/seb/SEB_3.10.1/SEB_3.10.1.864_SetupBundle.exe/download" target="_blank" rel="noopener">Alternate mirror ↗</a>
+      </div>
+
+      <ul class="notes">
+        <li>Fixes a settings-password bug from earlier versions</li>
+        <li>Better detection of virtual machines</li>
+        <li>Adds a Turkish interface option</li>
+      </ul>
+
+      <div class="hash-box">
+        <div class="label">Verify your download (optional)</div>
+        <div class="hash-row">
+          <code id="sha-win">9593eaf0612e32c26a6fb7f5aac13b8a4f4cfb54</code>
+          <button class="copy-btn" onclick="copyHash('sha-win', this)">Copy</button>
+        </div>
+        <details class="why-check">
+          <summary>How do I check this?</summary>
+          <p style="margin:8px 0 0;">Open Command Prompt in your Downloads folder and run:</p>
+          <pre>certutil -hashfile SEB_3.10.1.864_SetupBundle.exe SHA1</pre>
+          <p style="margin:6px 0 0;">The result should match the code above.</p>
+        </details>
+      </div>
+
+      <div class="resources">
+        <a href="https://safeexambrowser.org/windows/win_usermanual_en.html" target="_blank" rel="noopener">User manual ↗</a>
+        <a href="https://safeexambrowser.org/windows/win_release_notes_en.html" target="_blank" rel="noopener">Full release notes ↗</a>
+        <a href="https://safeexambrowser.org/download_releases_en.html" target="_blank" rel="noopener">Older versions ↗</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAC -->
+  <div class="panel" data-panel="mac">
+    <div class="card">
+      <div class="card-top">
+        <div>
+          <h3>SEB 3.6.1</h3>
+          <p class="version-meta">For macOS 11 through macOS 26</p>
+        </div>
+        <span class="badge green">Recommended</span>
+      </div>
+
+      <div class="actions">
+        <a class="btn primary" href="https://github.com/SafeExamBrowser/seb-mac/releases/download/3.6.1/SafeExamBrowser-3.6.1.dmg">Download for macOS</a>
+        <a class="btn secondary" href="https://sourceforge.net/projects/seb/files/seb-macosx/seb_macos_3.6.1/SafeExamBrowser-3.6.1.dmg/download" target="_blank" rel="noopener">Alternate mirror ↗</a>
+      </div>
+
+      <ul class="notes">
+        <li>Adds VoiceOver accessibility controls</li>
+        <li>Blocks Google Chrome from running during exams</li>
+        <li>Fixes a crash on pages using verbose logging</li>
+      </ul>
+
+      <div class="hash-box">
+        <div class="label">Verify your download (optional)</div>
+        <div class="hash-row">
+          <code id="sha-mac">ccb581fd8d5ef3c1e783c10bb60a398d18f924a0bd4566103a762d9e7be2524e</code>
+          <button class="copy-btn" onclick="copyHash('sha-mac', this)">Copy</button>
+        </div>
+        <details class="why-check">
+          <summary>How do I check this?</summary>
+          <p style="margin:8px 0 0;">Open Terminal in your Downloads folder and run:</p>
+          <pre>shasum -a 256 SafeExamBrowser-3.6.1.dmg</pre>
+          <p style="margin:6px 0 0;">The result should match the code above.</p>
+        </details>
+      </div>
+
+      <div class="note-box">Exam admins: use the <a href="sebs://safeexambrowser.org/exams/SEBClientSettings_Settings_Allowed.seb">Settings-Allowed link</a> to unlock the Settings editor after a fresh install.</div>
+
+      <div class="resources">
+        <a href="https://safeexambrowser.org/macosx/mac_usermanual_en.html" target="_blank" rel="noopener">User manual ↗</a>
+        <a href="https://safeexambrowser.org/macosx/mac_release_notes_en.html" target="_blank" rel="noopener">Full release notes ↗</a>
+        <a href="https://safeexambrowser.org/download_releases_en.html" target="_blank" rel="noopener">Older versions ↗</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- iOS -->
+  <div class="panel" data-panel="ios">
+    <div class="card">
+      <div class="card-top">
+        <div>
+          <h3>SEB 3.6.2</h3>
+          <p class="version-meta">For iOS and iPadOS 12 and newer</p>
+        </div>
+        <span class="badge amber">App Store</span>
+      </div>
+
+      <div class="actions">
+        <a class="btn primary" href="https://itunes.apple.com/app/safeexambrowser/id1155002964?mt=8" target="_blank" rel="noopener">Get it on the App Store</a>
+      </div>
+
+      <ul class="notes">
+        <li>Fixes a red lock screen on first start with school-managed devices</li>
+        <li>Removes old code that could cause random crashes</li>
+        <li>Adds VoiceOver, Zoom, and Grayscale accessibility controls</li>
+      </ul>
+
+      <div class="note-box">You must set a Quit Password before SEB can lock your device into exam mode.</div>
+
+      <div class="resources">
+        <a href="https://safeexambrowser.org/ios/ios_usermanual_en.html" target="_blank" rel="noopener">User manual ↗</a>
+        <a href="https://safeexambrowser.org/ios/ios_tutorial_en.html" target="_blank" rel="noopener">Setup tutorial ↗</a>
+        <a href="https://safeexambrowser.org/ios/ios_release_notes_en.html" target="_blank" rel="noopener">Full release notes ↗</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="install" class="wrap">
+  <p class="eyebrow">Step 2</p>
+  <h2 class="section-title">Install it</h2>
+  <p class="section-sub">These steps match the device you picked above.</p>
+  <ol class="steps" id="install-steps"></ol>
+</section>
+
+<section id="troubleshoot" class="wrap">
+  <p class="eyebrow">Step 3</p>
+  <h2 class="section-title">Something not working?</h2>
+  <p class="section-sub">Tap a problem below to see the fix.</p>
+  <div class="accordion" id="accordion"></div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <p style="color:var(--text); font-weight:700; margin:0;">Safe Exam Browser — Unofficial Guide</p>
+      <p style="margin:4px 0 0;">Always double-check against the official site before an exam.</p>
+    </div>
+    <div class="links">
+      <a href="https://safeexambrowser.org/download_en.html" target="_blank" rel="noopener">Official downloads ↗</a>
+      <a href="https://safeexambrowser.org/faq/faq_en.html" target="_blank" rel="noopener">FAQ ↗</a>
+      <a href="https://safeexambrowser.org/support_en.html" target="_blank" rel="noopener">Support ↗</a>
+    </div>
+    <p style="color:var(--text-soft); opacity:.7;">© 2010–2026 ETH Zürich, IT Services. Version data sourced from safeexambrowser.org.</p>
+  </div>
+</footer>
+
+<div id="toast" class="toast">Copied to clipboard</div>
+
+<script>
+  const steps = {
+    win: [
+      ["Download the installer", "Click “Download for Windows” above. It's a single setup file."],
+      ["Run it", "Double-click the file. If a blue Windows warning appears, click “More info” then “Run anyway.”"],
+      ["Follow the prompts", "Accept the license and keep the default install folder."],
+      ["Restart if asked", "Some computers need a restart to finish setup."],
+      ["Open Safe Exam Browser", "Find it in your Start Menu. It opens full-screen automatically."],
+      ["Load your exam", "Open the exam file or link your school gave you."]
+    ],
+    mac: [
+      ["Download the file", "Click “Download for macOS” above."],
+      ["Open it", "Double-click the file, then drag Safe Exam Browser into Applications."],
+      ["Allow it to open", "If macOS blocks it, go to System Settings → Privacy & Security and click “Open Anyway.”"],
+      ["Approve permissions", "Allow any Accessibility or Screen Recording requests so exam mode works."],
+      ["Open Safe Exam Browser", "Launch it from Applications or Launchpad."],
+      ["Load your exam", "Open the exam file or link your school gave you."]
+    ],
+    ios: [
+      ["Open the App Store", "Search “Safe Exam Browser” or tap the button above."],
+      ["Install it", "Tap Get, then confirm with Face ID, Touch ID, or your password."],
+      ["Set a Quit Password", "Do this before your exam — it's required to lock the device."],
+      ["Open your exam link", "Tap the link or scan the QR code your school gave you."],
+      ["Start the exam", "Confirm the prompt to lock into exam mode."],
+      ["Finish up", "Enter your quit password at the end to exit safely."]
+    ]
+  };
+
+  const issues = [
+    { title: "Windows 3.10.2 won't start", body: "This version was pulled. Uninstall it from “Add or Remove Programs,” restart, then install 3.10.1 from the Windows tab above." },
+    { title: "Windows warns me before installing", body: "Click “More info” then “Run anyway.” This is normal for less common downloads. You can also check the code shown above to be extra sure." },
+    { title: "Mac says the app is “damaged” or won't open", body: "Go to System Settings → Privacy & Security and click “Open Anyway.” If that doesn't work, delete the file and download it again." },
+    { title: "The app closes right after opening", body: "Make sure you're opening the exam file your school sent, and that your version matches what they expect." },
+    { title: "iPhone shows a red lock screen", body: "Update to the latest version from the App Store — this was fixed in 3.6.2." },
+    { title: "Can't find Settings after installing on Mac", body: "Use the Settings-Allowed link in the macOS download panel above to unlock it." }
+  ];
+
+  const tabBtns = document.querySelectorAll('.switch button');
+  const panels = document.querySelectorAll('.panel');
+
+  function renderSteps(os) {
+    const list = document.getElementById('install-steps');
+    list.innerHTML = '';
+    steps[os].forEach((s, i) => {
+      const li = document.createElement('li');
+      li.innerHTML = `
+        <span class="step-num">${i + 1}</span>
+        <div>
+          <h4>${s[0]}</h4>
+          <p>${s[1]}</p>
+        </div>`;
+      list.appendChild(li);
+    });
+  }
+
+  function selectTab(os) {
+    tabBtns.forEach(b => b.setAttribute('aria-selected', b.dataset.tab === os ? 'true' : 'false'));
+    panels.forEach(p => p.classList.toggle('active', p.dataset.panel === os));
+    renderSteps(os);
+  }
+
+  tabBtns.forEach(btn => btn.addEventListener('click', () => selectTab(btn.dataset.tab)));
+  selectTab('win');
+
+  const accordion = document.getElementById('accordion');
+  issues.forEach((issue) => {
+    const item = document.createElement('div');
+    item.className = 'accordion-item';
+    item.innerHTML = `
+      <button class="q" onclick="this.closest('.accordion-item').classList.toggle('open')">
+        <span>${issue.title}</span>
+        <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="#5b6472" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="accordion-panel"><p>${issue.body}</p></div>`;
+    accordion.appendChild(item);
+  });
+
+  function copyHash(id, btn) {
+    const text = document.getElementById(id).textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      const original = btn.textContent;
+      btn.textContent = 'Copied';
+      showToast();
+      setTimeout(() => { btn.textContent = original; }, 1400);
+    });
+  }
+
+  function showToast() {
+    const toast = document.getElementById('toast');
+    toast.classList.add('show');
+    clearTimeout(window._toastTimer);
+    window._toastTimer = setTimeout(() => toast.classList.remove('show'), 1500);
+  }
+</script>
+</body>
+</html>
