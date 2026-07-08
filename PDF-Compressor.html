@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDF Size Compressor</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<style>
+  body { font-family: 'Segoe UI', system-ui, sans-serif; }
+  .dropzone.dragover { border-color: #2563eb; background-color: #eff6ff; }
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+</style>
+</head>
+<body class="bg-slate-100 min-h-screen flex items-start justify-center py-10 px-4">
+
+<div class="w-full max-w-2xl bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
+
+  <div class="mb-6">
+    <h1 class="text-2xl font-semibold text-slate-900">PDF Size Compressor</h1>
+    <p class="text-sm text-slate-500 mt-1">Compress a PDF down to a target file size, entirely in your browser. Nothing is uploaded anywhere.</p>
+  </div>
+
+  <!-- Dropzone -->
+  <div id="dropzone" class="dropzone border-2 border-dashed border-slate-300 rounded-xl p-8 text-center cursor-pointer transition-colors">
+    <input type="file" id="fileInput" accept="application/pdf" class="hidden">
+    <div id="dropzoneContent">
+      <svg class="mx-auto h-10 w-10 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9m0 0 3.5 3.5M12 9 8.5 12.5M6.75 19.5a4.5 4.5 0 0 1-1.41-8.775 5.25 5.25 0 0 1 10.233-2.33 3.75 3.75 0 0 1 4.077 6.235 4.5 4.5 0 0 1-1.41 8.775h-11.49Z" />
+      </svg>
+      <p class="mt-3 text-sm text-slate-600"><span class="font-medium text-blue-600">Click to upload</span> or drag and drop a PDF</p>
+      <p id="fileName" class="mt-1 text-xs text-slate-400"></p>
+    </div>
+  </div>
+
+  <!-- Options -->
+  <div class="mt-6 grid grid-cols-2 gap-4">
+    <div>
+      <label class="block text-sm font-medium text-slate-700 mb-1">Target size</label>
+      <div class="flex rounded-lg border border-slate-300 overflow-hidden focus-within:ring-2 focus-within:ring-blue-500">
+        <input type="number" id="targetSize" value="5" min="0.1" step="0.1" class="w-full px-3 py-2 text-sm outline-none">
+        <select id="targetUnit" class="bg-slate-50 text-sm px-2 border-l border-slate-300 outline-none">
+          <option value="MB" selected>MB</option>
+          <option value="KB">KB</option>
+        </select>
+      </div>
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-slate-700 mb-1">Page rendering quality</label>
+      <select id="qualityPreset" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+        <option value="high">Best quality attempt first</option>
+        <option value="fast" selected>Balanced (faster)</option>
+      </select>
+    </div>
+  </div>
+
+  <button id="compressBtn" disabled class="mt-6 w-full bg-blue-600 disabled:bg-slate-300 disabled:cursor-not-allowed hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg transition-colors text-sm">
+    Compress PDF
+  </button>
+
+  <!-- Progress -->
+  <div id="progressWrap" class="mt-6 hidden">
+    <div class="flex justify-between text-xs text-slate-500 mb-1">
+      <span id="progressLabel">Working…</span>
+      <span id="progressPct">0%</span>
+    </div>
+    <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+      <div id="progressBar" class="bg-blue-600 h-2 rounded-full transition-all duration-200" style="width:0%"></div>
+    </div>
+    <div id="log" class="mt-3 text-xs text-slate-400 font-mono max-h-32 overflow-y-auto space-y-0.5"></div>
+  </div>
+
+  <!-- Result -->
+  <div id="resultWrap" class="mt-6 hidden">
+    <div class="rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+      <div id="resultHeadline" class="text-sm font-medium text-emerald-800"></div>
+      <div id="resultDetail" class="text-xs text-emerald-700 mt-1"></div>
+      <a id="downloadLink" class="mt-3 inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors">
+        Download compressed PDF
+      </a>
+    </div>
+    <p id="resultNote" class="text-xs text-slate-400 mt-3"></p>
+  </div>
+
+  <div id="errorWrap" class="mt-6 hidden rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"></div>
+
+  <details class="mt-8 text-xs text-slate-400">
+    <summary class="cursor-pointer select-none">How this works</summary>
+    <p class="mt-2 leading-relaxed">
+      To hit an aggressive target size, each page is rendered to an image and re-saved as a compressed JPEG inside a
+      new PDF. This is the only way browser-side compression can reliably reach large reductions (e.g. 355MB → 5MB).
+      The tradeoff: text becomes part of an image and is no longer selectable or searchable. The tool automatically
+      searches across JPEG quality and resolution to get as close to your target as possible without going over.
+    </p>
+  </details>
+</div>
+
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+const dropzone = document.getElementById('dropzone');
+const fileInput = document.getElementById('fileInput');
+const fileNameEl = document.getElementById('fileName');
+const compressBtn = document.getElementById('compressBtn');
+const progressWrap = document.getElementById('progressWrap');
+const progressBar = document.getElementById('progressBar');
+const progressPct = document.getElementById('progressPct');
+const progressLabel = document.getElementById('progressLabel');
+const logEl = document.getElementById('log');
+const resultWrap = document.getElementById('resultWrap');
+const errorWrap = document.getElementById('errorWrap');
+
+let selectedFile = null;
+
+dropzone.addEventListener('click', () => fileInput.click());
+dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('dragover'); });
+dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+dropzone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropzone.classList.remove('dragover');
+  if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+});
+fileInput.addEventListener('change', e => { if (e.target.files.length) handleFile(e.target.files[0]); });
+
+function handleFile(file) {
+  if (file.type !== 'application/pdf') {
+    showError('Please select a PDF file.');
+    return;
+  }
+  selectedFile = file;
+  fileNameEl.textContent = `${file.name} — ${formatBytes(file.size)}`;
+  compressBtn.disabled = false;
+  resultWrap.classList.add('hidden');
+  errorWrap.classList.add('hidden');
+}
+
+function formatBytes(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+}
+
+function showError(msg) {
+  errorWrap.textContent = msg;
+  errorWrap.classList.remove('hidden');
+}
+
+function log(msg) {
+  const line = document.createElement('div');
+  line.textContent = msg;
+  logEl.appendChild(line);
+  logEl.scrollTop = logEl.scrollHeight;
+}
+
+function setProgress(pct, label) {
+  progressBar.style.width = pct + '%';
+  progressPct.textContent = Math.round(pct) + '%';
+  if (label) progressLabel.textContent = label;
+}
+
+compressBtn.addEventListener('click', async () => {
+  if (!selectedFile) return;
+  errorWrap.classList.add('hidden');
+  resultWrap.classList.add('hidden');
+  logEl.innerHTML = '';
+  progressWrap.classList.remove('hidden');
+  compressBtn.disabled = true;
+  compressBtn.textContent = 'Compressing…';
+
+  try {
+    const unit = document.getElementById('targetUnit').value;
+    const targetVal = parseFloat(document.getElementById('targetSize').value) || 5;
+    const targetBytes = unit === 'KB' ? targetVal * 1024 : targetVal * 1024 * 1024;
+    const qualityPreset = document.getElementById('qualityPreset').value;
+
+    const result = await compressPdf(selectedFile, targetBytes, qualityPreset);
+    showResult(result, targetBytes);
+  } catch (err) {
+    console.error(err);
+    showError('Something went wrong while compressing: ' + (err.message || err));
+  } finally {
+    progressWrap.classList.add('hidden');
+    compressBtn.disabled = false;
+    compressBtn.textContent = 'Compress PDF';
+  }
+});
+
+function showResult(result, targetBytes) {
+  const { blob, originalSize, finalSize, hitTarget, pages } = result;
+  const url = URL.createObjectURL(blob);
+  const link = document.getElementById('downloadLink');
+  link.href = url;
+  link.download = selectedFile.name.replace(/\.pdf$/i, '') + '-compressed.pdf';
+
+  const reduction = (100 * (1 - finalSize / originalSize)).toFixed(1);
+  document.getElementById('resultHeadline').textContent = hitTarget
+    ? `Done — compressed to ${formatBytes(finalSize)}, under your target.`
+    : `Done — best achievable size was ${formatBytes(finalSize)} (couldn't go lower without unusable quality).`;
+  document.getElementById('resultDetail').textContent =
+    `${formatBytes(originalSize)} → ${formatBytes(finalSize)} (${reduction}% smaller) across ${pages} page${pages === 1 ? '' : 's'}.`;
+  document.getElementById('resultNote').textContent =
+    'Note: pages were rasterized to reach this size, so text in the output is no longer selectable or searchable.';
+
+  resultWrap.classList.remove('hidden');
+}
+
+// Core compression routine: renders pages once at a working scale, then
+// binary-searches JPEG quality; if minimum quality still exceeds target,
+// drops the render scale and tries again.
+async function compressPdf(file, targetBytes, qualityPreset) {
+  const arrayBuffer = await file.arrayBuffer();
+  const originalSize = file.size;
+
+  setProgress(2, 'Reading PDF…');
+  const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer.slice(0) });
+  const pdfDoc = await loadingTask.promise;
+  const numPages = pdfDoc.numPages;
+  log(`Loaded PDF: ${numPages} pages, ${formatBytes(originalSize)}`);
+
+  // Estimate an initial scale based on target-size-per-page budget.
+  // More pages / smaller target => start at lower resolution.
+  const bytesPerPageBudget = targetBytes / numPages;
+  let scale = qualityPreset === 'high' ? 2.0 : 1.5;
+  if (bytesPerPageBudget < 15000) scale = 0.6;
+  else if (bytesPerPageBudget < 40000) scale = 0.9;
+  else if (bytesPerPageBudget < 100000) scale = 1.2;
+
+  const minScale = 0.35;
+  let attempt = 0;
+  const maxAttempts = 6;
+  let finalBytes = null;
+  let finalScaleUsed = scale;
+
+  while (attempt < maxAttempts) {
+    attempt++;
+    setProgress(5, `Rendering pages at ${Math.round(scale * 100)}% scale (pass ${attempt})…`);
+    log(`Pass ${attempt}: rendering at scale ${scale.toFixed(2)}`);
+
+    const canvases = await renderAllPages(pdfDoc, scale, (done, total) => {
+      const pct = 5 + (done / total) * 40;
+      setProgress(pct, `Rendering page ${done}/${total}…`);
+    });
+
+    // Binary search JPEG quality for this scale
+    let lo = 0.1, hi = 0.92, bestBlob = null, bestBytes = Infinity;
+    for (let i = 0; i < 6; i++) {
+      const q = (lo + hi) / 2;
+      setProgress(45 + (i / 6) * 45, `Testing quality ${(q * 100).toFixed(0)}% (pass ${attempt})…`);
+      const { blob, size } = await buildPdfFromCanvases(canvases, q, pdfDoc, (done, total) => {});
+      log(`  quality ${(q * 100).toFixed(0)}% → ${formatBytes(size)}`);
+
+      if (size <= targetBytes) {
+        bestBlob = blob; bestBytes = size;
+        lo = q; // try higher quality within budget
+      } else {
+        hi = q; // too big, reduce quality
+      }
+    }
+
+    if (bestBlob) {
+      finalBytes = { blob: bestBlob, size: bestBytes };
+      finalScaleUsed = scale;
+      break;
+    }
+
+    // Even minimum quality at this scale exceeded target -> reduce resolution and retry
+    if (scale <= minScale) {
+      // give up reducing further; build one last minimal-quality version to return as best effort
+      setProgress(95, 'Building best-effort output…');
+      const { blob, size } = await buildPdfFromCanvases(canvases, 0.1, pdfDoc, () => {});
+      finalBytes = { blob, size };
+      finalScaleUsed = scale;
+      break;
+    }
+    scale = Math.max(minScale, scale * 0.65);
+  }
+
+  setProgress(100, 'Done');
+  return {
+    blob: finalBytes.blob,
+    originalSize,
+    finalSize: finalBytes.size,
+    hitTarget: finalBytes.size <= targetBytes,
+    pages: numPages,
+    scaleUsed: finalScaleUsed
+  };
+}
+
+async function renderAllPages(pdfDoc, scale, onProgress) {
+  const canvases = [];
+  for (let i = 1; i <= pdfDoc.numPages; i++) {
+    const page = await pdfDoc.getPage(i);
+    const viewport = page.getViewport({ scale });
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.max(1, Math.round(viewport.width));
+    canvas.height = Math.max(1, Math.round(viewport.height));
+    const ctx = canvas.getContext('2d');
+    await page.render({ canvasContext: ctx, viewport }).promise;
+    canvases.push({ canvas, widthPts: page.view[2] - page.view[0], heightPts: page.view[3] - page.view[1] });
+    onProgress(i, pdfDoc.numPages);
+  }
+  return canvases;
+}
+
+async function buildPdfFromCanvases(canvases, quality, srcPdfDoc, onProgress) {
+  const { PDFDocument } = PDFLib;
+  const outDoc = await PDFDocument.create();
+
+  for (let i = 0; i < canvases.length; i++) {
+    const { canvas, widthPts, heightPts } = canvases[i];
+    const jpegDataUrl = canvas.toDataURL('image/jpeg', quality);
+    const jpegBytes = dataUrlToUint8Array(jpegDataUrl);
+    const jpegImage = await outDoc.embedJpg(jpegBytes);
+    const pdfPage = outDoc.addPage([widthPts, heightPts]);
+    pdfPage.drawImage(jpegImage, { x: 0, y: 0, width: widthPts, height: heightPts });
+    onProgress(i + 1, canvases.length);
+  }
+
+  const bytes = await outDoc.save();
+  const blob = new Blob([bytes], { type: 'application/pdf' });
+  return { blob, size: blob.size };
+}
+
+function dataUrlToUint8Array(dataUrl) {
+  const base64 = dataUrl.split(',')[1];
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return bytes;
+}
+</script>
+
+</body>
+</html>
