@@ -404,6 +404,46 @@ body::after {
   .pause-card{ padding:28px 32px; }
   .how-to-box{ font-size:.75rem; padding:9px 18px; }
 }
+
+/* Phones — full-bleed, single-column quiz, bigger touch targets */
+@media(max-width:640px){
+  body{ align-items:stretch; justify-content:stretch; }
+  #gameWrapper{ width:100vw; height:100vh; height:100dvh; min-height:0; max-height:none; border-radius:0; box-shadow:none; touch-action:none; }
+  #gameWrapper::before, #gameWrapper::after{ display:none; }
+  #vignette{ border-radius:0; }
+  .game-title{ font-size:2.5rem; }
+  .badge-3d{ font-size:.8rem; }
+  .subtitle{ font-size:.62rem; letter-spacing:2px; margin-bottom:10px; }
+  .start-badge{ font-size:.6rem; padding:4px 14px; }
+  .how-to-box{ font-size:.7rem; padding:9px 14px; max-width:92%; line-height:1.7; margin-bottom:14px; }
+  .btn-start{ font-size:1.05rem; padding:12px 40px; }
+  .hud-pill{ font-size:.72rem; padding:3px 9px; }
+  #pauseBtn{ font-size:.66rem; padding:3px 10px; }
+  .quiz-card{ padding:18px 16px 16px; max-width:94%; }
+  .quiz-food-icon{ font-size:2.8rem; }
+  .quiz-question{ font-size:1rem; margin-bottom:12px; }
+  .quiz-options{ grid-template-columns:1fr; gap:6px; }
+  .quiz-opt{ padding:13px 10px; font-size:.92rem; }
+  .quiz-fact{ font-size:.74rem; }
+  .result-icon{ font-size:3.4rem; }
+  .result-title{ font-size:2.1rem; }
+  .result-score{ font-size:1.3rem; }
+  .pause-card{ padding:24px 26px; }
+  .pause-title{ font-size:2rem; }
+  #mobileJump{ width:66px; height:66px; bottom:24px; right:16px; }
+  #speedBar, #puSlot{ bottom:14px; }
+}
+
+/* Landscape phones — compress vertical menu content */
+@media(max-height:480px) and (orientation:landscape){
+  .game-title{ font-size:2rem; margin-bottom:2px; }
+  .subtitle{ margin-bottom:6px; }
+  .how-to-box{ font-size:.62rem; padding:6px 12px; margin-bottom:8px; line-height:1.5; }
+  .start-badge{ margin-bottom:6px; }
+  .hs-badge{ margin-bottom:4px; }
+  .btn-start{ padding:9px 34px; font-size:.95rem; }
+  #mobileJump{ width:56px; height:56px; bottom:14px; }
+}
 </style>
 </head>
 <body>
@@ -53721,9 +53761,9 @@ const scene = new THREE.Scene();
 scene.fog = new THREE.Fog(0x8fc9e6, 55, 130);
 
 const camera = new THREE.PerspectiveCamera(58, 900/520, 0.1, 500);
-const CAM_BASE = new THREE.Vector3(3.6, 4.6, 10.2);
+const CAM_BASE = new THREE.Vector3(11, 5.2, 2.5);
 camera.position.copy(CAM_BASE);
-camera.lookAt(0, 1.8, -10);
+camera.lookAt(0, 2.3, -12);
 
 function resize(){
   const w=container.clientWidth, h=container.clientHeight;
@@ -53987,7 +54027,7 @@ function buildPlayer(){
   }
   legL=leg(-1); legR=leg(1);
 
-  g.rotation.y=0.22;   // slight 3/4 turn toward camera
+  g.rotation.y=3*Math.PI/4;   // side / 3-4 profile facing the camera (see runner from the side)
   g.position.set(0,0,0);
   scene.add(g);
   return g;
@@ -54455,11 +54495,11 @@ function animatePlayerVisual(dt){
   }
   // body bob
   playerGroup.position.y = player.y + (jumping?0:Math.abs(Math.sin(player.runPhase))*0.08);
-  // hit flash tilt
+  // keep the side-facing orientation; apply lean + hit tilt on other axes
+  playerGroup.rotation.y = 3*Math.PI/4;
+  const lean = activePowerup==='turbo' ? -0.2 : (jumping ? -0.12 : 0);
+  playerGroup.rotation.x = THREE.MathUtils.lerp(playerGroup.rotation.x||0, lean, 0.12);
   playerGroup.rotation.z = player.hitAnim>0 ? Math.sin(frameCount*0.6)*0.12 : 0;
-  // turbo lean
-  const lean = activePowerup==='turbo' ? -0.16 : 0;
-  playerGroup.rotation.x = THREE.MathUtils.lerp(playerGroup.rotation.x||0, lean, 0.1);
   // invincible blink
   const blink = (player.invincible>0 && !player.shielded && Math.floor(player.invincible/5)%2===0);
   playerGroup.visible=!blink;
@@ -54495,8 +54535,8 @@ function updateCamera(dt){
   camera.fov = THREE.MathUtils.lerp(camera.fov, targetFov, 0.06);
   camera.updateProjectionMatrix();
   const bob = gameState==='playing' ? Math.sin(frameCount*0.12)*0.06 : Math.sin(frameCount*0.03)*0.05;
-  camera.position.set(CAM_BASE.x, CAM_BASE.y+bob + player.y*0.12, CAM_BASE.z);
-  camera.lookAt(0, 1.6+player.y*0.25, -10);
+  camera.position.set(CAM_BASE.x, CAM_BASE.y+bob + player.y*0.10, CAM_BASE.z);
+  camera.lookAt(0, 2.3+player.y*0.22, -12);
 }
 
 // =============================================
