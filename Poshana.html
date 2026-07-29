@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  POSHANA — Sri Lankan Day Balance
+  Build your whole day of real Sri Lankan food, then see a meaningful
+  outcome: how today's eating pattern shapes your long-term risk of
+  non-communicable diseases (NCDs) — with warnings, early symptoms to
+  watch, and simple local swaps.
+  ────────────────────────────────────────────────────────────────────────
+  HTML5 + JavaScript + Tailwind CSS (Play CDN). Single file.
+  Real food photos: Wikipedia/Wikimedia Commons (freely licensed),
+  with emoji fallback so a food is always recognisable / works offline.
+  ────────────────────────────────────────────────────────────────────────
+  IMPORTANT: This is general health education, NOT a diagnosis. NCD values
+  are simplified for teaching. Confirm with a Sri Lankan doctor/dietitian
+  and national guidance before any real-world use. Screening saves lives.
+  ════════════════════════════════════════════════════════════════════════
+-->
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=5">
+<meta name="theme-color" content="#0B1512">
+<title>Poshana — Sri Lankan Day Balance</title>
+<meta name="description" content="Build a day of Sri Lankan food and learn how it shapes your risk of diabetes, heart disease and other NCDs.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍛</text></svg>">
+<!-- Perf: no runtime CSS framework (all styles are inline, ~0 blocking). Preconnect image + font hosts. -->
+<link rel="preconnect" href="https://upload.wikimedia.org" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700&family=Public+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0B1512; --bg2:#12211C; --panel:#16271F; --line:#2A4034; --chalk:#EFF5F0; --dim:#A6BDB0;
+    --gold:#E9C877; --gold2:#FBE6A8; --leaf:#3FB56B; --spice:#E8843C; --chilli:#E24A4A; --amber:#F0B23C;
+    --glass:rgba(50,80,64,.42); --glass2:rgba(70,104,84,.55); --gbrd:rgba(255,255,255,.16);
+    --txt:1;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  [hidden]{display:none!important}
+  html,body{margin:0;height:100%;overflow:hidden;overscroll-behavior:none;color:var(--chalk);
+    font-family:"Public Sans",system-ui,sans-serif;font-size:calc(16px*var(--txt));-webkit-text-size-adjust:100%}
+  body{background:radial-gradient(130% 90% at 50% -10%, #1a3128 0%, #0e1a15 55%, #080f0c 100%),#080f0c}
+  #app{position:fixed;inset:0;height:100dvh;display:flex;flex-direction:column}
+  .disp{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:700;letter-spacing:.01em}
+  .gold-text{background:linear-gradient(180deg,#FDECB8,#E9C877 55%,#D6A94C);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:#E9C877}
+  button{font-family:inherit;cursor:pointer;color:inherit}
+  .btn{border:1px solid rgba(255,255,255,.32);border-radius:16px;background:linear-gradient(180deg,#FFE7BE,#F0C066);color:#241804;font-weight:700;
+    padding:14px 22px;min-height:56px;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-size:1.05rem;
+    box-shadow:0 5px 0 #b98a4e,0 10px 22px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.7);transition:transform .08s,box-shadow .08s}
+  .btn:active{transform:translateY(4px);box-shadow:0 1px 0 #b98a4e,0 3px 8px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.7)}
+  .btn:disabled{opacity:.4;box-shadow:none}
+  .btn-ghost{background:var(--glass);backdrop-filter:blur(12px);color:var(--chalk);border:1px solid var(--gbrd);box-shadow:0 6px 18px rgba(0,0,0,.3)}
+  .btn:focus-visible,.icon-btn:focus-visible,.food:focus-visible,.meal:focus-visible,.tab:focus-visible{outline:4px solid var(--gold);outline-offset:3px}
+  .icon-btn{width:48px;height:48px;border-radius:13px;background:var(--glass);backdrop-filter:blur(10px);border:1px solid var(--gbrd);
+    display:grid;place-items:center;font-size:1.25rem}
+  .panel{background:var(--glass);backdrop-filter:blur(15px) saturate(1.2);border:1px solid var(--gbrd);border-radius:20px;
+    box-shadow:0 12px 40px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.13)}
+  .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+  /* food visual (emoji placeholder → real photo fades in; shimmer while loading) */
+  .fv{position:relative;display:grid;place-items:center;overflow:hidden;border-radius:12px;background:rgba(0,0,0,.18);isolation:isolate}
+  .fv.ld::after{content:"";position:absolute;inset:0;z-index:1;
+    background:linear-gradient(100deg,transparent 20%,rgba(255,255,255,.10) 45%,transparent 70%);
+    background-size:220% 100%;animation:shimmer 1.1s linear infinite}
+  @keyframes shimmer{to{background-position:-220% 0}}
+  .fv .emo{position:absolute;inset:0;display:grid;place-items:center;line-height:1;z-index:0}
+  .fv img{position:relative;z-index:2;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .35s}
+  .fv img.on{opacity:1}
+  /* screens */
+  .screen{flex:1;display:flex;flex-direction:column;min-height:0}
+  .screen>*{animation:fade .35s ease both}
+  @keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .scroll{flex:1;overflow:auto;-webkit-overflow-scrolling:touch}
+  .wrap{max-width:640px;margin:0 auto;padding:16px}
+  /* top bar */
+  #top{display:flex;align-items:center;gap:8px;padding:12px 12px 4px}
+  #top .ttl{flex:1;font-weight:700}
+  /* live meters */
+  .metbar{display:flex;gap:8px;padding:6px 12px;flex-wrap:wrap;justify-content:center}
+  .met{display:flex;align-items:center;gap:6px;background:var(--glass);border:1px solid var(--gbrd);border-radius:999px;padding:5px 11px;font-size:.82rem;font-weight:600}
+  .met .bar{width:44px;height:7px;border-radius:4px;background:var(--line);overflow:hidden}
+  .met .bar i{display:block;height:100%;border-radius:4px;transition:width .3s,background .3s}
+  /* meal tabs */
+  .tabs{display:flex;gap:8px;padding:8px 12px;overflow-x:auto}
+  .tab{flex:0 0 auto;border-radius:14px;background:var(--glass);border:1px solid var(--gbrd);padding:9px 13px;font-weight:700;font-size:.9rem;
+    display:flex;align-items:center;gap:6px;transition:background .12s,border-color .12s}
+  .tab.on{background:linear-gradient(180deg,#2c4a3a,#1d3327);border-color:var(--gold)}
+  .tab .n{background:var(--leaf);color:#08120c;border-radius:999px;font-size:.72rem;min-width:18px;height:18px;display:grid;place-items:center;padding:0 4px}
+  /* meal card */
+  .meal{border-radius:18px;background:var(--glass);border:1px solid var(--gbrd);padding:12px;margin-bottom:12px;cursor:pointer;transition:border-color .15s,box-shadow .15s,transform .1s}
+  .meal:hover{border-color:var(--gbrd);transform:translateY(-1px)}
+  .meal.active{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset,0 0 22px rgba(233,200,119,.14)}
+  .meal h3{margin:0 0 8px;font-size:1.02rem;display:flex;align-items:center;gap:8px}
+  .meal .cnt{margin-left:auto;background:var(--glass2);border:1px solid var(--gbrd);border-radius:999px;font-size:.76rem;font-weight:700;min-width:22px;text-align:center;padding:1px 8px}
+  .meal.active .cnt{background:var(--gold);color:#20160a;border-color:var(--gold)}
+  .blocks{display:flex;flex-wrap:wrap;gap:8px;min-height:20px}
+  .blocks .empty{color:var(--dim);font-size:.86rem}
+  .block{display:flex;align-items:center;gap:7px;background:rgba(0,0,0,.22);border:1px solid var(--line);border-radius:12px;padding:5px 8px 5px 5px;font-size:.82rem;font-weight:600;color:inherit;font-family:inherit;cursor:pointer;transition:transform .1s,border-color .12s}
+  .block:hover{border-color:var(--chalk)}.block:active{transform:scale(.95)}
+  .block .fv{width:30px;height:30px;font-size:1.1rem;flex:0 0 auto}
+  .block .fv .emo{font-size:1.1rem}
+  .block .x{opacity:.55;font-weight:700}
+  .block.warn{border-color:var(--amber)} .block.bad{border-color:var(--chilli)}
+  .block.new{animation:blockin .22s cubic-bezier(.2,1.5,.5,1)}
+  @keyframes blockin{from{opacity:0;transform:scale(.55)}to{opacity:1;transform:none}}
+  .met.score{background:linear-gradient(180deg,#2c4a3a,#1d3327);border-color:var(--gold);color:var(--gold2)}
+  /* shelf */
+  #shelf{display:flex;gap:10px;overflow-x:auto;padding:10px 12px calc(10px + env(safe-area-inset-bottom))}
+  #shelf::-webkit-scrollbar{height:7px}#shelf::-webkit-scrollbar-thumb{background:var(--line);border-radius:4px}
+  .food{position:relative;flex:0 0 auto;width:96px;min-height:120px;border-radius:16px;background:var(--glass);backdrop-filter:blur(10px);
+    border:1px solid var(--gbrd);padding:7px;display:flex;flex-direction:column;align-items:center;gap:5px;box-shadow:0 5px 14px rgba(0,0,0,.3);transition:transform .1s,border-color .1s}
+  .food:hover{transform:translateY(-3px);border-color:var(--gold)}.food:active{transform:scale(.95)}
+  .food .fv{width:74px;height:56px}.food .fv .emo{font-size:2.1rem}
+  .food .nm{font-size:.78rem;font-weight:600;text-align:center;line-height:1.05}
+  .food .si{font-size:.68rem;color:var(--dim);text-align:center;line-height:1}
+  .food-i{position:absolute;top:3px;right:3px;width:22px;height:22px;border-radius:50%;z-index:2;background:rgba(8,15,12,.75);
+    border:1px solid var(--gbrd);color:var(--gold2);font-size:.68rem;font-weight:700;display:grid;place-items:center;padding:0}
+  .food-i:hover{background:var(--gold);color:#20160a}
+  .ntag{display:inline-block;background:var(--glass2);border:1px solid var(--gbrd);border-radius:999px;padding:4px 10px;font-size:.8rem;font-weight:600;margin:3px 2px}
+  /* doors / cards */
+  .door{padding:20px;border-radius:22px;background:var(--glass);backdrop-filter:blur(15px);border:1px solid var(--gbrd);
+    display:flex;align-items:center;gap:14px;text-align:left;width:100%;transition:transform .14s,border-color .14s;box-shadow:0 10px 30px rgba(0,0,0,.34);margin-bottom:12px}
+  .door:hover{transform:translateY(-3px);border-color:var(--gold)}
+  .door .g{font-size:2.4rem}.door .n{font-weight:700;font-size:1.14rem}.door .s{color:var(--dim);font-size:.88rem}
+  /* risk meters */
+  .risk{background:var(--glass);border:1px solid var(--gbrd);border-radius:16px;padding:12px 14px;margin-bottom:10px}
+  .risk .rh{display:flex;align-items:center;gap:8px;font-weight:700}
+  .risk .rlvl{margin-left:auto;font-size:.82rem;font-weight:700;padding:3px 10px;border-radius:999px}
+  .risk .bar{height:12px;border-radius:7px;background:var(--line);overflow:hidden;margin-top:8px}
+  .risk .bar i{display:block;height:100%;border-radius:7px;transition:width .5s}
+  .lvl-low{background:rgba(63,181,107,.22);color:#9ff0bf} .lvl-mid{background:rgba(240,178,60,.2);color:#ffd98a} .lvl-high{background:rgba(226,74,74,.22);color:#ff9d9d}
+  .warncard{border:1px solid var(--gbrd);border-left-width:5px;border-radius:14px;padding:14px;margin-bottom:10px;background:var(--glass);text-align:left}
+  .warncard.mid{border-left-color:var(--amber)} .warncard.high{border-left-color:var(--chilli)} .warncard.good{border-left-color:var(--leaf)}
+  .warncard ul{margin:6px 0 0;padding-left:18px;color:var(--dim);font-size:.9rem} .warncard li{margin:2px 0}
+  .badge{display:inline-flex;align-items:center;gap:6px;background:var(--glass2);border:1px solid var(--gold);border-radius:999px;padding:6px 12px;font-weight:700;font-size:.85rem;margin:4px}
+  .stars{font-size:1.5rem;letter-spacing:2px}
+  /* tower */
+  .tower{display:flex;flex-direction:column-reverse;align-items:center;gap:4px;margin:6px 0}
+  .trow{height:16px;border-radius:5px;box-shadow:inset 0 1px 0 rgba(255,255,255,.2)}
+  #modal{position:fixed;inset:0;background:rgba(6,12,9,.82);backdrop-filter:blur(7px);display:none;place-items:center;padding:18px;z-index:60}
+  #modal.open{display:grid}
+  #modal>.panel{animation:pop .28s cubic-bezier(.2,1.4,.5,1) both;max-width:420px;width:100%;max-height:90vh;overflow:auto;padding:20px}
+  @keyframes pop{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
+  .fi-row{text-align:left;padding:10px 12px;background:var(--glass);border:1px solid var(--gbrd);border-radius:13px;margin-bottom:8px}
+  #stars-bg{position:fixed;inset:0;pointer-events:none;opacity:.4;z-index:0}
+  #stars-bg i{position:absolute;width:2px;height:2px;border-radius:50%;background:#bfe6cf;animation:tw 4s ease-in-out infinite}
+  @keyframes tw{0%,100%{opacity:.15}50%{opacity:.8}}
+  #app>*{position:relative;z-index:1}
+  @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div id="stars-bg"></div>
+<div id="app">
+  <div id="top" hidden>
+    <div class="ttl" id="top-ttl"></div>
+    <button id="b-info" class="icon-btn" aria-label="Learn about NCDs">📖</button>
+    <button id="b-about" class="icon-btn" aria-label="About">ⓘ</button>
+  </div>
+  <div id="screen" class="screen"></div>
+  <div id="bottom" hidden>
+    <div id="shelf" role="group" aria-label="Foods you can add"></div>
+    <div id="actions" style="display:flex;gap:10px;justify-content:center;padding:4px 14px calc(12px + env(safe-area-inset-bottom))"></div>
+  </div>
+</div>
+<p id="live" class="sr-only" aria-live="polite"></p>
+<div id="modal" role="dialog" aria-modal="true"></div>
+<noscript><p style="padding:2rem">Poshana needs JavaScript to run.</p></noscript>
+
+<script>
+/* ═══ IMAGE MAP (real Sri Lankan food photos, resolved from Wikipedia/Commons) ═══ */
+const IMG={"kiribath":"https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Kiribath.jpg/330px-Kiribath.jpg","stringhopper":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Idiyappam_with_Egg_Masala_Curry.jpg/330px-Idiyappam_with_Egg_Masala_Curry.jpg","hopper":"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Appam_-_%E0%AE%85%E0%AE%AA%E0%AF%8D%E0%AE%AA%E0%AE%AE%E0%AF%8D.jpg/330px-Appam_-_%E0%AE%85%E0%AE%AA%E0%AF%8D%E0%AE%AA%E0%AE%AE%E0%AF%8D.jpg","egghopper":"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Appam_-_%E0%AE%85%E0%AE%AA%E0%AF%8D%E0%AE%AA%E0%AE%AE%E0%AF%8D.jpg/330px-Appam_-_%E0%AE%85%E0%AE%AA%E0%AF%8D%E0%AE%AA%E0%AE%AE%E0%AF%8D.jpg","polroti":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/2020-05-08_19_34_28_Chapati_being_made_in_a_pan_in_the_Franklin_Farm_section_of_Oak_Hill%2C_Fairfax_County%2C_Virginia.jpg/330px-2020-05-08_19_34_28_Chapati_being_made_in_a_pan_in_the_Franklin_Farm_section_of_Oak_Hill%2C_Fairfax_County%2C_Virginia.jpg","roti":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/2020-05-08_19_34_28_Chapati_being_made_in_a_pan_in_the_Franklin_Farm_section_of_Oak_Hill%2C_Fairfax_County%2C_Virginia.jpg/330px-2020-05-08_19_34_28_Chapati_being_made_in_a_pan_in_the_Franklin_Farm_section_of_Oak_Hill%2C_Fairfax_County%2C_Virginia.jpg","pittu":"https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Puttu_%28Rice_Flour_steamed_cake%29.jpg/330px-Puttu_%28Rice_Flour_steamed_cake%29.jpg","kolakanda":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Kola_kanda.jpg/330px-Kola_kanda.jpg","bread":"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Korb_mit_Br%C3%B6tchen.JPG/330px-Korb_mit_Br%C3%B6tchen.JPG","parippu":"https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/3_types_of_lentil.png/330px-3_types_of_lentil.png","polsambol":"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Pol_Sambol.jpg/330px-Pol_Sambol.jpg","seenisambol":"https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Chutneykarnataka.jpg/330px-Chutneykarnataka.jpg","lunumiris":"https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/A_dish_of_Lunumiris.JPG/330px-A_dish_of_Lunumiris.JPG","katta":"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Sambal_cobek.JPG/330px-Sambal_cobek.JPG","fishcurry":null,"chickencurry":null,"beefcurry":"https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Taj_Mahal_-_Lamb_Curry_Madras.jpg/330px-Taj_Mahal_-_Lamb_Curry_Madras.jpg","eggcurry":"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Chicken_raw_egg_with_broken_shell.jpg/330px-Chicken_raw_egg_with_broken_shell.jpg","riceandcurry":null,"redrice":"https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Rice%2C_red-rice%2C_AIVANAM-like.JPG/330px-Rice%2C_red-rice%2C_AIVANAM-like.JPG","whiterice":"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Meshi_001.jpg/330px-Meshi_001.jpg","gotukola":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Mallung.jpg/330px-Mallung.jpg","mallum":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Mallung.jpg/330px-Mallung.jpg","wattakka":"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/FrenchMarketPumpkinsB.jpg/330px-FrenchMarketPumpkinsB.jpg","bandakka":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Hong_Kong_Okra_Aug_25_2012.JPG/330px-Hong_Kong_Okra_Aug_25_2012.JPG","karawila":"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Momordica_charantia_Blanco2.357.png/330px-Momordica_charantia_Blanco2.357.png","ala":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Patates.jpg/330px-Patates.jpg","beans":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Heaps_of_beans.jpg/330px-Heaps_of_beans.jpg","carrot":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Vegetable-Carrot-Bundle-wStalks.jpg/330px-Vegetable-Carrot-Bundle-wStalks.jpg","cabbage":"https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Cabbage_and_cross_section_on_white.jpg/330px-Cabbage_and_cross_section_on_white.jpg","papadam":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Roasted_Papad_-_Howrah_2013-11-02_4068.jpg/330px-Roasted_Papad_-_Howrah_2013-11-02_4068.jpg","polos":"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/The_jackfruit_is_holding_on_to_the_tree.jpg/330px-The_jackfruit_is_holding_on_to_the_tree.jpg","jackfruit":"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/The_jackfruit_is_holding_on_to_the_tree.jpg/330px-The_jackfruit_is_holding_on_to_the_tree.jpg","sprats":"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Odesa_bazaar_%285%29_sprats.JPG/330px-Odesa_bazaar_%285%29_sprats.JPG","driedfish":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Fish-Drying_Barn.jpg/330px-Fish-Drying_Barn.jpg","kottu":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Chicken_Kottu.jpg/330px-Chicken_Kottu.jpg","friedrice":"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Koh_Mak%2C_Thailand%2C_Fried_rice_with_seafood%2C_Thai_fried_rice.jpg/330px-Koh_Mak%2C_Thailand%2C_Fried_rice_with_seafood%2C_Thai_fried_rice.jpg","noodles":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Homemade_Chow_mein_with_shrimps_and_meat_with_a_choy_and_Choung.jpg/330px-Homemade_Chow_mein_with_shrimps_and_meat_with_a_choy_and_Choung.jpg","vadai":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Medu_Vadas.JPG/330px-Medu_Vadas.JPG","issovadai":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Medu_Vadas.JPG/330px-Medu_Vadas.JPG","cutlet":null,"fishbun":"https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Sesame_seed_hamburger_buns.jpg/330px-Sesame_seed_hamburger_buns.jpg","rolls":"https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Spring_Rolls_%283357696061%29.jpg/330px-Spring_Rolls_%283357696061%29.jpg","patties":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Karipap_Daging.jpg/330px-Karipap_Daging.jpg","samosa":"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Samosas%2C_snack_food_at_Wikipedia%27s_16th_Birthday_celebration_in_Chittagong_%2801%29.jpg/330px-Samosas%2C_snack_food_at_Wikipedia%27s_16th_Birthday_celebration_in_Chittagong_%2801%29.jpg","murukku":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/A_Traditional_Tamil_Snack_Murukku.jpg/330px-A_Traditional_Tamil_Snack_Murukku.jpg","kadala":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Chickpea_BNC.jpg/330px-Chickpea_BNC.jpg","kimbulabanis":"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Korb_mit_Br%C3%B6tchen.JPG/330px-Korb_mit_Br%C3%B6tchen.JPG","achcharu":"https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Chilli_pickle_in_a_plate_2.jpg/330px-Chilli_pickle_in_a_plate_2.jpg","curdtreacle":"https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Curd_Setting.jpg/330px-Curd_Setting.jpg","watalappan":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Watalappan-Sri_Lanka.jpg/330px-Watalappan-Sri_Lanka.jpg","kavum":null,"kokis":"https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Kokis.JPG/330px-Kokis.JPG","aluwa":null,"icecream":"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Ice_cream_with_whipped_cream%2C_chocolate_syrup%2C_and_a_wafer_%28cropped%29.jpg/330px-Ice_cream_with_whipped_cream%2C_chocolate_syrup%2C_and_a_wafer_%28cropped%29.jpg","biscuits":"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Bourbon_and_Custard_Cream.jpeg/330px-Bourbon_and_Custard_Cream.jpeg","milktea":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Chai_In_Sakora.jpg/330px-Chai_In_Sakora.jpg","plaintea":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Cup_of_black_tea.JPG/330px-Cup_of_black_tea.JPG","coffee":"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Latte_and_dark_coffee.jpg/330px-Latte_and_dark_coffee.jpg","thambili":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/%E0%B6%AD%E0%B7%90%E0%B6%B9%E0%B7%92%E0%B6%BD%E0%B7%92_%E0%B7%80%E0%B7%92%E0%B6%9A%E0%B7%92%E0%B6%B1%E0%B7%93%E0%B6%B8.jpg/330px-%E0%B6%AD%E0%B7%90%E0%B6%B9%E0%B7%92%E0%B6%BD%E0%B7%92_%E0%B7%80%E0%B7%92%E0%B6%9A%E0%B7%92%E0%B6%B1%E0%B7%93%E0%B6%B8.jpg","fruitjuice":"https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Orange_juice_1.jpg/330px-Orange_juice_1.jpg","softdrink":"https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Glass_of_Cola.jpg/330px-Glass_of_Cola.jpg","milo":"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Australian_milo.jpg/330px-Australian_milo.jpg","faluda":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Faluda.JPG/330px-Faluda.JPG","banana":"https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Bananavarieties.jpg/330px-Bananavarieties.jpg","papaya":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Carica_papaya_-_K%C3%B6hler%E2%80%93s_Medizinal-Pflanzen-029.jpg/330px-Carica_papaya_-_K%C3%B6hler%E2%80%93s_Medizinal-Pflanzen-029.jpg","woodapple":"https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Wood-apple_tree.JPG/330px-Wood-apple_tree.JPG","mango":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Mangos_-_single_and_halved.jpg/330px-Mangos_-_single_and_halved.jpg","rambutan":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Rambutan_white_background_alt.jpg/330px-Rambutan_white_background_alt.jpg","avocado":"https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Persea_americana_fruit_2.JPG/330px-Persea_americana_fruit_2.JPG","egg":"https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Soft-boiled-egg.jpg/330px-Soft-boiled-egg.jpg","curd":"https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Curd_in_a_traditional_Manipuri_earthen_pot.JPG/330px-Curd_in_a_traditional_Manipuri_earthen_pot.JPG"};
+
+/* ═══ UTIL ═══ */
+const $=(s,r=document)=>r.querySelector(s);
+const el=(t,c,h)=>{const n=document.createElement(t);if(c)n.className=c;if(h!=null)n.innerHTML=h;return n;};
+const clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v));
+const sum=(a,k)=>a.reduce((s,i)=>s+(i[k]||0),0);
+function live(t){$('#live').textContent=t;}
+function foodVisual(def){
+  const w=el('div','fv'); w.append(el('div','emo',def.emoji));
+  const u=IMG[def.id];
+  if(u){ w.classList.add('ld'); const im=new Image(); im.alt=def.name; im.loading='lazy'; im.decoding='async';
+    im.onload=()=>{ im.classList.add('on'); w.classList.remove('ld'); const e=w.querySelector('.emo'); if(e)e.style.opacity=.001; };
+    im.onerror=()=>{ im.remove(); w.classList.remove('ld'); }; im.src=u; w.append(im); }
+  return w;
+}
+
+/* ═══ FOOD DATA (per-food NCD-relevant loads, 0–3 scale; simplified for teaching) ═══
+   sugar salt oil refined fibre = loads · veg protein processed fried = flags
+   meals: which slot the food belongs to (b morning m tea l lunch e eve-tea d dinner) */
+const F=(id,name,si,emoji,group,meals,sugar,salt,oil,refined,fibre,veg,protein,processed,fried,tip)=>
+  ({id,name,si,emoji,group,meals,sugar,salt,oil,refined,fibre,veg,protein,processed,fried,tip});
+const FOOD_DB=[
+ // ── Breakfast staples ──
+ F('kiribath','Milk rice','කිරිබත්','🍚','grain','bl',0,1,1,3,0,0,0,0,0,'Kiribath is refined rice with coconut milk — tasty, but pair it with sambol greens and go easy on the portion.'),
+ F('stringhopper','String hoppers','ඉඳිආප්ප','🍜','grain','bd',0,0,0,2,1,0,0,0,0,'String hoppers are steamed (not fried). Have them with dhal and a green sambol for balance.'),
+ F('hopper','Hopper','ආප්ප','🥞','grain','bd',0,0,1,2,0,0,0,0,0,'A plain hopper is light. Add an egg hopper for protein.'),
+ F('egghopper','Egg hopper','බිත්තර ආප්ප','🍳','protein','bd',0,0,1,2,0,0,1,0,0,'The egg adds protein — a good balanced breakfast choice.'),
+ F('polroti','Pol roti','පොල් රොටී','🫓','grain','be',0,1,1,2,1,0,0,0,0,'Pol roti has coconut fibre. Have with lunu miris in small amounts (salt).'),
+ F('bread','Bread','පාන්','🍞','grain','be',0,1,0,3,0,0,0,1,0,'White bread is refined. Wholemeal or red-rice options give more fibre.'),
+ F('pittu','Pittu','පිට්ටු','🍚','grain','bd',0,0,0,2,1,0,0,0,0,'Pittu with dhal and coconut makes a filling, steamed meal.'),
+ F('kolakanda','Kola kanda','කොළ කැඳ','🥣','veg','b',0,0,0,1,2,1,0,0,0,'Herbal porridge — one of the healthiest local breakfasts, full of greens.'),
+ F('parippu','Dhal curry','පරිප්පු','🍲','protein','bld',0,1,1,0,2,0,1,0,0,'Dhal (parippu) is cheap plant protein and fibre — a daily hero.'),
+ F('polsambol','Pol sambol','පොල් සම්බෝල','🥥','veg','bld',0,1,1,0,1,1,0,0,0,'Coconut sambol adds flavour and some fibre; watch the salt and chilli oil.'),
+ F('seenisambol','Seeni sambol','සීනි සම්බෝල','🧅','sweet','bl',2,1,2,0,0,0,0,0,0,'Seeni sambol is cooked with sugar and oil — a small spoon is plenty.'),
+ F('lunumiris','Lunu miris','ලුනු මිරිස්','🌶️','veg','bl',0,2,1,0,0,0,0,0,0,'A fiery salt-and-chilli sambol — very salty, use a little.'),
+ F('katta','Katta sambol','කට්ට සම්බෝල','🌶️','veg','l',0,2,1,0,0,0,0,0,0,'Dried-chilli sambol — high in salt.'),
+ F('egg','Egg','බිත්තර','🥚','protein','bl',0,0,1,0,0,0,1,0,0,'A boiled egg is great protein. Fried adds oil.'),
+ // ── Rice & curry (lunch/dinner) ──
+ F('riceandcurry','Rice & curry plate','බත් කරි','🍛','grain','ld',0,1,1,2,2,1,1,0,0,'The classic balanced plate — keep the rice a fist-size and load up the vegetable curries.'),
+ F('redrice','Red rice','රතු බත්','🍚','grain','ld',0,0,0,1,2,0,0,0,0,'Rathu haal keeps its bran — more fibre and slower sugar than white rice.'),
+ F('whiterice','White rice','සුදු බත්','🍚','grain','ld',0,0,0,3,0,0,0,0,0,'White rice is refined. A smaller portion + red rice mix is kinder to blood sugar.'),
+ F('gotukola','Gotukola sambol','ගොටුකොළ','🥬','veg','ld',0,1,1,0,2,1,0,0,0,'Iron-rich pennywort — a fresh green sambol on the plate every day is a win.'),
+ F('mallum','Mallum','මැල්ලුම්','🥬','veg','ld',0,1,1,0,2,1,0,0,0,'Chopped greens with coconut — fibre and vitamins.'),
+ F('wattakka','Pumpkin curry','වට්ටක්කා','🎃','veg','ld',1,1,1,0,1,1,0,0,0,'Pumpkin gives vitamin A. Mild coconut curry.'),
+ F('bandakka','Okra','බණ්ඩක්කා','🫛','veg','ld',0,1,1,0,2,1,0,0,0,'Bandakka is full of fibre.'),
+ F('karawila','Bitter gourd','කරවිල','🥒','veg','ld',0,1,1,0,2,1,0,0,0,'Karawila is prized and gentle on blood sugar.'),
+ F('ala','Potato curry','අල','🥔','veg','ld',0,1,1,1,1,1,0,0,0,'Potato is starchy — count it a little like rice.'),
+ F('beans','Bean curry','බෝංචි','🫘','veg','ld',0,1,1,0,2,1,0,0,0,'Green beans — good fibre.'),
+ F('carrot','Carrot','කැරට්','🥕','veg','ld',0,0,0,0,1,1,0,0,0,'Sweet, crunchy vitamin A.'),
+ F('cabbage','Cabbage','ගෝවා','🥬','veg','ld',0,1,1,0,1,1,0,0,0,'Cabbage mallum or curry — light and filling.'),
+ F('polos','Polos curry','පොලොස්','🟢','veg','ld',0,1,1,0,2,1,0,0,0,'Young jackfruit curry — hearty and high in fibre.'),
+ F('papadam','Papadam','පපඩම්','🟠','fried','ld',0,2,2,1,0,0,0,0,1,'Fried and salty — one or two, not a stack.'),
+ F('fishcurry','Fish curry','මාලු','🐟','protein','ld',0,1,1,0,0,0,1,0,0,'Fish is excellent protein; oily fish helps the heart.'),
+ F('chickencurry','Chicken curry','කුකුල් මස්','🍗','protein','ld',0,1,2,0,0,0,1,0,0,'Good protein; the oil is in the gravy — take less gravy.'),
+ F('beefcurry','Beef curry','හරක් මස්','🥩','protein','ld',0,1,2,0,0,0,1,0,0,'Red meat now and then; higher in saturated fat.'),
+ F('eggcurry','Egg curry','බිත්තර කරි','🥚','protein','ld',0,1,1,0,0,0,1,0,0,'Egg curry — affordable protein.'),
+ F('sprats','Sprats','හාල්මැස්සො','🐟','protein','ld',0,2,1,0,0,0,1,0,1,'Eaten whole with bones — protein + calcium, but salty.'),
+ F('driedfish','Dried fish','කරවල','🐟','protein','ld',0,3,1,0,0,0,1,1,0,'Karawala is very salty — a small piece for flavour, not a serving.'),
+ // ── Dinner extras / rice alternatives ──
+ F('kottu','Kottu','කොත්තු','🍳','fried','de',0,2,2,3,0,0,0,0,1,'Kottu is refined roti + oil + salt. Ask for extra vegetables and less oil; share a portion.'),
+ F('friedrice','Fried rice','ෆ්‍රයිඩ් රයිස්','🍚','fried','d',0,1,2,3,0,0,0,0,1,'Fried rice is oily and refined — add a veg side and a smaller portion.'),
+ F('noodles','Noodles','නූඩ්ල්ස්','🍜','grain','d',0,1,1,3,0,0,0,1,0,'Refined noodles — pile in vegetables and an egg.'),
+ // ── Short eats / tea (morning & evening) ──
+ F('vadai','Ulundu vadai','උළුඳු වඩේ','🍩','fried','me',0,1,2,1,1,0,1,0,1,'Deep-fried lentil snack — tasty but oily.'),
+ F('issovadai','Isso vadai','ඉස්සෝ වඩේ','🍤','fried','me',0,1,2,1,0,0,1,0,1,'Prawn vadai — deep-fried; an occasional treat.'),
+ F('cutlet','Cutlet','කට්ලට්','🧆','fried','me',0,1,2,1,0,0,0,0,1,'Breadcrumbed and deep-fried.'),
+ F('fishbun','Fish bun','මාළු පාන්','🥐','fried','me',0,1,1,2,0,0,1,1,0,'Refined bun with a spicy filling.'),
+ F('rolls','Chinese roll','රෝල්ස්','🌯','fried','me',0,1,2,1,0,0,0,0,1,'Deep-fried roll — grease alert.'),
+ F('patties','Patties','පැටිස්','🥟','fried','me',0,1,2,1,0,0,0,0,1,'Flaky fried pastry.'),
+ F('samosa','Samosa','සමෝසා','🔺','fried','me',0,1,2,1,0,0,0,0,1,'Fried pastry parcel.'),
+ F('murukku','Murukku','මුරුක්කු','🥨','fried','me',0,2,2,1,0,0,0,1,1,'Crunchy fried, salty snack.'),
+ F('kadala','Kadala','කඩල','🫘','protein','me',0,1,0,0,2,0,1,0,0,'Boiled chickpea — a rare healthy short-eat: protein + fibre.'),
+ F('kimbulabanis','Kimbula banis','කිඹුලා බනිස්','🥖','sweet','me',2,0,1,2,0,0,0,1,0,'Sugar-topped bun — mostly refined flour and sugar.'),
+ F('achcharu','Achcharu','අච්චාරු','🥭','snack','me',1,2,0,0,1,1,0,0,0,'Fruit pickle — tangy, but salted and sweetened.'),
+ // ── Sweets / desserts ──
+ F('curdtreacle','Curd & treacle','මී කිරි','🍯','dairy','ed',2,0,0,0,0,0,1,0,0,'Buffalo curd is good protein — the treacle (kithul) is sugar, so drizzle lightly.'),
+ F('watalappan','Watalappan','වටලප්පන්','🍮','sweet','ed',3,0,1,0,0,0,0,0,0,'A jaggery-and-coconut custard — delicious, and high in sugar. A small cup.'),
+ F('kavum','Kavum','කැවුම්','🍯','sweet','me',3,0,2,1,0,0,0,0,1,'Oil cake with treacle — festival sweet, sugar + oil.'),
+ F('kokis','Kokis','කොකිස්','🌼','fried','me',1,0,2,1,0,0,0,0,1,'Crispy fried sweet.'),
+ F('aluwa','Aluwa','අලුව','🍬','sweet','me',3,0,0,1,0,0,0,0,0,'Rice-flour sweet — mostly sugar.'),
+ F('icecream','Ice cream','අයිස් ක්‍රීම්','🍦','sweet','ed',3,0,1,0,0,0,0,1,0,'A treat — high in sugar.'),
+ F('biscuits','Biscuits','බිස්කට්','🍪','sweet','me',2,1,1,2,0,0,0,1,0,'Packaged, sweet and refined.'),
+ // ── Drinks ──
+ F('milktea','Milk tea (sugar)','කිරි තේ','🍵','drink','bme',2,0,0,0,0,0,0,0,0,'Sweetened milk tea 3–4× a day is a big hidden sugar source. Cut the sugar gradually.'),
+ F('plaintea','Plain tea','තේ','🍵','drink','bme',0,0,0,0,0,0,0,0,0,'Plain tea, little or no sugar — the everyday choice.'),
+ F('coffee','Coffee','කෝපි','☕','drink','bme',1,0,0,0,0,0,0,0,0,'Fine in moderation; watch added sugar.'),
+ F('thambili','King coconut','තැඹිලි','🥥','drink','bmed',0,0,0,0,0,1,0,0,0,'Thambili is naturally hydrating with no added sugar — a great swap for soft drinks.'),
+ F('fruitjuice','Fruit juice','පළතුරු යුෂ','🧃','drink','me',2,0,0,0,0,0,0,1,0,'Even fresh juice concentrates the sugar and loses fibre — eat the whole fruit instead.'),
+ F('softdrink','Soft drink','සිසිල් බීම','🥤','drink','med',3,0,0,0,0,0,0,1,0,'A bottle can hold 8–10 teaspoons of sugar — the biggest easy win is to cut these.'),
+ F('milo','Milo','මයිලෝ','🥛','drink','bme',2,0,0,0,0,0,0,1,0,'Malt drinks are sweetened — check how much sugar you add too.'),
+ F('faluda','Faluda','ෆලූඩා','🥤','drink','me',3,0,1,0,0,0,0,1,0,'Sweet syrup + ice cream — a dessert in a glass.'),
+ // ── Fruits ──
+ F('banana','Banana','කෙසෙල්','🍌','fruit','bme',1,0,0,0,1,1,0,0,0,'A perfect natural snack with fibre and potassium.'),
+ F('papaya','Papaya','ගස්ලබු','🥭','fruit','bme',0,0,0,0,1,1,0,0,0,'Sweet, orange, full of vitamin C.'),
+ F('woodapple','Wood apple','දිවුල්','🟤','fruit','me',0,0,0,0,2,1,0,0,0,'Divul — high fibre, tangy.'),
+ F('mango','Mango','අඹ','🥭','fruit','me',1,0,0,0,1,1,0,0,0,'Naturally sweet — a whole fruit is fine.'),
+ F('rambutan','Rambutan','රඹුටන්','🔴','fruit','me',1,0,0,0,1,1,0,0,0,'Juicy seasonal fruit.'),
+ F('avocado','Avocado','අලිගැට පේර','🥑','fruit','bme',0,0,1,0,2,1,0,0,0,'Healthy fats + fibre. In SL often mashed with sugar — skip the sugar.')
+];
+const FOOD=Object.fromEntries(FOOD_DB.map(f=>[f.id,f]));
+
+/* ═══ MEALS ═══ */
+const MEALS=[['b','Breakfast','🌅'],['m','Morning tea','☕'],['l','Lunch','🍛'],['e','Evening tea','🫖'],['d','Dinner','🌙']];
+const MEAL_NAME=Object.fromEntries(MEALS.map(m=>[m[0],m[1]]));
+
+/* ═══ NCD KNOWLEDGE (education — not diagnosis) ═══ */
+const NCD={
+ diabetes:{name:'Type 2 Diabetes',icon:'🩸',col:'#E24A73',
+   build:'Years of high sugar and refined carbs (white rice, sweets, sugary tea and soft drinks) keep blood glucose high until the body can no longer manage it. Sri Lanka has a fast-rising diabetes rate.',
+   symptoms:['Feeling very thirsty','Passing urine often, especially at night','Tiredness and low energy','Cuts and wounds healing slowly','Blurred vision','Unexplained weight loss'],
+   swap:'Swap white rice for red rice (smaller portion), cut the sugar in your tea, choose whole fruit over sweets, and add dhal and vegetables for fibre. Ask for a blood-sugar test.'},
+ heart:{name:'Heart Disease',icon:'❤️',col:'#E24A4A',
+   build:'Deep-fried short-eats, fatty meats, coconut-oil frying and salt over many years narrow the arteries that feed the heart.',
+   symptoms:['Tightness, pressure or pain in the chest','Breathlessness when active','Unusual tiredness','Pain spreading to arm, neck or jaw','Sometimes there is no warning at all'],
+   swap:'Fewer deep-fried short-eats, grill/boil/steam instead of deep-frying, add oily fish and vegetables, and go easy on salt.'},
+ bp:{name:'High Blood Pressure',icon:'🫀',col:'#E8843C',
+   build:'Too much salt — dried fish (karawala), papadam, salty sambols and packaged snacks — raises blood pressure quietly for years. It is called the "silent killer".',
+   symptoms:['Usually NO symptoms — that is the danger','Sometimes headaches','Sometimes dizziness or blurred vision'],
+   swap:'Cut added salt, limit dried fish and packaged snacks, and add fruit and vegetables (potassium). Get your blood pressure checked regularly.'},
+ obesity:{name:'Overweight & Obesity',icon:'⚖️',col:'#F0B23C',
+   build:'Energy-dense fried and sugary foods with large refined portions and few vegetables lead to slow weight gain around the middle — which drives every other NCD.',
+   symptoms:['Gradual weight gain, especially around the waist','Breathlessness on effort','Low energy','Joint aches'],
+   swap:'Keep rice to a fist, fill half the plate with vegetables, drink water or thambili instead of sugary drinks, and cut fried snacks.'},
+ liver:{name:'Fatty Liver',icon:'🫥',col:'#C9A94C',
+   build:'Sugary drinks, sweets and fried food push fat into the liver (NAFLD) — usually with no symptoms until damage is done. It is increasingly common, even in the young.',
+   symptoms:['Usually silent — often found by accident','Tiredness','A dull ache in the upper-right belly'],
+   swap:'Cut sugary drinks and sweets first, reduce fried food, add vegetables and fibre, and move more each day.'}
+};
+
+/* ═══ SCORING: build totals → NCD risks → day balance ═══ */
+function score(day){
+  const items=[].concat(...MEALS.map(m=>day[m[0]].map(id=>FOOD[id]))).filter(Boolean);
+  const n=items.length||1;
+  const t={sugar:sum(items,'sugar'),salt:sum(items,'salt'),oil:sum(items,'oil'),refined:sum(items,'refined'),fibre:sum(items,'fibre')};
+  const vegCount=items.filter(i=>i.veg).length;
+  const proteinCount=items.filter(i=>i.protein).length;
+  const friedCount=items.filter(i=>i.fried).length;
+  const sugaryDrinks=items.filter(i=>i.group==='drink'&&i.sugar>=2).length;
+  const distinctVeg=new Set(items.filter(i=>i.veg).map(i=>i.id)).size;
+  // risks 0..1 (thresholds tuned so a typical junky day → high, balanced day → low)
+  const risks={
+    diabetes:clamp(t.sugar/12*0.5 + t.refined/12*0.3 + sugaryDrinks/3*0.25 - t.fibre/14*0.3),
+    heart:   clamp(t.oil/12*0.5 + friedCount/5*0.3 + t.salt/12*0.25 - vegCount/7*0.2),
+    bp:      clamp(t.salt/9*0.9 - vegCount/8*0.12),
+    obesity: clamp(t.oil/12*0.28 + t.sugar/12*0.28 + t.refined/12*0.28 + friedCount/5*0.2 - t.fibre/14*0.2 - vegCount/7*0.18),
+    liver:   clamp(t.sugar/12*0.45 + friedCount/5*0.3 + t.refined/12*0.25 - t.fibre/14*0.2)
+  };
+  const avg=(risks.diabetes+risks.heart+risks.bp+risks.obesity+risks.liver)/5;
+  let dayScore=Math.round(clamp(100 - avg*95 + Math.min(vegCount,5)*3 + Math.min(t.fibre,10)*1.2 + (proteinCount>=2?4:0) - (sugaryDrinks*4) - (friedCount*3), 0,100));
+  return {items,t,risks,avg,dayScore,vegCount,proteinCount,friedCount,sugaryDrinks,distinctVeg};
+}
+function lvl(v){ return v>=0.62?'high':v>=0.38?'mid':'low'; }
+function badges(s){
+  const b=[];
+  if(s.t.salt<=3) b.push(['🧂','Salt Smart']);
+  if(s.t.sugar<=3&&s.sugaryDrinks===0) b.push(['🍬','Sugar Aware']);
+  if(s.t.fibre>=8) b.push(['🌾','Fibre Hero']);
+  if(s.distinctVeg>=5) b.push(['🌈','Rainbow Day']);
+  if(s.t.oil<=4&&s.friedCount<=1) b.push(['❤️','Heart Friendly']);
+  if(s.dayScore>=75) b.push(['🏆','Balanced Day']);
+  return b;
+}
+
+/* ═══ PERSIST ═══ */
+const KEY='poshana.v1'; let saved=null; try{saved=JSON.parse(localStorage.getItem(KEY));}catch{}
+const Save=Object.assign({daysDone:0,best:0,badges:[],seenIntro:0},saved||{});
+function flush(){ try{localStorage.setItem(KEY,JSON.stringify(Save));}catch{} }
+
+/* ═══ STATE ═══ */
+const State={ screen:'title', day:{b:[],m:[],l:[],e:[],d:[]}, active:'b', challenge:null };
+function emptyDay(){ return {b:[],m:[],l:[],e:[],d:[]}; }
+
+/* ═══ CHALLENGES ═══ */
+const CHALLENGES=[
+ {id:'free',ic:'🍽️',name:'My Day (free build)',brief:'Build a normal day of your own eating, then see what it means for your health.',preset:null,target:0},
+ {id:'office',ic:'💼',name:'The office day',brief:'A busy worker grabs sugary tea, a fried short-eat and kottu. Can you rebalance the day?',
+   preset:{b:['milktea','bread'],m:['milktea','rolls'],l:['whiterice','chickencurry','papadam'],e:['milktea','vadai'],d:['kottu','softdrink']},target:70},
+ {id:'student',ic:'🎒',name:'Student budget day',brief:'Cheap and filling — but is it balanced? Fix it with dhal, greens and fruit.',
+   preset:{b:['bread','seenisambol','milktea'],m:['biscuits','plaintea'],l:['whiterice','parippu','papadam'],e:['fishbun','milktea'],d:['noodles','egg']},target:70},
+ {id:'sweettooth',ic:'🍮',name:'Festival sweets day',brief:'Watalappan, kavum and soft drinks everywhere. Enjoy a treat but protect your day.',
+   preset:{b:['kiribath','seenisambol'],m:['kavum','milktea'],l:['whiterice','beefcurry','papadam'],e:['watalappan','softdrink'],d:['friedrice','icecream']},target:65}
+];
+
+/* ═══ RENDER ═══ */
+const Screen=$('#screen'), Shelf=$('#shelf'), Actions=$('#actions'), Top=$('#top'), TopTtl=$('#top-ttl');
+function show(s){ State.screen=s; Screen.innerHTML=''; Shelf.innerHTML=''; Actions.innerHTML='';
+  Top.hidden=(s==='title'); $('#bottom').hidden=(s!=='build');
+  const mtr=$('#meters'); if(mtr&&s!=='build') mtr.remove();   // meters live only on build screen
+  if(s==='title')return renderTitle();
+  if(s==='menu')return renderMenu();
+  if(s==='build')return renderBuild();
+  if(s==='outcome')return renderOutcome();
+}
+
+function renderTitle(){
+  const c=el('div','scroll'); const w=el('div','wrap');
+  w.style.cssText='display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;min-height:80vh;text-align:center';
+  w.append(el('div','disp',`<div style="font-size:2.5rem">🍛 <span class="gold-text">Poshana</span></div>
+    <div style="color:var(--dim);font-weight:400;margin-top:6px">Sri Lankan Day Balance — build your day, see your future.</div>`));
+  const start=el('button','btn','Start ▶'); start.style.minWidth='200px'; start.onclick=()=>{ if(!Save.seenIntro){showIntro();} else show('menu'); };
+  w.append(start);
+  const how=el('button','btn btn-ghost','❓ How it works'); how.onclick=showIntro; w.append(how);
+  w.append(el('div',null,`<span style="color:var(--dim)">🗓️ ${Save.daysDone} days balanced · best ${Save.best}/100</span>`));
+  c.append(w); Screen.append(c);
+}
+const INTRO=[
+ ['🍛','Build your whole day','Add real Sri Lankan foods to Breakfast, teas, Lunch and Dinner — everything you actually eat, including short-eats and drinks.'],
+ ['🔬','See what it means','Your day is turned into a health picture: sugar, salt, oil and fibre — and how a pattern like this shapes your risk of <b>diabetes, heart disease, high blood pressure, obesity and fatty liver</b>.'],
+ ['⚠️','Learn the warning signs','For any raised risk you will see the early <b>symptoms to watch</b> and a simple local <b>swap</b> — so you can act early.'],
+ ['💚','One day will not decide it','NCDs build over years. This is education, not a diagnosis — but daily habits add up. If you have concerns or symptoms, see a doctor. Screening saves lives.']
+];
+function showIntro(){ let i=0;
+  const r=()=>{ const [a,h,p]=INTRO[i];
+    openModal(`<div style="text-align:center"><div style="font-size:3rem">${a}</div>
+      <div class="disp" style="font-size:1.35rem;margin:8px 0 10px">${h}</div>
+      <p style="color:var(--dim);line-height:1.55">${p}</p>
+      <div style="display:flex;gap:6px;justify-content:center;margin:14px 0">${INTRO.map((_,k)=>`<span style="width:8px;height:8px;border-radius:50%;background:${k===i?'var(--gold)':'var(--line)'}"></span>`).join('')}</div>
+      <div style="display:flex;gap:10px"><button class="btn btn-ghost" id="isk" style="flex:1">Skip</button>
+      <button class="btn" id="inx" style="flex:1">${i<INTRO.length-1?'Next →':"Let's go"}</button></div></div>`);
+    $('#isk').onclick=fin; $('#inx').onclick=()=>{ if(i<INTRO.length-1){i++;r();} else fin(); };
+  };
+  const fin=()=>{ Save.seenIntro=1; flush(); closeModal(); show('menu'); };
+  r();
+}
+
+function renderMenu(){
+  TopTtl.textContent='Choose a day';
+  const c=el('div','scroll'); const w=el('div','wrap');
+  w.append(el('div','disp',`<div style="font-size:1.5rem;margin-bottom:4px">Pick how to play</div>
+    <div style="color:var(--dim);font-size:.9rem;margin-bottom:14px">Free-build your own day, or take a challenge and rebalance it.</div>`));
+  CHALLENGES.forEach(ch=>{ const d=el('button','door',`<div class="g">${ch.ic}</div><div><div class="n">${ch.name}</div><div class="s">${ch.brief}</div></div>`);
+    d.onclick=()=>startChallenge(ch); w.append(d); });
+  c.append(w); Screen.append(c);
+}
+function startChallenge(ch){ State.challenge=ch; State.day = ch.preset? JSON.parse(JSON.stringify(ch.preset)) : emptyDay();
+  State.active='b'; show('build'); }
+
+let mealBlocks={}, goBtn=null;   // refs for incremental updates (no full re-render per tap)
+function blockNode(k,id,fresh){
+  const def=FOOD[id]; if(!def)return null;
+  const risky=def.fried||def.sugar>=3||def.salt>=3, warn=def.sugar>=2||def.salt>=2||def.oil>=2;
+  const bl=el('button','block'+(risky?' bad':warn?' warn':'')+(fresh?' new':'')); bl.type='button';
+  bl.setAttribute('aria-label','Remove '+def.name+' from '+MEAL_NAME[k]);
+  bl.append(foodVisual(def)); bl.append(el('span',null,def.name)); bl.append(el('span','x','✕'));
+  bl.onclick=e=>{ e.stopPropagation(); removeBlock(k,bl); };
+  return bl;
+}
+function fillBlocks(k){
+  const box=mealBlocks[k]; box.innerHTML='';
+  if(!State.day[k].length){ box.append(el('span','empty','Select this meal, then tap foods below.')); return; }
+  State.day[k].forEach(id=>box.append(blockNode(k,id,false)));
+}
+function addBlock(k,id){
+  State.day[k].push(id);
+  const box=mealBlocks[k]; const empty=box.querySelector('.empty'); if(empty)empty.remove();
+  box.append(blockNode(k,id,true));
+  updateCount(k); updateLive(); live(FOOD[id].name+' added to '+MEAL_NAME[k]);
+}
+function removeBlock(k,node){
+  const idx=[...node.parentNode.children].indexOf(node);
+  State.day[k].splice(idx,1); node.remove();
+  if(!State.day[k].length) mealBlocks[k].append(el('span','empty','Select this meal, then tap foods below.'));
+  updateCount(k); updateLive();
+}
+function updateCount(k){ const c=$('#cnt-'+k); if(c) c.textContent=State.day[k].length; }
+function setActive(k){ State.active=k;
+  document.querySelectorAll('.meal').forEach(m=>{ const on=m.dataset.k===k; m.classList.toggle('active',on); m.setAttribute('aria-pressed',on); });
+  buildShelf(k);
+}
+function renderBuild(){
+  Screen.innerHTML=''; Actions.innerHTML=''; mealBlocks={};
+  const ch=State.challenge;
+  TopTtl.innerHTML = ch&&ch.id!=='free' ? `${ch.ic} ${ch.name}` : '🍽️ My Day';
+  const c=el('div','scroll'); const w=el('div','wrap'); w.style.paddingBottom='6px';
+  if(ch&&ch.brief) w.append(el('div','panel',`<div style="padding:10px 12px;font-size:.9rem;color:var(--dim)">${ch.brief}</div>`));
+  MEALS.forEach(([k,name,ic])=>{
+    const card=el('div','meal'+(State.active===k?' active':'')); card.dataset.k=k;
+    card.setAttribute('role','button'); card.tabIndex=0; card.setAttribute('aria-pressed',State.active===k);
+    card.setAttribute('aria-label','Select '+name+' to add foods');
+    card.innerHTML=`<h3><span style="font-size:1.3rem">${ic}</span> ${name}<span class="cnt" id="cnt-${k}">${State.day[k].length}</span></h3>`;
+    const blocks=el('div','blocks'); card.append(blocks); mealBlocks[k]=blocks; fillBlocks(k);
+    const sel=()=>setActive(k);
+    card.onclick=sel; card.onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); sel(); } };
+    w.append(card);
+  });
+  c.append(w); Screen.append(c);
+  renderMeters(); buildShelf(State.active);
+  const reset=el('button','btn btn-ghost','↺ Reset'); reset.onclick=()=>{ State.day=State.challenge?.preset?JSON.parse(JSON.stringify(State.challenge.preset)):emptyDay(); renderBuild(); };
+  goBtn=el('button','btn',`See my day's health →`); goBtn.onclick=()=>show('outcome');
+  Actions.append(reset,goBtn); updateLive();
+}
+function renderMeters(){
+  let m=$('#meters'); if(!m){ m=el('div','metbar'); m.id='meters'; Top.after(m); }
+  updateLive();
+}
+function updateLive(){
+  const m=$('#meters'); if(!m)return; const s=score(State.day);
+  const met=(ic,label,val,max)=>{ const pct=clamp(val/max)*100; const col=pct>66?'var(--chilli)':pct>40?'var(--amber)':'var(--leaf)';
+    return `<div class="met">${ic} ${label}<div class="bar"><i style="width:${pct}%;background:${label==='Fibre'?'var(--leaf)':col}"></i></div></div>`; };
+  const total=[].concat(...Object.values(State.day)).length;
+  m.innerHTML = `<div class="met score" title="Day Balance">💚 ${total?s.dayScore:'--'}<span style="opacity:.6">/100</span></div>`
+    + met('🍬','Sugar',s.t.sugar,14)+met('🧂','Salt',s.t.salt,12)+met('🛢️','Oil',s.t.oil,14)+met('🌾','Fibre',s.t.fibre,12)
+    + `<div class="met">🥗 ${s.vegCount}</div>`;
+  if(goBtn) goBtn.disabled = total===0;
+}
+function buildShelf(meal){
+  Shelf.innerHTML='';
+  const list=FOOD_DB.filter(f=>f.meals.includes(meal));
+  Shelf.append(el('div',null,`<div style="align-self:center;color:var(--dim);font-size:.78rem;padding:0 4px;white-space:nowrap">Adding to<br><b style="color:var(--gold)">${MEAL_NAME[meal]}</b></div>`));
+  list.forEach(def=>{ const b=el('button','food'); b.setAttribute('aria-label',`${def.name}. Add to ${MEAL_NAME[meal]}.`);
+    b.append(foodVisual(def)); b.append(el('div','nm',def.name)); b.append(el('div','si',def.si||''));
+    const info=el('button','food-i','ⓘ'); info.type='button'; info.setAttribute('aria-label','About '+def.name);
+    info.onclick=e=>{ e.stopPropagation(); foodInfo(def); }; b.append(info);
+    b.onclick=()=>addBlock(meal,def.id);
+    Shelf.append(b);
+  });
+}
+
+/* food info modal: portion + what you get + how it affects NCD risk */
+const NUTRI_HINT=def=>{
+  const out=[];
+  if(def.veg) out.push('Fibre & vitamins');
+  if(def.protein) out.push('Protein');
+  if(def.group==='fruit') out.push('Natural sweetness & fibre');
+  if(def.fibre>=2) out.push('Good fibre');
+  if(def.sugar>=2) out.push('⚠ High free sugar');
+  if(def.salt>=2) out.push('⚠ High salt');
+  if(def.oil>=2||def.fried) out.push('⚠ Fried / high oil');
+  if(def.refined>=2) out.push('⚠ Refined carb');
+  return out.length?out:['Everyday food'];
+};
+const PORTION={grain:'A fist of rice / 1–2 pieces',protein:'A palm-size piece',veg:'Fill half the plate',fruit:'One piece / a handful',
+  drink:'One cup/glass',sweet:'A small piece, now and then',fried:'One or two, occasionally',snack:'A small amount',dairy:'A small cup'};
+function foodInfo(def){
+  const risky=[]; if(def.sugar>=2)risky.push('diabetes & fatty liver'); if(def.salt>=2)risky.push('blood pressure'); if(def.oil>=2||def.fried)risky.push('heart & weight'); if(def.refined>=3)risky.push('diabetes');
+  openModal(`<div style="text-align:center">
+    <div id="fi-vis" style="width:130px;height:96px;margin:0 auto 8px;border-radius:14px;overflow:hidden"></div>
+    <div class="disp" style="font-size:1.3rem">${def.name}</div>
+    <div style="color:var(--dim);margin:2px 0 12px">${def.si||''}</div>
+    <div class="fi-row"><b>🖐 Portion</b><div style="color:var(--dim);margin-top:2px">${PORTION[def.group]||'A small serving'}</div></div>
+    <div class="fi-row"><b>💪 What it gives</b><div style="margin-top:5px">${NUTRI_HINT(def).map(n=>`<span class="ntag">${n}</span>`).join(' ')}</div></div>
+    ${risky.length?`<div class="fi-row" style="border-color:var(--amber)"><b>⚠ Eaten often, this adds to</b><div style="color:var(--dim);margin-top:2px">${[...new Set(risky)].join(', ')} risk</div></div>`:''}
+    <div class="fi-row"><b>💡 Tip</b><div style="color:var(--dim);margin-top:2px">${def.tip||''}</div></div>
+    <button class="btn" style="width:100%;margin-top:6px" data-close>Close</button></div>`);
+  const v=$('#fi-vis'); if(v){ const fv=foodVisual(def); fv.style.width='100%'; fv.style.height='100%'; fv.style.borderRadius='14px'; v.append(fv); }
+}
+
+function renderOutcome(){
+  const s=score(State.day); TopTtl.textContent="Your day's outcome";
+  Save.daysDone++; Save.best=Math.max(Save.best,s.dayScore);
+  const earned=badges(s); earned.forEach(([e,n])=>{ if(!Save.badges.includes(n))Save.badges.push(n); }); flush();
+  const c=el('div','scroll'); const w=el('div','wrap');
+  const stars=Math.max(1,Math.round(s.dayScore/20));
+  const verdict = s.dayScore>=75?'A well-balanced day! 💚' : s.dayScore>=50?'A fair day — a few easy wins left.' : 'This pattern needs some rebalancing.';
+  w.append(el('div','panel',`<div style="padding:16px;text-align:center">
+     <div class="disp" style="font-size:1.5rem">${verdict}</div>
+     <div class="stars" style="margin:6px 0">${'⭐'.repeat(stars)}${'☆'.repeat(5-stars)}</div>
+     <div style="color:var(--dim)">Day Balance <b style="color:var(--chalk)">${s.dayScore}/100</b> · ${s.items.length} items · 🥗 ${s.vegCount} veg · 🌾 fibre ${s.t.fibre}</div>
+     ${State.challenge&&State.challenge.target?`<div style="margin-top:6px;color:${s.dayScore>=State.challenge.target?'var(--leaf)':'var(--amber)'}">${s.dayScore>=State.challenge.target?'✓ Challenge target met!':`Target ${State.challenge.target} — keep rebalancing`}</div>`:''}
+   </div>`));
+  // NCD projection heading
+  w.append(el('div','disp',`<div style="font-size:1.15rem;margin:16px 0 8px">🔮 If most of your days looked like this…</div>`));
+  const order=Object.keys(NCD).map(k=>[k,s.risks[k]]).sort((a,b)=>b[1]-a[1]);
+  order.forEach(([k,v])=>{ const L=lvl(v), d=NCD[k]; const pct=Math.round(v*100);
+    const r=el('div','risk'); r.innerHTML=`<div class="rh">${d.icon} ${d.name}
+      <span class="rlvl ${L==='high'?'lvl-high':L==='mid'?'lvl-mid':'lvl-low'}">${L==='high'?'Higher risk':L==='mid'?'Watch this':'Lower risk'}</span></div>
+      <div class="bar"><i style="width:${Math.max(6,pct)}%;background:${L==='high'?'var(--chilli)':L==='mid'?'var(--amber)':'var(--leaf)'}"></i></div>`;
+    w.append(r);
+  });
+  // warnings for mid/high risks
+  const flagged=order.filter(([k,v])=>lvl(v)!=='low');
+  if(flagged.length){
+    w.append(el('div','disp',`<div style="font-size:1.15rem;margin:16px 0 8px">⚠️ What to know & watch</div>`));
+    flagged.forEach(([k,v])=>{ const d=NCD[k], L=lvl(v);
+      w.append(el('div','warncard '+L,`<div style="font-weight:700;display:flex;align-items:center;gap:8px">${d.icon} ${d.name}</div>
+        <div style="color:var(--dim);font-size:.9rem;margin:6px 0">${d.build}</div>
+        <div style="font-weight:600;font-size:.9rem">Early signs to watch:</div>
+        <ul>${d.symptoms.map(x=>`<li>${x}</li>`).join('')}</ul>
+        <div style="margin-top:8px;padding:8px 10px;background:rgba(63,181,107,.12);border-radius:10px;font-size:.9rem"><b>✅ Try this:</b> ${d.swap}</div>`));
+    });
+  } else {
+    w.append(el('div','warncard good',`<div style="font-weight:700">💚 Low risk across the board — well done!</div>
+      <div style="color:var(--dim);font-size:.9rem;margin-top:4px">Plenty of vegetables and fibre, and sugar, salt and oil kept in check. Keep this pattern and stay active. Even so, regular screening (blood sugar & blood pressure) is wise for every adult.</div>`));
+  }
+  // badges
+  if(earned.length){ const bx=el('div',null,'<div class="disp" style="font-size:1.1rem;margin:16px 0 6px">🎖️ Badges earned today</div>');
+    const row=el('div'); earned.forEach(([e,n])=>row.append(el('span','badge',`${e} ${n}`))); bx.append(row); w.append(bx); }
+  // disclaimer
+  w.append(el('div','warncard',`<div style="font-size:.84rem;color:var(--dim)"><b>Remember:</b> this is general education, not a diagnosis. One day does not decide anything — but the pattern of your days adds up over years. NCDs are largely preventable. If you have any symptoms or concerns, or for routine screening, please see a doctor or dietitian.</div>`));
+  // actions
+  const row=el('div',null); row.style.cssText='display:flex;gap:10px;margin:6px 0 20px';
+  const rb=el('button','btn btn-ghost','↩ Rebuild this day'); rb.style.flex='1'; rb.onclick=()=>show('build');
+  const nx=el('button','btn','New day'); nx.style.flex='1'; nx.onclick=()=>show('menu');
+  row.append(rb,nx); w.append(row);
+  const old=$('#meters'); if(old)old.remove();
+  c.append(w); Screen.append(c);
+}
+
+/* ═══ MODAL ═══ */
+function openModal(html){ const m=$('#modal'); m.innerHTML=`<div class="panel">${html}</div>`; m.classList.add('open');
+  m.querySelectorAll('[data-close]').forEach(b=>b.onclick=closeModal); m.onclick=e=>{if(e.target===m)closeModal();}; }
+function closeModal(){ const m=$('#modal'); m.classList.remove('open'); m.innerHTML=''; }
+document.addEventListener('keydown',e=>{ if(e.key==='Escape')closeModal(); });
+
+/* ═══ NCD LIBRARY (top bar 📖) ═══ */
+$('#b-info').onclick=()=>{ let html='<div class="disp" style="font-size:1.3rem;margin-bottom:10px">📖 Know your NCDs</div>';
+  for(const k in NCD){ const d=NCD[k]; html+=`<div class="warncard" style="border-left-color:${d.col}">
+    <div style="font-weight:700">${d.icon} ${d.name}</div>
+    <div style="color:var(--dim);font-size:.88rem;margin:5px 0">${d.build}</div>
+    <div style="font-weight:600;font-size:.88rem">Watch for:</div><ul>${d.symptoms.map(x=>`<li>${x}</li>`).join('')}</ul>
+    <div style="margin-top:6px;font-size:.88rem"><b>Prevent:</b> ${d.swap}</div></div>`; }
+  html+='<button class="btn" style="width:100%;margin-top:4px" data-close>Close</button>';
+  openModal(html);
+};
+$('#b-about').onclick=()=>openModal(`<div><div class="disp" style="font-size:1.25rem;margin-bottom:8px">About Poshana</div>
+  <p style="font-size:.92rem">Poshana ("nutrition") helps Sri Lankan families see how everyday eating — rice & curry, hoppers, short-eats, sweets and sugary tea — shapes long-term risk of non-communicable diseases.</p>
+  <p style="font-size:.92rem"><b>It is education, not medical advice.</b> If food, weight or your health feels worrying, a doctor or dietitian can help — and simple screening (blood sugar, blood pressure) finds problems early.</p>
+  <p style="font-size:.82rem;color:var(--dim)">Food photos: Wikipedia / Wikimedia Commons. NCD and nutrition values are simplified for teaching and should be reviewed against Sri Lankan clinical guidance before real use. Nothing leaves your device.</p>
+  <button class="btn" style="width:100%;margin-top:6px" data-close>Close</button></div>`);
+
+/* ═══ BOOT ═══ */
+(function stars(){ const s=$('#stars-bg'); let h=''; for(let i=0;i<40;i++)h+=`<i style="left:${Math.random()*100}%;top:${Math.random()*80}%;animation-delay:${(Math.random()*4).toFixed(2)}s"></i>`; s.innerHTML=h; })();
+show('title');
+</script>
+</body>
+</html>

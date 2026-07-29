@@ -183,6 +183,31 @@
   .lvl .ic{font-size:1.9rem}.lvl .t{flex:1}.lvl .t b{font-size:1.06rem}.lvl .t span{color:var(--chalk-dim);font-size:.86rem}
   .card{background:var(--glass);backdrop-filter:blur(14px) saturate(1.2);border:1px solid var(--glass-brd);border-left-width:5px;border-radius:14px;padding:14px 16px;text-align:left;width:100%;box-shadow:0 8px 24px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.12)}
   .card.win{border-color:var(--veg)}.card.next{border-color:var(--lamp)}.card.fact{border-color:var(--dairy)}
+  .card.why{border-color:var(--gold)}
+  .food{position:relative}
+  .food-i{position:absolute;top:3px;right:3px;width:24px;height:24px;border-radius:50%;z-index:2;
+    background:rgba(16,24,40,.72);border:1px solid var(--glass-brd);color:var(--gold-2);font-size:.72rem;font-weight:700;
+    display:grid;place-items:center;line-height:1;padding:0}
+  .food-i:hover{background:var(--gold);color:#20160a}
+  .ntag{display:inline-block;background:var(--glass-2);border:1px solid var(--glass-brd);border-radius:999px;
+    padding:5px 11px;font-size:.85rem;font-weight:600;margin:3px 2px}
+  .fi-row{text-align:left;padding:10px 12px;background:var(--glass);border:1px solid var(--glass-brd);border-radius:14px;margin-bottom:8px}
+  .subtitle{color:var(--chalk-dim);font-weight:400;text-align:center;margin-top:6px;max-width:340px;line-height:1.45}
+  .purpose{color:var(--chalk-dim);font-size:.92rem;text-align:center;max-width:460px;line-height:1.4;margin:-4px 0 4px}
+  .intro{max-width:420px;text-align:center}
+  .intro .art{font-size:3.4rem;margin-bottom:8px;line-height:1}
+  .intro h3{font-family:"Bricolage Grotesque",sans-serif;font-size:1.4rem;margin:0 0 10px}
+  .intro p{color:var(--chalk-dim);line-height:1.55;margin:0 0 16px}
+  .dots{display:flex;gap:6px;justify-content:center;margin-bottom:14px}
+  .dots i{width:8px;height:8px;border-radius:50%;background:var(--stall);transition:background .2s}
+  .dots i.on{background:var(--gold);transform:scale(1.15)}
+  .coach{position:absolute;top:46px;left:50%;transform:translateX(-50%);z-index:5;
+    width:min(340px,calc(100vw - 24px));padding:13px 15px;text-align:center;font-size:.92rem;line-height:1.4;
+    animation:coachIn .3s ease both;word-break:break-word;overflow-wrap:anywhere}
+  @keyframes coachIn{from{opacity:0;transform:translate(-50%,10px)}to{opacity:1;transform:translate(-50%,0)}}
+  .coach .k{font-size:1.1rem}
+  @media(max-width:400px){.coach{top:42px;padding:11px 13px;font-size:.85rem;line-height:1.35}}
+  @media(max-width:340px){.coach{font-size:.8rem}}
   #bottom{padding-top:4px;background:linear-gradient(180deg,transparent,rgba(8,14,24,.55))}
   #actions{display:flex;gap:12px;justify-content:center;padding:6px 14px calc(12px + env(safe-area-inset-bottom))}
   #modal{position:fixed;inset:0;background:rgba(8,14,24,.82);backdrop-filter:blur(7px);display:none;
@@ -196,6 +221,29 @@
   #confetti{position:fixed;inset:0;pointer-events:none;z-index:70;overflow:hidden}
   #confetti span{position:absolute;top:-20px;font-size:1.4rem;animation:fall linear forwards}
   @keyframes fall{to{transform:translateY(105vh) rotate(600deg);opacity:.9}}
+  /* ── cooking sparkle when food lands ── */
+  .spark{position:fixed;z-index:66;pointer-events:none;font-size:1.3rem;animation:spark .6s ease-out forwards}
+  @keyframes spark{0%{opacity:0;transform:translate(-50%,-50%) scale(.4)}30%{opacity:1}100%{opacity:0;transform:translate(-50%,-140%) scale(1.1)}}
+  /* ── feeding cutscene ── */
+  .feast{position:fixed;inset:0;z-index:75;display:grid;place-items:center;
+    background:radial-gradient(circle at 50% 42%, rgba(24,36,60,.86), rgba(8,14,24,.94));backdrop-filter:blur(5px);animation:fade .3s both}
+  .feast-scene{position:relative;text-align:center;z-index:76}
+  .feast-gif{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:min(70vw,300px);opacity:.28;
+    border-radius:20px;z-index:75;pointer-events:none;filter:saturate(1.1)}
+  .friend{font-size:5.2rem;display:inline-block;transition:transform .16s;filter:drop-shadow(0 10px 22px rgba(0,0,0,.55))}
+  .friend.chomp{transform:scale(1.2) rotate(-3deg)}
+  .friend.happy{animation:feastBounce .7s ease}
+  @keyframes feastBounce{0%,100%{transform:translateY(0) scale(1)}28%{transform:translateY(-26px) scale(1.12)}60%{transform:translateY(0) scale(1.06)}}
+  .feast-cap{margin-top:14px;font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:1.5rem;color:var(--gold);
+    filter:drop-shadow(0 2px 8px rgba(233,200,119,.4))}
+  .feast-sub{margin-top:2px;color:var(--chalk-dim);font-size:.95rem}
+  .feast-food{position:fixed;left:50%;bottom:13%;width:66px;height:66px;transform:translateX(-50%);z-index:78;
+    transition:transform .5s cubic-bezier(.45,0,.2,1),opacity .5s}
+  .feast-food.go{transform:translate(-50%,-42vh) scale(.32) rotate(18deg);opacity:.15}
+  .heart{position:fixed;left:50%;top:40%;font-size:1.7rem;z-index:79;pointer-events:none;animation:heartUp 1s ease forwards}
+  @keyframes heartUp{0%{opacity:1;transform:translate(-50%,0) scale(.5)}100%{opacity:0;transform:translate(calc(-50% + var(--dx,0px)),-110px) scale(1.25)}}
+  .steam{position:fixed;z-index:78;pointer-events:none;font-size:1.2rem;opacity:.7;animation:steam 1s ease-out forwards}
+  @keyframes steam{0%{opacity:0;transform:translate(-50%,0) scale(.6)}30%{opacity:.7}100%{opacity:0;transform:translate(-50%,-70px) scale(1.2)}}
   /* desktop: bigger plate, comfy shelf */
   @media(min-width:1024px){
     .plate{width:min(52vh,520px)}
@@ -323,10 +371,60 @@ const FOOD_DB=[
  {id:'sardines',name:'Sardines',emoji:'🐟',img:'Sardines',group:'protein',produce:0,colour:null,portions:1,fibreG:0,freeSugarG:0,tags:['protein'],fact:'Tinned sardines are cheap and full of omega-3.'},
  {id:'muffin',name:'Muffin',emoji:'🧁',img:null,group:'sometimes',produce:0,colour:null,portions:1,fibreG:1,freeSugarG:18,tags:['reveal'],fact:'A muffin is a treat, not an everyday breakfast.'},
  {id:'sweets',name:'Sweets',emoji:'🍬',img:null,group:'sometimes',produce:0,colour:null,portions:1,fibreG:0,freeSugarG:20,tags:['reveal'],fact:'Sweets are pure free sugar — enjoy a few, sometimes.'},
- {id:'popcorn',name:'Popcorn',emoji:'🍿',img:null,group:'sometimes',produce:0,colour:null,portions:1,fibreG:1.2,freeSugarG:0,tags:['snack'],fact:'Plain popcorn is a light wholegrain snack.'}
+ {id:'popcorn',name:'Popcorn',emoji:'🍿',img:null,group:'sometimes',produce:0,colour:null,portions:1,fibreG:1.2,freeSugarG:0,tags:['snack'],fact:'Plain popcorn is a light wholegrain snack.'},
+ // ── Sri Lankan foods (local staples & greens) ──
+ {id:'gotukola',name:'Gotukola',emoji:'🥬',img:null,group:'veg',produce:1,colour:'green',portions:1,fibreG:2.2,freeSugarG:0,serve:'A handful as sambol (~50g)',tags:['veg','iron','vitamin-c','antioxidant'],fact:'Gotukola (pennywort) is a Sri Lankan green rich in iron — often eaten as a fresh sambol.'},
+ {id:'mukunuwenna',name:'Mukunuwenna',emoji:'🥬',img:null,group:'veg',produce:1,colour:'green',portions:1,fibreG:2,freeSugarG:0,serve:'A handful, cooked (~50g)',tags:['veg','iron','vitamin-c'],fact:'Mukunuwenna is a leafy green stir-fried with coconut — a good source of iron.'},
+ {id:'kangkung',name:'Kangkung',emoji:'🥬',img:'Water Spinach',group:'veg',produce:1,colour:'green',portions:1,fibreG:2.1,freeSugarG:0,serve:'A cupped hand, cooked (~80g)',tags:['veg','iron','vitamin-c'],fact:'Kangkung (water spinach) is a quick stir-fry green loved across Sri Lanka.'},
+ {id:'karawila',name:'Karawila',emoji:'🥒',img:'Bitter Gourd',group:'veg',produce:1,colour:'green',portions:1,fibreG:2.8,freeSugarG:0,serve:'A few slices (~60g)',tags:['veg','fibre','vitamin-c'],fact:'Karawila (bitter gourd) is prized in Sri Lanka and is gentle on blood sugar.'},
+ {id:'bandakka',name:'Bandakka',emoji:'🫛',img:'Okra',group:'veg',produce:1,colour:'green',portions:1,fibreG:3.2,freeSugarG:0,serve:'A handful (~80g)',tags:['veg','fibre','vitamin-c'],fact:'Bandakka (okra / ladies fingers) is full of fibre — often made as a curry.'},
+ {id:'pathola',name:'Pathola',emoji:'🥒',img:'Snake Gourd',group:'veg',produce:1,colour:'green',portions:1,fibreG:1.8,freeSugarG:0,serve:'A cupped hand (~80g)',tags:['veg','fibre'],fact:'Pathola (snake gourd) is a light, watery vegetable cooked into mild curries.'},
+ {id:'murunga',name:'Murunga',emoji:'🌿',img:'Drumsticks',group:'veg',produce:1,colour:'green',portions:1,fibreG:3.2,freeSugarG:0,serve:'A few pods or a handful of leaves (~50g)',tags:['veg','iron','calcium','vitamin-c'],fact:'Murunga (drumstick) leaves and pods are among the most nutritious greens — iron and calcium.'},
+ {id:'wattakka',name:'Wattakka',emoji:'🎃',img:'Pumpkin',group:'veg',produce:1,colour:'orange',portions:1,fibreG:2,freeSugarG:0,serve:'A cupped hand, cooked (~80g)',tags:['veg','beta-carotene'],fact:'Wattakka (pumpkin) is orange from beta-carotene, which your body turns into vitamin A.'},
+ {id:'manioc',name:'Manioc',emoji:'🥔',img:'Cassava',group:'grain',produce:0,colour:null,portions:1,fibreG:1.8,freeSugarG:0,serve:'A cupped hand, boiled (~100g)',tags:['grain','energy'],fact:'Manioc (cassava) is a starchy Sri Lankan staple — good energy, often eaten with sambol.'},
+ {id:'redrice',name:'Red rice',emoji:'🍚',img:null,group:'grain',produce:0,colour:null,portions:1,fibreG:2,freeSugarG:0,serve:'A cupped hand, cooked (~½ cup)',tags:['wholegrain'],fact:'Rathu haal (red rice) keeps its bran, giving more fibre than white rice.'},
+ {id:'papaya',name:'Papaya',emoji:'🥭',img:'Papaya',group:'fruit',produce:1,colour:'orange',portions:1,fibreG:1.7,freeSugarG:0,serve:'A few slices (~120g)',tags:['fruit','vitamin-c','beta-carotene'],fact:'Papaya (gaslabu) is sweet, orange and full of vitamin C.'},
+ {id:'jackfruit',name:'Jackfruit',emoji:'🟡',img:null,group:'fruit',produce:1,colour:'yellow',portions:1,fibreG:1.5,freeSugarG:0,serve:'A few bulbs (~80g)',tags:['fruit','fibre'],fact:'Ripe jackfruit (waraka) is sweet; young jackfruit (polos) is cooked like a curry.'},
+ {id:'mung',name:'Green gram',emoji:'🫘',img:null,group:'protein',produce:0,colour:null,portions:1,fibreG:7.6,freeSugarG:0,serve:'A palm, cooked (~120g)',tags:['protein','plant-protein','iron','fibre'],fact:'Mung (green gram) is a filling breakfast — plant protein, iron and fibre.'},
+ {id:'sprats',name:'Sprats',emoji:'🐟',img:null,group:'protein',produce:0,colour:null,portions:1,fibreG:0,freeSugarG:0,serve:'A small handful (~30g)',tags:['protein','calcium','omega-3'],fact:'Halmasso (sprats) are eaten whole with the bones — cheap protein and calcium.'}
 ];
 const FOOD=Object.fromEntries(FOOD_DB.map(f=>[f.id,f]));
 const GTINT={veg:'#37B26B',fruit:'#E24A73',grain:'#E0A83A',protein:'#7C6BE0',dairy:'#54C3DE',sometimes:'#94A0B0'};
+const GROUP_LABEL={veg:'Vegetable',fruit:'Fruit',grain:'Grain / carbohydrate',protein:'Protein food',dairy:'Dairy / drink',sometimes:'Sometimes food'};
+/* Portion (hand guide) + nutrients — general education, verify with local guidance. */
+const PORTION={veg:'About a fist (~80g)',fruit:'One handful / one piece (~80g)',grain:'A cupped hand (~40–60g cooked)',
+  protein:'A palm (~100g)',dairy:'A small glass or matchbox (~150ml / 30g)',sometimes:'A small amount, now and then'};
+const NUTRI_LBL={iron:'Iron',calcium:'Calcium','vitamin-c':'Vitamin C','vitamin-d':'Vitamin D','beta-carotene':'Vitamin A',
+  wholegrain:'Slow-release energy','slow-release':'Slow-release energy','healthy-fat':'Healthy fats',
+  'plant-protein':'Plant protein','omega-3':'Omega-3',potassium:'Potassium',antioxidant:'Antioxidants',energy:'Energy (carbs)',fibre:'Fibre'};
+function portionText(def){ if(def.serve)return def.serve;
+  if((def.tags||[]).includes('water'))return 'A glass whenever you are thirsty';
+  return PORTION[def.group]||'A small serving'; }
+function nutrientText(def){
+  const out=[], add=t=>{ if(t&&!out.includes(t))out.push(t); };
+  (def.tags||[]).forEach(t=>{ if(NUTRI_LBL[t])add(NUTRI_LBL[t]); });
+  if(def.group==='sometimes') return ['High in free sugar / a treat'];
+  if(def.produce) add('Vitamins');
+  if(def.group==='protein') add('Protein');
+  if(def.group==='dairy') add('Calcium');
+  if((def.fibreG||0)>=3) add('Fibre');
+  if(def.group==='grain'&&!out.includes('Slow-release energy')) add('Energy (carbs)');
+  return out.slice(0,4);
+}
+function foodInfo(def){
+  const everyday=def.group!=='sometimes', nut=nutrientText(def);
+  openModal(`<div style="text-align:center">
+    <div id="fi-vis" style="width:104px;height:104px;margin:0 auto 8px"></div>
+    <div class="display" style="font-size:1.35rem">${def.name}</div>
+    <div style="color:var(--chalk-dim);margin:2px 0 14px">${GROUP_LABEL[def.group]||def.group} · ${everyday?'everyday food':'sometimes food'}</div>
+    <div class="fi-row"><b>🖐 Portion</b><div style="color:var(--chalk-dim);margin-top:2px">${portionText(def)}</div></div>
+    <div class="fi-row"><b>💪 What you get</b><div style="margin-top:5px">${nut.map(n=>`<span class="ntag">${n}</span>`).join(' ')}</div></div>
+    <div class="fi-row"><b>💡 Did you know</b><div style="color:var(--chalk-dim);margin-top:2px">${def.fact||''}</div></div>
+    <div style="display:flex;gap:10px;margin-top:14px"><button class="btn" id="fi-add" style="flex:1">Add to plate</button>
+    <button class="btn btn-ghost" style="flex:1" data-close>Close</button></div></div>`);
+  const vis=$('#fi-vis'); if(vis){ const fv=foodVisual(def); fv.style.width='100%'; fv.style.height='100%'; vis.append(fv); }
+  const add=$('#fi-add'); if(add) add.onclick=()=>{ closeModal(); addFood(def.id); };
+}
 
 const LEVELS={
  kid:[
@@ -343,7 +441,9 @@ const LEVELS={
   {id:'A6',ic:'🎉',name:'Party plate',brief:'It is a party! Add a treat and still keep colours.',speak:'It is a party! Add a treat, and keep three colours too.',
    food:['strawberry','watermelon','grapes','carrot','pepper','cheese','cake','icecream','biscuits','choc','water'],win:{colours:3}},
   {id:'A7',ic:'🍱',name:'Lunchbox',brief:'Pack a veg, a fruit, a grain and a protein.',speak:'Pack a lunchbox: a veg, a fruit, a grain and a protein.',
-   food:['carrot','cucumber','tomato','apple','grapes','strawberry','bread','rice','egg','cheese','hummus','water','crisps'],win:{groups:['veg','fruit','grain','protein'],colours:3}}
+   food:['carrot','cucumber','tomato','apple','grapes','strawberry','bread','rice','egg','cheese','hummus','water','crisps'],win:{groups:['veg','fruit','grain','protein'],colours:3}},
+  {id:'A8',ic:'🍛',name:'Rice & curry',brief:'Build a Sri Lankan rice & curry plate — rice, a green, a veg and a protein.',speak:'Build a rice and curry plate. Add rice, a green leaf, a vegetable and a protein.',
+   food:['redrice','gotukola','mukunuwenna','karawila','bandakka','wattakka','murunga','tomato','aubergine','mung','sprats','papaya','manioc','water'],win:{groups:['veg','grain','protein'],colours:3}}
  ],
  teen:[
   {id:'B1',ic:'⚽',name:'Fuel for football',brief:'Ravi has football at 5. Build his plate.',goal:'sport',
@@ -510,6 +610,40 @@ function flyFood(cardEl){ if(matchMedia('(prefers-reduced-motion:reduce)').match
   requestAnimationFrame(()=>{ clone.style.transform=`translate(${tx}px,${ty}px) scale(.55) rotate(20deg)`; clone.style.opacity='.15'; });
   setTimeout(()=>clone.remove(),470);
 }
+/* Optional GIF slots — paste hotlink GIF URLs to show real GIFs at these moments.
+   Pipeline is verified to load hotlinked image/gif. Left empty by default so the
+   game stays fully offline + licence-clean; the built-in CSS scene plays instead. */
+const GIFS={ feast:'', win:'', cooking:'' };
+function gifEl(key,cls){ const u=GIFS[key]; if(!u)return null;
+  const im=new Image(); im.src=u; if(cls)im.className=cls; im.alt=''; im.decoding='async'; im.onerror=()=>im.remove(); return im; }
+function cookSpark(x,y){ if(matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+  const g=['✨','💫','🍳','⭐']; const s=el('div','spark',g[Math.floor(Math.random()*g.length)]);
+  s.style.left=x+'px'; s.style.top=y+'px'; document.body.append(s); setTimeout(()=>s.remove(),620); }
+function spawnHeart(host){ const g=['❤️','✨','💚','⭐','😋']; const h=el('div','heart',g[Math.floor(Math.random()*g.length)]);
+  h.style.setProperty('--dx',(Math.random()*120-60).toFixed(0)+'px'); host.append(h); setTimeout(()=>h.remove(),1000); }
+/* Cinematic: plate foods fly one-by-one into the friend, who chomps and beams. */
+function feedAnimation(items, done){
+  const friend = State.aud==='kid'?'🌱' : State.aud==='teen'?'😋' : '👨‍👩‍👧';
+  const label  = {kid:'Feeding Sprout…',teen:'Serving it up…',adult:'Serving the table…'}[State.aud];
+  const ov=el('div','feast');
+  ov.innerHTML=`<div class="feast-scene"><div class="friend" id="ffriend">${friend}</div>
+    <div class="feast-cap" id="fcap">${label}</div><div class="feast-sub" id="fsub">Made with a balanced plate 🍽️</div></div>`;
+  const gif=gifEl('feast','feast-gif'); if(gif) ov.append(gif);
+  document.body.append(ov);
+  const fr=$('#ffriend');
+  const foods=items.slice(0,8), step=280;
+  foods.forEach((p,i)=>setTimeout(()=>{
+    const def=FOOD[p.id]; const f=el('div','feast-food'); f.append(foodVisual(def)); ov.append(f);
+    requestAnimationFrame(()=>f.classList.add('go'));
+    setTimeout(()=>{ f.remove(); fr.classList.remove('chomp'); void fr.offsetWidth; fr.classList.add('chomp');
+      beep(460+i*35,.07,'triangle',.1); spawnHeart(ov); }, 500);
+  }, i*step));
+  const total=foods.length*step+700;
+  setTimeout(()=>{ fr.classList.remove('chomp'); fr.classList.add('happy'); if(State.aud==='kid')fr.textContent='🌱';
+    $('#fcap').textContent={kid:'Yum! Sprout loved it 💚',teen:'Nice plate 👌',adult:'Dinner is served 🍽️'}[State.aud];
+    for(let k=0;k<6;k++) setTimeout(()=>spawnHeart(ov),k*70); happy(); }, total-350);
+  setTimeout(()=>{ ov.remove(); done&&done(); }, total+650);
+}
 function refreshMute(){ const b=$('#b-mute'); if(b) b.textContent=State.sound?'🔊':'🔇'; }
 function toggleSound(v){ State.sound=v!=null?v:!State.sound; refreshMute();
   if(State.sound){ try{actx=actx||new (AudioContext||webkitAudioContext)(); actx.resume(); beep(660,.1,'sine',.08);}catch{} } }
@@ -524,7 +658,8 @@ function reallyAdd(id){ const def=FOOD[id]; State.plate.push({id,uid:Math.random
   beep({veg:262,fruit:330,grain:392,protein:440,dairy:523,sometimes:196}[def.group]||330,.12,'triangle');
   vibrate(12); document.querySelectorAll('.food.hint').forEach(f=>f.classList.remove('hint'));
   if(State.aud==='kid'&&State.tapSpeak) speak(def.name);
-  live(def.name+' added'); renderPlate(); }
+  live(def.name+' added'); renderPlate();
+  const pr=$('#plate')?.getBoundingClientRect(); if(pr) setTimeout(()=>cookSpark(pr.left+pr.width/2, pr.top+pr.height*0.4),430); }
 function removeFood(uid){ const i=State.plate.findIndex(p=>p.uid===uid); if(i<0)return;
   State.plate.splice(i,1); renderPlate(); }
 function clearPlate(){ State.plate=[]; renderPlate(); }
@@ -556,21 +691,57 @@ function show(s){ State.screen=s; document.body.classList.toggle('kid',State.aud
   if(s==='week')return renderWeek();
   if(s==='garden')return renderGarden();
 }
+/* ═══ MEANING: intro story, purpose, why-it-matters ═══ */
+const INTRO=[
+ ['🪐','Welcome to Plate Planet','Every plate you build feeds a hungry little friend. A balanced plate gives them energy and a big smile — and teaches you what real balanced eating looks like.'],
+ ['🌈','Watch the rainbow grow','Add different-coloured foods and the rainbow above the plate lights up. More colours means more vitamins. That is the whole idea — <b>eat the rainbow</b>.'],
+ ['🌱','How to play','Tap foods to drop them on the plate. Fill the little goal shown at the top, then press <b>Feed</b>. Your friend reacts to how balanced the plate is — no numbers for kids, just colours and smiles.'],
+ ['🍎','Why you are playing','This is not about "good" or "bad" food. It is about balance — a skill you keep. What you learn here works at your real table, for you and your family. No calorie counting, ever.']
+];
+function showIntro(){ let i=0;
+  const render=()=>{ const [art,h,p]=INTRO[i];
+    openModal(`<div class="intro"><div class="art">${art}</div><h3>${h}</h3><p>${p}</p>
+      <div class="dots">${INTRO.map((_,k)=>`<i class="${k===i?'on':''}"></i>`).join('')}</div>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-ghost" id="in-skip" style="flex:1;min-height:52px">Skip</button>
+        <button class="btn" id="in-next" style="flex:1;min-height:52px">${i<INTRO.length-1?'Next →':"Let's cook 🍳"}</button></div></div>`);
+    $('#in-skip').onclick=finish; $('#in-next').onclick=()=>{ if(i<INTRO.length-1){i++;render();} else finish(); };
+  };
+  const finish=()=>{ Save.seenIntro=1; flush(); closeModal(); };
+  render();
+}
+const PURPOSE={
+  kid:'Feed Sprout and learn what a balanced plate looks like — with colours, not numbers.',
+  teen:'Build plates for real goals — sport, focus, energy — and see the hidden sugar in drinks.',
+  adult:'Plan meals that balance nutrition, budget, time and taste, then export a shopping list.'
+};
+function whyText(l){ if(l.why)return l.why;
+  if(State.aud==='kid') return 'Lots of colours means lots of different vitamins — to grow, play and feel good.';
+  if(State.aud==='adult') return 'A balanced week beats a perfect single meal. Variety across the days is what really counts.';
+  return ({sport:'Carbs fuel your muscles, protein repairs them, water replaces sweat — that is how you perform and recover.',
+    focus:'Slow energy from wholegrains plus protein keeps your brain steady all morning — no 10:30 crash.',
+    growth:'Iron, calcium and protein build a growing body — they matter most in your teens.',
+    recover:'After training your body rebuilds with protein, colour and fluids.'}[l.goal]
+    || 'Balanced plates give steady energy and everything your body needs, without any counting.'); }
 function renderTitle(){
   const c=el('div','center');
   c.append(el('div','display',`<div style="font-size:2.7rem;text-align:center">🪐 <span class="gold-text">Plate Planet</span></div>
-    <div style="color:var(--chalk-dim);font-weight:400;text-align:center;margin-top:6px">Build a happy, balanced plate.</div>`));
+    <div class="subtitle">A friendly game where you build balanced plates for hungry friends — and learn what really fuels you.</div>`));
   const doors=el('div','doors');
   [['🌱','Sprout Kitchen','Ages 5–9','kid'],['⚡','Fuel Lab','Ages 10–17','teen'],['🍽️','Family Table','Grown-ups','adult']]
    .forEach(([g,n,s,a])=>{ const d=el('button','door',`<div class="g">${g}</div><div class="n">${n}</div><div class="s">${s}</div>`);
      d.onclick=()=>{State.aud=a; enableSoundOnce(); show('hub');}; doors.append(d); });
   c.append(doors);
-  c.append(el('div',null,`<span style="color:var(--chalk-dim)">🌰 ${Save.seeds} seeds grown</span>`));
+  const row=el('div',null); row.style.cssText='display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center';
+  const how=el('button','btn btn-ghost','❓ How to play'); how.style.minHeight='48px'; how.onclick=showIntro;
+  row.append(how, el('span',null,`<span style="color:var(--chalk-dim)">🌰 ${Save.seeds} seeds grown</span>`));
+  c.append(row);
   Screen.append(c);
 }
 function renderHub(){
   const c=el('div','center'); c.style.justifyContent='flex-start'; c.style.gap='12px';
   c.append(el('div','display',`${({kid:'🌱 Sprout Kitchen',teen:'⚡ Fuel Lab',adult:'🍽️ Family Table'})[State.aud]}`));
+  c.append(el('div','purpose',PURPOSE[State.aud]||''));
   const list=el('div',null); list.style.cssText='display:flex;flex-direction:column;gap:12px;width:100%;max-width:520px';
   LEVELS[State.aud].forEach(l=>{ const done=Save.done.includes(l.id);
     const b=el('button','lvl',`<span class="ic">${l.ic}</span><span class="t"><b>${l.name}</b><br><span>${l.brief}</span></span>${done?'<span style="color:var(--veg);font-size:1.3rem">✓</span>':''}`);
@@ -603,6 +774,15 @@ function renderPlay(){
        stroke-dasharray="97.4" stroke-dashoffset="97.4" transform="rotate(-90 18 18)" style="transition:stroke-dashoffset .4s,stroke .4s"/>
      <text id="ring-t" x="18" y="21" text-anchor="middle" font-size="10">0</text></svg>`); }
   Screen.append(wrap);
+  // first-play coach: explain the pieces + the point
+  if(!Save.coachDone){
+    const msg=State.aud==='kid'
+      ? `<span class="k">👋</span> Tap foods below to fill the plate. Watch the <b>🌈 rainbow</b> and <b>🌱 Sprout</b> light up. Reach the goal at the top, then press <b>Feed Sprout</b>.`
+      : `<span class="k">👋</span> Tap foods to build the plate. The <b>🌈 rainbow</b> and the <b>score ring</b> show your balance. Hit the goal shown up top, then <b>Serve</b>.`;
+    const coach=el('div','panel coach',`${msg}<div style="margin-top:10px"><button class="btn" style="min-height:44px;padding:8px 20px">Got it 👍</button></div>`);
+    coach.querySelector('button').onclick=()=>{ Save.coachDone=1; flush(); coach.remove(); };
+    wrap.append(coach);
+  }
   // shelf
   l.food.forEach((id,idx)=>{ const def=FOOD[id]; if(!def)return;
     const b=el('button','food'); b.setAttribute('aria-label',`${def.name}, ${def.group}. Add to plate.`);
@@ -610,6 +790,8 @@ function renderPlay(){
     const fv=foodVisual(def); b.append(fv);
     b.append(el('div','nm',def.name));
     const g=el('div','grp'); g.style.background=GTINT[def.group]||'#555'; b.append(g);
+    const info=el('button','food-i','ⓘ'); info.type='button'; info.setAttribute('aria-label','About '+def.name+' — portion and nutrients');
+    info.onclick=e=>{ e.stopPropagation(); foodInfo(def); }; b.append(info);
     b.onclick=()=>{ flyFood(b); addFood(id); };
     Shelf.append(b);
   });
@@ -672,9 +854,17 @@ function serveLevel(){
   if(!items.length){ live('Add some food first'); speak('Add some food first'); return; }
   const r=score(items,ctx()), won=checkWin(l,r,items);
   if(won){ if(!Save.done.includes(l.id))Save.done.push(l.id); Save.seeds+=2;
-    if(!Save.plants.includes(l.id))Save.plants.push(l.id); flush(); happy(); confetti(); vibrate([20,40,30]); }
-  else { Save.seeds+=1; flush(); beep(392,.18,'sine',.09); vibrate(30); }
+    if(!Save.plants.includes(l.id))Save.plants.push(l.id); }
+  else Save.seeds+=1;
+  flush(); vibrate(won?[20,40,30]:30);
   const cards=coaching(r,l,items);
+  const proceed=()=>renderDebrief(l,r,items,won,cards);
+  // cinematic: cook + feed the friend, then debrief
+  if(matchMedia('(prefers-reduced-motion:reduce)').matches) proceed();
+  else feedAnimation(items, proceed);
+}
+function renderDebrief(l,r,items,won,cards){
+  if(won) confetti(); else beep(392,.18,'sine',.09);
   $('#bottom').hidden=true; Brief.hidden=true; $('#b-speak').hidden=true;
   Screen.innerHTML='';
   const c=el('div','center'); c.style.justifyContent='flex-start';
@@ -683,6 +873,7 @@ function serveLevel(){
     <div style="text-align:center;font-size:1.6rem;margin-top:4px">${head}</div>
     <div style="text-align:center;color:var(--veg);margin-top:2px">🌰 +${won?2:1} seeds</div>`));
   const box=el('div',null); box.style.cssText='display:flex;flex-direction:column;gap:12px;width:100%;max-width:520px';
+  box.append(el('div','card why',`<b>💡 Why this matters</b><br><span style="color:var(--chalk-dim)">${whyText(l)}</span>`));
   cards.forEach(cd=>box.append(el('div','card '+cd.t,`<b>${cd.h}</b><br><span style="color:var(--chalk-dim)">${cd.b}</span>`)));
   c.append(box);
   if(State.aud==='kid') speak(won?'Yummy! '+cards[0].b:'Good start. '+cards[1].b);
@@ -784,7 +975,8 @@ $('#b-myth').onclick=openMyth;
 $('#b-about').onclick=()=>openModal(`<div><div class="display" style="font-size:1.2rem;margin-bottom:10px">About Plate Planet</div>
   <p>Plate Planet teaches balanced plates for kids, teens and grown-ups. It is educational, not medical advice.</p>
   <p><b>If food or eating feels stressful, talking to a doctor or a dietitian helps.</b></p>
-  <p style="color:var(--chalk-dim);font-size:.86rem">No accounts, no ads, nothing leaves your device. Food photos: TheMealDB. Nutrition values are placeholders pending dietitian review.</p>
+  <p style="color:var(--chalk-dim);font-size:.86rem">Made for Sri Lankan families — includes local foods like gotukola, murunga, wattakka, karawila, red rice and green gram. Tap the ⓘ on any food to see its portion and the nutrients it gives.</p>
+  <p style="color:var(--chalk-dim);font-size:.86rem">Portion and nutrient notes are general education (hand-portion guides), not exact figures. Confirm with a Sri Lankan dietitian and local food-composition data before real use. No accounts, no ads, nothing leaves your device. Food photos: TheMealDB.</p>
   <button class="btn" style="width:100%;margin-top:8px" data-close>Close</button></div>`);
 $('#b-set').onclick=()=>{ openModal(`<div><div class="display" style="font-size:1.2rem;margin-bottom:12px">Settings</div>
   <label style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">Sound &amp; spoken words
@@ -804,6 +996,7 @@ document.addEventListener('pointerdown',()=>{ if(actx&&actx.state==='suspended')
 /* ═══ BOOT ═══ */
 makeStars(); refreshMute();
 show('title');
+if(!Save.seenIntro) setTimeout(showIntro, 400);   // first-run story: what + why + how
 </script>
 </body>
 </html>
