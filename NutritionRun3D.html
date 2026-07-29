@@ -54257,18 +54257,33 @@ function buildAuras(){
 //  ITEM (food / junk / powerup) 3D OBJECTS
 // =============================================
 const emojiTexCache=new Map();
+// system emoji font stack; sans-serif last so mobile falls back to the OS colour-emoji font
+const EMOJI_FONT='"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji","Android Emoji",sans-serif';
+function paintEmoji(g,emoji){
+  g.clearRect(0,0,256,256);
+  // soft white disc behind emoji so it reads clearly against the colored orb/glow
+  g.beginPath(); g.arc(128,128,122,0,Math.PI*2);
+  g.fillStyle='rgba(255,255,255,0.95)'; g.fill();
+  g.font='180px '+EMOJI_FONT;
+  g.textAlign='center'; g.textBaseline='middle';
+  g.fillText(emoji,128,150);
+  // did the glyph actually paint? sample a ring inside the disc for non-white pixels
+  const d=g.getImageData(48,48,160,160).data;
+  for(let i=0;i<d.length;i+=4){
+    if(d[i+3]>10 && (d[i]<245||d[i+1]<245||d[i+2]<245)) return true; // coloured pixel => emoji drew
+  }
+  return false;
+}
 function emojiTexture(emoji){
   if(emojiTexCache.has(emoji)) return emojiTexCache.get(emoji);
   const c=document.createElement('canvas'); c.width=c.height=256;
-  const g=c.getContext('2d');
-  // soft white disc behind emoji so it reads clearly against the colored orb/glow
-  g.beginPath(); g.arc(128,128,120,0,Math.PI*2);
-  g.fillStyle='rgba(255,255,255,0.92)'; g.fill();
-  g.font='190px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",serif';
-  g.textAlign='center'; g.textBaseline='middle';
-  g.fillText(emoji,128,146);
+  const g=c.getContext('2d',{willReadFrequently:true});
+  paintEmoji(g,emoji);
   const tex=new THREE.CanvasTexture(c);
   tex.colorSpace=THREE.SRGBColorSpace; tex.anisotropy=4;
+  // On mobile the OS emoji font often isn't rasterised on first paint (blank canvas).
+  // Re-bake a few times and flag the texture so the glyph appears once the font loads.
+  [80,300,800,1600].forEach(ms=>setTimeout(()=>{ if(paintEmoji(g,emoji)) tex.needsUpdate=true; },ms));
   emojiTexCache.set(emoji,tex); return tex;
 }
 const glowTexCache=new Map();
@@ -54831,6 +54846,9 @@ function init(){
   seedSideProps();
   playerGroup=buildPlayer();
   buildAuras();
+  // pre-bake every food/power-up emoji now so the OS emoji font is loaded &
+  // re-baked (mobile) well before items start spawning
+  [...HEALTHY_FOODS,...UNHEALTHY_FOODS,...POWERUP_TYPES].forEach(f=>emojiTexture(f.emoji));
   $('hsDisplay').textContent=highScore;
   $('pauseBtn').style.display='none';
   // warm one render then hide loader
