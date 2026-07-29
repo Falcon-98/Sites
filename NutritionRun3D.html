@@ -176,6 +176,21 @@ body::after {
 .how-to-box::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg, transparent, rgba(255,184,0,.45), transparent); }
 .how-to-box strong { color:var(--gold); }
 .how-to-box .tip { color:rgba(100,220,160,.9); font-size:.73rem; }
+.lang-select { display:flex; flex-direction:column; align-items:center; gap:8px; margin-bottom:18px; }
+.lang-label { color:rgba(255,248,231,.7); font-size:.72rem; font-weight:700; letter-spacing:.5px; text-transform:uppercase; }
+.lang-btns { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+.lang-btn {
+  font-family:inherit; font-size:.9rem; font-weight:700;
+  background:rgba(4,16,10,.55); color:rgba(255,248,231,.75);
+  border:1.5px solid rgba(255,184,0,.28); padding:9px 20px; border-radius:999px;
+  cursor:pointer; transition:all .15s; -webkit-tap-highlight-color:transparent;
+}
+.lang-btn:hover { border-color:rgba(255,184,0,.6); color:#fff8e7; transform:translateY(-2px); }
+.lang-btn.active {
+  background:linear-gradient(135deg, var(--gold) 0%, var(--amber) 100%);
+  color:var(--deep); border-color:transparent;
+  box-shadow:0 4px 16px rgba(255,184,0,.5), inset 0 1px 0 rgba(255,255,255,.35);
+}
 .btn-start {
   font-family:'Bungee',cursive; font-size:1.25rem; letter-spacing:2px;
   background:linear-gradient(135deg, var(--gold) 0%, var(--amber) 100%);
@@ -515,6 +530,14 @@ body::after {
       Grab power-ups: <strong>🛡️ Shield · ⚡ Turbo · 🧲 Magnet</strong><br/>
       <span class="tip">Press P to pause · Reach 2000m to win 🏆</span>
     </div>
+    <div class="lang-select">
+      <div class="lang-label">🌐 Language · භාෂාව · மொழி</div>
+      <div class="lang-btns">
+        <button class="lang-btn active" data-lang="en">English</button>
+        <button class="lang-btn" data-lang="si">සිංහල</button>
+        <button class="lang-btn" data-lang="ta">தமிழ்</button>
+      </div>
+    </div>
     <button class="btn-start" id="startBtn">🌾 START RUN!</button>
     <div class="deco-line-bot"></div>
   </div>
@@ -538,7 +561,7 @@ body::after {
   <!-- QUIZ OVERLAY -->
   <div id="quizOverlay" class="screen hidden">
     <div class="quiz-card">
-      <div class="quiz-danger-tag">⚠️ UNHEALTHY FOOD ALERT</div>
+      <div class="quiz-danger-tag" id="quizDangerTag">⚠️ UNHEALTHY FOOD ALERT</div>
       <span class="quiz-food-icon" id="quizFoodIcon">🍟</span>
       <div class="quiz-timer-bar"><div class="quiz-timer-fill" id="quizTimerFill" style="width:100%"></div></div>
       <div class="quiz-question" id="quizQuestion">Loading question...</div>
@@ -53629,33 +53652,125 @@ const THREE = await import(_threeURL);
 // =============================================
 //  DATA (ported from 2D version)
 // =============================================
+// --- language ( en = English, si = Sri Lankan Sinhala, ta = Sri Lankan Tamil ) ---
+let lang = localStorage.getItem('nr3dLang') || 'en';
+// pack a trilingual value; works for strings and arrays (options)
+const t = (en, si, ta) => ({ en, si, ta });
+// resolve a value for the current language ( plain strings pass through )
+const L = f => (f && typeof f === 'object' && !Array.isArray(f) && f.en !== undefined) ? (f[lang] ?? f.en) : f;
+
 const HEALTHY_FOODS = [
-  { emoji:'🥥', name:'King Coconut', pts:15, msg:'Superhydrator!' },
-  { emoji:'🌿', name:'Gotukola',     pts:20, msg:'Brain Boost!' },
-  { emoji:'🍌', name:'Banana',       pts:10, msg:'Energy Up!' },
-  { emoji:'🐟', name:'Fish',         pts:18, msg:'Omega-3 Power!' },
-  { emoji:'🧅', name:'Red Onion',    pts:12, msg:'Antioxidant!' },
-  { emoji:'🌶️', name:'Green Chilli', pts:10, msg:'Vitamin C!' },
-  { emoji:'🍋', name:'Lime',         pts:10, msg:'Fresh Boost!' },
-  { emoji:'🥬', name:'Mukunuwenna',  pts:22, msg:'Iron Rich!' },
-  { emoji:'🫘', name:'Dhal',         pts:14, msg:'Protein Power!' },
-  { emoji:'🍠', name:'Sweet Potato', pts:12, msg:'Fibre Rich!' },
+  { emoji:'🥥', pts:15, name:t('King Coconut','තැඹිලි','இளநீர்'),                 msg:t('Superhydrator!','සුපිරි සජලනය!','சூப்பர் நீரேற்றம்!') },
+  { emoji:'🌿', pts:20, name:t('Gotukola','ගොටුකොළ','வல்லாரை'),                   msg:t('Brain Boost!','මොළයට බලය!','மூளைக்கு சக்தி!') },
+  { emoji:'🍌', pts:10, name:t('Banana','කෙසෙල්','வாழைப்பழம்'),                    msg:t('Energy Up!','ශක්තිය ඉහළට!','ஆற்றல் அதிகரிப்பு!') },
+  { emoji:'🐟', pts:18, name:t('Fish','මාළු','மீன்'),                              msg:t('Omega-3 Power!','ඔමේගා-3 බලය!','ஒமேகா-3 சக்தி!') },
+  { emoji:'🧅', pts:12, name:t('Red Onion','රතු ලූණු','சிவப்பு வெங்காயம்'),         msg:t('Antioxidant!','ප්‍රතිඔක්සිකාරක!','ஆன்டிஆக்சிடன்ட்!') },
+  { emoji:'🌶️', pts:10, name:t('Green Chilli','අමු මිරිස්','பச்சை மிளகாய்'),        msg:t('Vitamin C!','විටමින් C!','வைட்டமின் C!') },
+  { emoji:'🍋', pts:10, name:t('Lime','දෙහි','எலுமிச்சை'),                          msg:t('Fresh Boost!','නැවුම් ශක්තිය!','புத்துணர்ச்சி!') },
+  { emoji:'🥬', pts:22, name:t('Mukunuwenna','මුකුණුවැන්න','முகுணுவென்ன'),          msg:t('Iron Rich!','යකඩ බහුලයි!','இரும்புச்சத்து நிறைந்தது!') },
+  { emoji:'🫘', pts:14, name:t('Dhal','පරිප්පු','பருப்பு'),                          msg:t('Protein Power!','ප්‍රෝටීන් බලය!','புரதச் சக்தி!') },
+  { emoji:'🍠', pts:12, name:t('Sweet Potato','බතල','சர்க்கரைவள்ளிக்கிழங்கு'),      msg:t('Fibre Rich!','තන්තු බහුලයි!','நார்ச்சத்து நிறைந்தது!') },
 ];
 const UNHEALTHY_FOODS = [
-  { emoji:'🍟', name:'French Fries', question:'What is the main health risk of deep-fried foods?', options:['High in Trans Fats','Rich in Protein','Good for Heart','Low Calories'], correct:0, fact:'Deep-fried foods are high in trans fats and saturated fats, which raise bad cholesterol and increase heart disease risk.' },
-  { emoji:'🥤', name:'Soda', question:'How much sugar is in an average can of soda?', options:['About 2 tsp','About 10 tsp','About 1 tsp','None at all'], correct:1, fact:'A single 330ml can of soda contains around 35g (7-10 tsp) of sugar — far exceeding the daily recommendation!' },
-  { emoji:'🍔', name:'Burger', question:'Which nutrient is excessive in processed fast food?', options:['Fibre','Vitamin C','Sodium','Calcium'], correct:2, fact:'Fast food burgers are extremely high in sodium (salt), contributing to high blood pressure and kidney issues.' },
-  { emoji:'🍩', name:'Donut', question:'Donuts are high in which harmful type of fat?', options:['Omega-3','Trans Fat','Monounsaturated','Polyunsaturated'], correct:1, fact:'Donuts made with partially hydrogenated oils contain trans fats, the most harmful dietary fat for your heart.' },
-  { emoji:'🧁', name:'Cupcake', question:'Excess sugar consumption primarily contributes to?', options:['Strong Bones','Diabetes & Obesity','Better Vision','More Energy'], correct:1, fact:'High sugar intake is a leading cause of type 2 diabetes, obesity, and dental decay. Sri Lanka has rising diabetes rates!' },
-  { emoji:'🍕', name:'Junk Pizza', question:'What is "empty calories" in junk food?', options:['Calories with nutrients','Calories without nutrients','Zero calorie food','Healthy fast food'], correct:1, fact:'Empty calories provide energy but zero nutritional value — common in chips, pizza, and sweets.' },
-  { emoji:'🍭', name:'Candy', question:'Which local Sri Lankan fruit is a HEALTHY sweet alternative?', options:['Wood Apple','Bubblegum','Toffee','Cola Nut'], correct:0, fact:'Wood apple (Beli mal) is a traditional Sri Lankan fruit rich in vitamins and antioxidants — a perfect natural sweet!' },
-  { emoji:'🥨', name:'Salted Snack', question:'High sodium intake is most directly linked to?', options:['Good eyesight','Hypertension (High BP)','Strong muscles','Clear skin'], correct:1, fact:'Excess sodium raises blood pressure, a major risk factor for stroke and heart disease. Gotukola sambol is a healthier snack!' },
+  { emoji:'🍟', correct:0,
+    name:t('French Fries','ප්‍රංශ චිප්ස්','பிரெஞ்சு உருளைப் பொரியல்'),
+    question:t('What is the main health risk of deep-fried foods?',
+               'ගැඹුරු තෙලේ බැදූ ආහාරවල ප්‍රධාන සෞඛ්‍ය අවදානම කුමක්ද?',
+               'எண்ணெயில் பொரித்த உணவுகளின் முக்கிய உடல்நல அபாயம் என்ன?'),
+    options:t(['High in Trans Fats','Rich in Protein','Good for Heart','Low Calories'],
+              ['ට්‍රාන්ස් මේද අධිකයි','ප්‍රෝටීන් බහුලයි','හදවතට හොඳයි','කැලරි අඩුයි'],
+              ['டிரான்ஸ் கொழுப்பு அதிகம்','புரதம் நிறைந்தது','இதயத்திற்கு நல்லது','கலோரி குறைவு']),
+    fact:t('Deep-fried foods are high in trans fats and saturated fats, which raise bad cholesterol and increase heart disease risk.',
+           'ගැඹුරු තෙලේ බැදූ ආහාරවල ට්‍රාන්ස් හා සන්තෘප්ත මේද අධික වන අතර, එය නරක කොලෙස්ටරෝල් වැඩි කර හෘද රෝග අවදානම ඉහළ නංවයි.',
+           'எண்ணெயில் பொரித்த உணவுகளில் டிரான்ஸ் மற்றும் நிறைவுற்ற கொழுப்புகள் அதிகம்; இவை கெட்ட கொலஸ்ட்ராலை உயர்த்தி இதய நோய் அபாயத்தை அதிகரிக்கின்றன.') },
+  { emoji:'🥤', correct:1,
+    name:t('Soda','සිසිල් බීම','சோடா'),
+    question:t('How much sugar is in an average can of soda?',
+               'සාමාන්‍ය සොඩා ටින් එකක සීනි කොපමණ තිබේද?',
+               'ஒரு சராசரி சோடா டப்பாவில் எவ்வளவு சர்க்கரை உள்ளது?'),
+    options:t(['About 2 tsp','About 10 tsp','About 1 tsp','None at all'],
+              ['තේ හැඳි 2ක් පමණ','තේ හැඳි 10ක් පමණ','තේ හැඳි 1ක් පමණ','කිසිවක් නැත'],
+              ['சுமார் 2 தேக்கரண்டி','சுமார் 10 தேக்கரண்டி','சுமார் 1 தேக்கரண்டி','இல்லவே இல்லை']),
+    fact:t('A single 330ml can of soda contains around 35g (7-10 tsp) of sugar — far exceeding the daily recommendation!',
+           '330ml සොඩා ටින් එකක ග්‍රෑම් 35ක් (තේ හැඳි 7-10ක්) පමණ සීනි අඩංගු වේ — දෛනික නිර්දේශයට වඩා බෙහෙවින් වැඩියි!',
+           'ஒரு 330ml சோடா டப்பாவில் சுமார் 35g (7-10 தேக்கரண்டி) சர்க்கரை உள்ளது — தினசரி பரிந்துரையை விட மிக அதிகம்!') },
+  { emoji:'🍔', correct:2,
+    name:t('Burger','බර්ගර්','பர்கர்'),
+    question:t('Which nutrient is excessive in processed fast food?',
+               'සැකසූ ක්ෂණික ආහාරවල අධික වන පෝෂකය කුමක්ද?',
+               'பதப்படுத்தப்பட்ட துரித உணவில் அதிகமாக உள்ள சத்து எது?'),
+    options:t(['Fibre','Vitamin C','Sodium','Calcium'],
+              ['තන්තු','විටමින් C','සෝඩියම්','කැල්සියම්'],
+              ['நார்ச்சத்து','வைட்டமின் C','சோடியம்','கால்சியம்']),
+    fact:t('Fast food burgers are extremely high in sodium (salt), contributing to high blood pressure and kidney issues.',
+           'ක්ෂණික ආහාර බර්ගර්වල සෝඩියම් (ලුණු) අතිශයින් අධික වන අතර, එය අධි රුධිර පීඩනය හා වකුගඩු ගැටලුවලට හේතු වේ.',
+           'துரித உணவு பர்கர்களில் சோடியம் (உப்பு) மிக அதிகம்; இது உயர் இரத்த அழுத்தம் மற்றும் சிறுநீரக பிரச்சினைகளுக்கு வழிவகுக்கிறது.') },
+  { emoji:'🍩', correct:1,
+    name:t('Donut','ඩෝනට්','டோனட்'),
+    question:t('Donuts are high in which harmful type of fat?',
+               'ඩෝනට්වල අධික වන හානිකර මේද වර්ගය කුමක්ද?',
+               'டோனட்களில் அதிகமாக உள்ள தீங்கு விளைவிக்கும் கொழுப்பு வகை எது?'),
+    options:t(['Omega-3','Trans Fat','Monounsaturated','Polyunsaturated'],
+              ['ඔමේගා-3','ට්‍රාන්ස් මේදය','මොනෝඅසන්තෘප්ත','පොලිඅසන්තෘප්ත'],
+              ['ஒமேகா-3','டிரான்ஸ் கொழுப்பு','மோனோஅன்சாச்சுரேட்டட்','பாலிஅன்சாச்சுரேட்டட்']),
+    fact:t('Donuts made with partially hydrogenated oils contain trans fats, the most harmful dietary fat for your heart.',
+           'අර්ධ හයිඩ්‍රජනීකෘත තෙල්වලින් සාදන ඩෝනට්වල ට්‍රාන්ස් මේද අඩංගු වන අතර, එය හෘදයට වඩාත්ම හානිකර ආහාර මේදයයි.',
+           'பகுதி ஹைட்ரஜனேற்றப்பட்ட எண்ணெயில் செய்யப்படும் டோனட்களில் டிரான்ஸ் கொழுப்பு உள்ளது; இது இதயத்திற்கு மிகவும் தீங்கு விளைவிக்கும் உணவுக் கொழுப்பாகும்.') },
+  { emoji:'🧁', correct:1,
+    name:t('Cupcake','කප්කේක්','கப்கேக்'),
+    question:t('Excess sugar consumption primarily contributes to?',
+               'අධික සීනි පරිභෝජනය ප්‍රධාන වශයෙන් හේතු වන්නේ කුමකටද?',
+               'அதிக சர்க்கரை உட்கொள்ளல் முக்கியமாக எதற்கு வழிவகுக்கிறது?'),
+    options:t(['Strong Bones','Diabetes & Obesity','Better Vision','More Energy'],
+              ['ශක්තිමත් අස්ථි','දියවැඩියාව සහ තරබාරුකම','හොඳ පෙනීම','වැඩි ශක්තියක්'],
+              ['வலுவான எலும்புகள்','நீரிழிவு & உடல் பருமன்','சிறந்த பார்வை','அதிக ஆற்றல்']),
+    fact:t('High sugar intake is a leading cause of type 2 diabetes, obesity, and dental decay. Sri Lanka has rising diabetes rates!',
+           'අධික සීනි ගැනීම දෙවන වර්ගයේ දියවැඩියාව, තරබාරුකම හා දත් දිරාපත්වීමට ප්‍රධාන හේතුවකි. ශ්‍රී ලංකාවේ දියවැඩියා රෝගීන් වැඩිවෙමින් පවතී!',
+           'அதிக சர்க்கரை உட்கொள்ளல் வகை 2 நீரிழிவு, உடல் பருமன் மற்றும் பல் சிதைவுக்கு முக்கிய காரணம். இலங்கையில் நீரிழிவு பாதிப்பு அதிகரித்து வருகிறது!') },
+  { emoji:'🍕', correct:1,
+    name:t('Junk Pizza','අහිතකර පිට්සා','ஆரோக்கியமற்ற பீட்சா'),
+    question:t('What is "empty calories" in junk food?',
+               'අහිතකර ආහාරවල "හිස් කැලරි" යනු කුමක්ද?',
+               'குப்பை உணவில் "வெற்று கலோரிகள்" என்றால் என்ன?'),
+    options:t(['Calories with nutrients','Calories without nutrients','Zero calorie food','Healthy fast food'],
+              ['පෝෂක සහිත කැලරි','පෝෂක රහිත කැලරි','කැලරි රහිත ආහාර','සෞඛ්‍ය සම්පන්න ක්ෂණික ආහාර'],
+              ['சத்துள்ள கலோரிகள்','சத்தில்லாத கலோரிகள்','கலோரி இல்லாத உணவு','ஆரோக்கியமான துரித உணவு']),
+    fact:t('Empty calories provide energy but zero nutritional value — common in chips, pizza, and sweets.',
+           'හිස් කැලරි ශක්තිය සපයන නමුත් පෝෂණ වටිනාකමක් නැත — චිප්ස්, පිට්සා හා පැණි රසකැවිලිවල බහුලයි.',
+           'வெற்று கலோரிகள் ஆற்றலை மட்டும் தரும், ஊட்டச்சத்து மதிப்பு இல்லை — சிப்ஸ், பீட்சா, இனிப்புகளில் பொதுவானது.') },
+  { emoji:'🍭', correct:0,
+    name:t('Candy','පැණි කැවිලි','மிட்டாய்'),
+    question:t('Which local Sri Lankan fruit is a HEALTHY sweet alternative?',
+               'සෞඛ්‍ය සම්පන්න පැණි රස විකල්පයක් වන දේශීය ශ්‍රී ලාංකික පලතුර කුමක්ද?',
+               'ஆரோக்கியமான இனிப்பு மாற்றாக இருக்கும் இலங்கை நாட்டுப் பழம் எது?'),
+    options:t(['Wood Apple','Bubblegum','Toffee','Cola Nut'],
+              ['දිවුල්','බබල්ගම්','ටොෆි','කොලා ගෙඩිය'],
+              ['விளாம்பழம்','பபிள்கம்','டாஃபி','கோலா கொட்டை']),
+    fact:t('Wood apple (Divul) is a traditional Sri Lankan fruit rich in vitamins and antioxidants — a perfect natural sweet!',
+           'දිවුල් යනු විටමින් හා ප්‍රතිඔක්සිකාරක බහුල සම්ප්‍රදායික ශ්‍රී ලාංකික පලතුරකි — පරිපූර්ණ ස්වාභාවික පැණි රසයක්!',
+           'விளாம்பழம் வைட்டமின்கள் மற்றும் ஆன்டிஆக்சிடன்ட்கள் நிறைந்த பாரம்பரிய இலங்கைப் பழம் — சிறந்த இயற்கை இனிப்பு!') },
+  { emoji:'🥨', correct:1,
+    name:t('Salted Snack','ලුණු සහිත කෙටි කෑම','உப்பு தின்பண்டம்'),
+    question:t('High sodium intake is most directly linked to?',
+               'අධික සෝඩියම් ගැනීම වඩාත් සෘජුව සම්බන්ධ වන්නේ කුමකටද?',
+               'அதிக சோடியம் உட்கொள்ளல் மிக நேரடியாக எதனுடன் தொடர்புடையது?'),
+    options:t(['Good eyesight','Hypertension (High BP)','Strong muscles','Clear skin'],
+              ['හොඳ පෙනීම','අධි රුධිර පීඩනය (High BP)','ශක්තිමත් මාංශ පේශි','පැහැපත් සම'],
+              ['நல்ல பார்வை','உயர் இரத்த அழுத்தம் (High BP)','வலுவான தசைகள்','தெளிவான தோல்']),
+    fact:t('Excess sodium raises blood pressure, a major risk factor for stroke and heart disease. Gotukola sambol is a healthier snack!',
+           'අධික සෝඩියම් රුධිර පීඩනය වැඩි කරයි, එය ආඝාතය හා හෘද රෝග සඳහා ප්‍රධාන අවදානම් සාධකයකි. ගොටුකොළ සම්බෝල වඩා සෞඛ්‍ය සම්පන්න කෙටි කෑමකි!',
+           'அதிக சோடியம் இரத்த அழுத்தத்தை உயர்த்துகிறது; இது பக்கவாதம் மற்றும் இதய நோய்க்கு முக்கிய அபாய காரணி. வல்லாரை சம்பல் ஆரோக்கியமான தின்பண்டம்!') },
 ];
 const POWERUP_TYPES = [
-  { emoji:'🛡️', name:'SHIELD', color:'#00bcd4', effect:'shield', dur:320 },
-  { emoji:'⚡',  name:'TURBO',  color:'#FFB800', effect:'turbo',  dur:250 },
-  { emoji:'🧲',  name:'MAGNET', color:'#ce93d8', effect:'magnet', dur:280 },
+  { emoji:'🛡️', name:t('SHIELD','පලිහ','கவசம்'), color:'#00bcd4', effect:'shield', dur:320 },
+  { emoji:'⚡',  name:t('TURBO','ටර්බෝ','டர்போ'),  color:'#FFB800', effect:'turbo',  dur:250 },
+  { emoji:'🧲',  name:t('MAGNET','චුම්බකය','காந்தம்'), color:'#ce93d8', effect:'magnet', dur:280 },
 ];
+// runtime UI strings that must follow the selected language
+const UI = {
+  quizAlert: t('⚠️ UNHEALTHY FOOD ALERT','⚠️ අහිතකර ආහාර අනතුරු ඇඟවීම','⚠️ ஆரோக்கியமற்ற உணவு எச்சரிக்கை'),
+  timesUp:   t("⏰ Time's up! ",'⏰ කාලය අවසන්! ','⏰ நேரம் முடிந்தது! '),
+};
 const MILESTONES = [
   { dist:500,  emoji:'🏃', text:'500m Reached!',  sub:'HALFWAY HUSTLE!' },
   { dist:1000, emoji:'⚡', text:'1 KILOMETER!',   sub:'EXTRAORDINARY!' },
@@ -53761,9 +53876,9 @@ const scene = new THREE.Scene();
 scene.fog = new THREE.Fog(0x8fc9e6, 55, 130);
 
 const camera = new THREE.PerspectiveCamera(58, 900/520, 0.1, 500);
-const CAM_BASE = new THREE.Vector3(11, 5.2, 2.5);
+const CAM_BASE = new THREE.Vector3(0, 4.8, 12.5);   // centered, behind the runner
 camera.position.copy(CAM_BASE);
-camera.lookAt(0, 2.3, -12);
+camera.lookAt(0, 2.6, -22);
 
 function resize(){
   const w=container.clientWidth, h=container.clientHeight;
@@ -54027,7 +54142,7 @@ function buildPlayer(){
   }
   legL=leg(-1); legR=leg(1);
 
-  g.rotation.y=3*Math.PI/4;   // side / 3-4 profile facing the camera (see runner from the side)
+  g.rotation.y=Math.PI;   // face away from camera (chase view — see runner's back)
   g.position.set(0,0,0);
   scene.add(g);
   return g;
@@ -54321,7 +54436,7 @@ function collectHealthy(it){
   flashVignette('vcollect');
   const p=projectItem(it);
   showFeedback('+'+(it.data.pts*combo), p.x, p.y, '#4CAF50');
-  showFeedback(it.data.msg, p.x, p.y-30, '#FFB800');
+  showFeedback(L(it.data.msg), p.x, p.y-30, '#FFB800');
   sfx('collect'); updateComboDisplay();
   collectRemove(it);
 }
@@ -54333,11 +54448,11 @@ function collectPowerup(it){
   slot.style.setProperty('--pu-col',puColor);
   slot.style.display='flex';
   $('puIcon').textContent=it.data.emoji;
-  $('puName').textContent=it.data.name;
+  $('puName').textContent=L(it.data.name);
   $('puFill').style.background=puColor;
   $('puFill').style.width='100%';
   const p=projectItem(it);
-  showFeedback('✨ '+it.data.name+'!', p.x, p.y, puColor);
+  showFeedback('✨ '+L(it.data.name)+'!', p.x, p.y, puColor);
   sfx('powerup');
   collectRemove(it);
 }
@@ -54354,12 +54469,13 @@ function expirePowerup(){
 function triggerQuiz(it){
   gameState='quiz'; currentQuizFood=it.data; quizAnswered=false;
   const p=projectItem(it);
-  showFeedback('😱 '+it.data.name+'!', p.x, p.y, '#e74c3c'); sfx('junk');
+  showFeedback('😱 '+L(it.data.name)+'!', p.x, p.y, '#e74c3c'); sfx('junk');
+  $('quizDangerTag').textContent=L(UI.quizAlert);
   $('quizFoodIcon').textContent=it.data.emoji;
-  $('quizQuestion').textContent=it.data.question;
+  $('quizQuestion').textContent=L(it.data.question);
   $('quizFact').style.display='none';
   const optsEl=$('quizOptions'); optsEl.innerHTML='';
-  it.data.options.forEach((opt,i)=>{ const btn=document.createElement('button'); btn.className='quiz-opt'; btn.textContent=opt; btn.onclick=()=>answerQuiz(i,btn); optsEl.appendChild(btn); });
+  L(it.data.options).forEach((opt,i)=>{ const btn=document.createElement('button'); btn.className='quiz-opt'; btn.textContent=opt; btn.onclick=()=>answerQuiz(i,btn); optsEl.appendChild(btn); });
   quizTimerVal=100; $('quizTimerFill').style.width='100%';
   show('quizOverlay',true);
   clearInterval(quizTimerInterval);
@@ -54374,7 +54490,7 @@ function answerQuiz(idx,btn){
   if(quizAnswered) return; quizAnswered=true; clearInterval(quizTimerInterval);
   const food=currentQuizFood, allBtns=document.querySelectorAll('.quiz-opt');
   $('quizFact').style.display='block';
-  $('quizFact').textContent='💡 '+food.fact;
+  $('quizFact').textContent='💡 '+L(food.fact);
   if(idx===food.correct){ btn.classList.add('correct'); combo=Math.max(combo-1,1); sfx('correct'); setTimeout(closeQuiz,2200); }
   else { btn.classList.add('wrong'); allBtns[food.correct].classList.add('correct'); sfx('wrong'); loseLife(); setTimeout(()=>{ if(lives>0) closeQuiz(); },2400); }
 }
@@ -54382,7 +54498,7 @@ function quizTimeUp(){
   if(quizAnswered) return; quizAnswered=true;
   document.querySelectorAll('.quiz-opt')[currentQuizFood.correct]?.classList.add('correct');
   $('quizFact').style.display='block';
-  $('quizFact').textContent="⏰ Time's up! "+currentQuizFood.fact;
+  $('quizFact').textContent=L(UI.timesUp)+L(currentQuizFood.fact);
   sfx('wrong'); loseLife();
   setTimeout(()=>{ if(lives>0) closeQuiz(); },2400);
 }
@@ -54495,8 +54611,8 @@ function animatePlayerVisual(dt){
   }
   // body bob
   playerGroup.position.y = player.y + (jumping?0:Math.abs(Math.sin(player.runPhase))*0.08);
-  // keep the side-facing orientation; apply lean + hit tilt on other axes
-  playerGroup.rotation.y = 3*Math.PI/4;
+  // keep the back-facing orientation; apply lean + hit tilt on other axes
+  playerGroup.rotation.y = Math.PI;
   const lean = activePowerup==='turbo' ? -0.2 : (jumping ? -0.12 : 0);
   playerGroup.rotation.x = THREE.MathUtils.lerp(playerGroup.rotation.x||0, lean, 0.12);
   playerGroup.rotation.z = player.hitAnim>0 ? Math.sin(frameCount*0.6)*0.12 : 0;
@@ -54536,7 +54652,7 @@ function updateCamera(dt){
   camera.updateProjectionMatrix();
   const bob = gameState==='playing' ? Math.sin(frameCount*0.12)*0.06 : Math.sin(frameCount*0.03)*0.05;
   camera.position.set(CAM_BASE.x, CAM_BASE.y+bob + player.y*0.10, CAM_BASE.z);
-  camera.lookAt(0, 2.3+player.y*0.22, -12);
+  camera.lookAt(0, 2.6+player.y*0.22, -22);
 }
 
 // =============================================
@@ -54587,6 +54703,15 @@ function spawnConfetti(){
 // =============================================
 //  WIRE UP BUTTONS
 // =============================================
+// language picker: highlight stored choice, switch on click
+const langBtns=document.querySelectorAll('.lang-btn');
+function setLang(code){
+  lang=code; localStorage.setItem('nr3dLang',code);
+  langBtns.forEach(b=>b.classList.toggle('active', b.dataset.lang===code));
+}
+langBtns.forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.lang)));
+setLang(lang);   // apply persisted / default language on load
+
 $('startBtn').addEventListener('click', startGame);
 $('pauseBtn').addEventListener('click', togglePause);
 $('resumeBtn').addEventListener('click', togglePause);
