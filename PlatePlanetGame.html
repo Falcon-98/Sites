@@ -2,1106 +2,808 @@
 <html lang="en">
 <!--
   ════════════════════════════════════════════════════════════════════════
-  PLATE PLANET — build a balanced plate
-  Single-file 3D nutrition game (kids / teens / parents).
+  PLATE PLANET (2D) — build a balanced plate
+  Single-file nutrition game for kids / teens / parents.
+  Flat 2D. Real food PHOTOS (TheMealDB, free/no-key) with instant EMOJI
+  fallback so a food is always recognisable even offline / on load failure.
+  No 3D, no build step, no backend, no data collection.
   ────────────────────────────────────────────────────────────────────────
-  DEPENDENCIES (pinned):
-    three     0.169.0  (import map, unpkg)
-    Tailwind  Play CDN (dev). PROD: run Tailwind CLI once, paste generated
-              CSS inline, delete the CDN <script>.
-    fonts     Bricolage Grotesque / Public Sans / IBM Plex Mono (Google)
-  ────────────────────────────────────────────────────────────────────────
-  COLOUR TOKENS: window.TOKENS + :root vars — single source shared by
-    Tailwind config and Three.js materials. Never diverge them.
-  ────────────────────────────────────────────────────────────────────────
-  SCRIPT SECTION MAP (search the banner to jump):
-    01 CONFIG      07 AUDIO       13 MODES
-    02 DATA        08 FACTORY     14 MINIGAMES
-    03 UTIL        09 SCENE       15 UI
-    04 CAPABILITY  10 AURORA      16 GARDEN
-    05 STORE       11 INPUT       17 FALLBACK
-    06 PERSIST     12 SCORE       18 BOOT
-  ────────────────────────────────────────────────────────────────────────
-  SAFETY: no calories anywhere; no body-size/weight; no moralising words
-    (banned list enforced in copy); no fail state in kids mode.
-  NOTE: FOOD_DB / NUTRI_MODEL are placeholders — require dietitian sign-off
-    and sourced national food-composition values before public release.
+  Kids mode: minimal words, big targets, spoken food names, no numbers,
+    no fail state. Teen/parent modes add numbers as comparisons/planning.
+  SAFETY: no calories; no body-size/weight; no moralising words.
+  NOTE: nutrition values are placeholders — dietitian sign-off + sourced
+    food-composition data required before public release.
   ════════════════════════════════════════════════════════════════════════
 -->
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=5">
-<meta name="theme-color" content="#101B2E">
+<meta name="theme-color" content="#0E1726">
 <title>Plate Planet — build a balanced plate</title>
-<meta name="description" content="A 3D game about balanced plates for kids, teens and parents.">
-
-<script type="importmap">
-{ "imports": {
-  "three": "https://unpkg.com/three@0.169.0/build/three.module.js",
-  "three/addons/": "https://unpkg.com/three@0.169.0/examples/jsm/"
-}}
-</script>
-
+<meta name="description" content="A friendly game about balanced plates for kids, teens and parents.">
 <script src="https://cdn.tailwindcss.com"></script>
-<script>
-  window.TOKENS = {
-    ink:'#101B2E', ink2:'#1B2C46', stall:'#2A3E5C', chalk:'#EAF0EA',
-    chalkDim:'#9DAEBE', lamp:'#FFD79A', veg:'#2E9E5B', fruit:'#C3305F',
-    grain:'#D9932F', protein:'#6A5AC9', dairy:'#4FB8D4', sometimes:'#8A93A3',
-    water:'#2BB3C0', sugarHaze:'#E8A33C'
-  };
-  if (window.tailwind) tailwind.config = { theme: { extend: {
-    colors: TOKENS,
-    fontFamily: {
-      display: ['"Bricolage Grotesque"','system-ui','sans-serif'],
-      body:    ['"Public Sans"','system-ui','sans-serif'],
-      data:    ['"IBM Plex Mono"','ui-monospace','monospace']
-    }
-  }}};
-</script>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700&family=Public+Sans:wght@400;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700&family=Public+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --ink:#101B2E; --ink-2:#1B2C46; --stall:#2A3E5C; --chalk:#EAF0EA;
-    --chalk-dim:#9DAEBE; --lamp:#FFD79A; --focus-ring:#FFD79A;
-    --veg:#2E9E5B; --fruit:#C3305F; --grain:#D9932F; --protein:#6A5AC9;
-    --dairy:#4FB8D4; --sometimes:#8A93A3; --water:#2BB3C0; --sugar-haze:#E8A33C;
-    --pad-b: env(safe-area-inset-bottom, 0px);
-    --txt-scale: 1;
+    --ink:#0E1726; --ink-2:#17233A; --stall:#28374F; --chalk:#F1F5F2; --chalk-dim:#A8B6C6;
+    --lamp:#FFD79A; --veg:#37B26B; --fruit:#E24A73; --grain:#E0A83A; --protein:#7C6BE0;
+    --dairy:#54C3DE; --sometimes:#94A0B0; --water:#37C3D0; --sugar:#F0A93C; --joy:#FFC24B;
+    --glass:rgba(34,50,80,.58); --glass-2:rgba(48,66,102,.72); --glass-brd:rgba(255,255,255,.18);
+    --gold:#E9C877; --gold-2:#FBE6A8;
+    --txt:1;
   }
-  *{box-sizing:border-box}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  [hidden]{display:none!important}
   html,body{margin:0;height:100%;overflow:hidden;overscroll-behavior:none;
-    background:var(--ink);color:var(--chalk);
-    font-family:"Public Sans",system-ui,sans-serif;
-    font-size:calc(16px * var(--txt-scale)); -webkit-text-size-adjust:100%}
-  #canvas-root{position:fixed;inset:0;touch-action:none;display:block}
-  #ui{position:fixed;inset:0;pointer-events:none;
-      height:100dvh;display:flex;flex-direction:column;justify-content:space-between}
-  #ui > *{pointer-events:auto}
-  #stage-ui{pointer-events:none}
-  .btn{min-height:56px;min-width:56px;border-radius:16px;border:0;cursor:pointer;
-       font:600 1.05rem/1 "Public Sans",system-ui,sans-serif;color:var(--ink);
-       background:var(--lamp);padding:0 22px;display:inline-flex;align-items:center;justify-content:center;gap:8px}
-  .btn:active{transform:translateY(1px)}
-  .btn-ghost{background:var(--ink-2);color:var(--chalk);border:1px solid var(--stall)}
-  .btn:disabled{opacity:.4;cursor:default}
-  .btn:focus-visible,[data-focus]:focus-visible,.food-btn:focus-visible{outline:3px solid var(--focus-ring);outline-offset:3px}
-  .chip{background:var(--ink-2);border:1px solid var(--stall);border-radius:999px;
-        padding:8px 16px;font-weight:600;font-size:.95rem;max-width:70vw}
-  .icon-btn{width:48px;height:48px;display:grid;place-items:center;border-radius:12px;
-        background:var(--ink-2);border:1px solid var(--stall);color:var(--chalk);cursor:pointer;font-size:1.2rem}
-  .panel{background:var(--ink-2);border:1px solid var(--stall);border-radius:20px}
-  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
-           clip-path:inset(50%);white-space:nowrap;border:0}
-  #primary-action{padding:10px 16px calc(14px + var(--pad-b))}
-  #hud{padding:12px}
-  #food-rail{scrollbar-width:thin}
-  #food-rail::-webkit-scrollbar{height:6px}
-  #food-rail::-webkit-scrollbar-thumb{background:var(--stall);border-radius:3px}
-  .food-btn{flex:0 0 auto;min-width:78px;min-height:92px;border-radius:16px;cursor:pointer;
-        background:var(--ink-2);border:1px solid var(--stall);color:var(--chalk);
-        display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:8px}
-  .food-btn .g{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;font-size:1.1rem}
-  .food-btn .nm{font-size:.78rem;text-align:center;line-height:1.05}
-  .kid .food-btn{min-width:92px;min-height:104px}
-  .kid{--txt-scale:1.06}
-  #modal-layer{background:rgba(16,27,46,.72);backdrop-filter:blur(6px);
-       display:none;place-items:center;padding:20px;z-index:40}
-  #modal-layer.open{display:grid}
-  .door{display:flex;flex-direction:column;gap:8px;align-items:center;justify-content:center;
-        padding:22px 16px;border-radius:20px;background:var(--ink-2);border:1px solid var(--stall);
-        cursor:pointer;min-height:132px;transition:transform .12s ease, border-color .12s ease}
-  .door:hover{transform:translateY(-3px);border-color:var(--lamp)}
-  .door .glyph{font-size:2.4rem;line-height:1}
-  .door .name{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:700;font-size:1.15rem}
-  .door .sub{color:var(--chalk-dim);font-size:.85rem;text-align:center}
-  .lvl{padding:14px 16px;border-radius:16px;background:var(--ink-2);border:1px solid var(--stall);
-       cursor:pointer;text-align:left;display:flex;justify-content:space-between;align-items:center;gap:10px}
-  .lvl:hover{border-color:var(--lamp)}
-  .lvl .done{color:var(--veg);font-size:1.1rem}
-  .card{background:var(--ink-2);border:1px solid var(--stall);border-radius:16px;padding:14px 16px}
-  .card.win{border-color:var(--veg)} .card.next{border-color:var(--lamp)} .card.fact{border-color:var(--dairy)}
-  .meter{height:12px;border-radius:6px;background:var(--stall);overflow:hidden}
-  .meter > i{display:block;height:100%;border-radius:6px;transition:width .3s ease}
-  #boot-msg{position:fixed;inset:0;display:grid;place-items:center;text-align:center;padding:24px;z-index:50}
-  #fallback{position:fixed;inset:0;overflow:auto;padding:20px;background:var(--ink);z-index:30}
-  .fade-in{animation:fade .3s ease both}
-  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-  .plated{position:absolute;bottom:0;left:0;right:0;display:flex;flex-wrap:wrap;gap:6px;justify-content:center;
-          padding:8px;pointer-events:auto}
-  .p-chip{background:var(--ink-2);border:1px solid var(--stall);border-radius:999px;padding:5px 10px;
-          font-size:.8rem;cursor:pointer;display:flex;align-items:center;gap:6px}
-  .p-chip .x{opacity:.6}
-  .cube{width:22px;height:22px;border-radius:4px;background:var(--chalk);
-        box-shadow:inset -3px -3px 0 rgba(0,0,0,.15)}
-  @media (prefers-reduced-motion: reduce){ *{animation-duration:.01ms!important;transition-duration:.01ms!important} }
+    color:var(--chalk);font-family:"Public Sans",system-ui,sans-serif;font-size:calc(16px*var(--txt));
+    -webkit-text-size-adjust:100%}
+  /* Warm night-market backdrop + faint stars */
+  body{background:
+    radial-gradient(130% 90% at 50% -12%, #1d2f52 0%, #111c33 55%, #0a1120 100%),
+    #0a1120;}
+  #app{position:fixed;inset:0;height:100dvh;display:flex;flex-direction:column;
+    background:radial-gradient(58% 40% at 50% 46%, rgba(217,178,90,.12), transparent 70%)}
+  #stars{position:fixed;inset:0;pointer-events:none;opacity:.5;z-index:0}
+  #stars i{position:absolute;width:2px;height:2px;border-radius:50%;background:#cfe0f0;
+    animation:tw 4s ease-in-out infinite}
+  @keyframes tw{0%,100%{opacity:.2}50%{opacity:.9}}
+  #app>*{position:relative;z-index:1}
+  .display{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:700;letter-spacing:.01em}
+  .gold-text{background:linear-gradient(180deg,#FDECB8 0%,#E9C877 55%,#D6A94C 100%);-webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;color:#E9C877;filter:drop-shadow(0 2px 8px rgba(233,200,119,.45))}
+  button{font-family:inherit;cursor:pointer;color:inherit}
+  .btn{border:1px solid rgba(255,255,255,.35);border-radius:18px;background:linear-gradient(180deg,#FFE7BE,#F3C877);color:#20160a;font-weight:700;
+    padding:16px 26px;font-size:1.1rem;min-height:60px;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    box-shadow:0 5px 0 #b98a4e,0 10px 22px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.7);transition:transform .08s,box-shadow .08s,filter .1s}
+  .btn:hover{filter:brightness(1.05)}
+  .btn:active{transform:translateY(4px);box-shadow:0 1px 0 #b98a4e,0 3px 8px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.7)}
+  .btn:disabled{opacity:.45;box-shadow:none}
+  .btn-ghost{background:var(--glass);backdrop-filter:blur(12px);color:var(--chalk);border:1px solid var(--glass-brd);
+    box-shadow:0 6px 20px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.12)}
+  .btn:focus-visible,.food:focus-visible,.icon-btn:focus-visible,.door:focus-visible,.lvl:focus-visible{outline:4px solid var(--gold);outline-offset:3px}
+  .icon-btn{width:50px;height:50px;border-radius:14px;background:var(--glass);backdrop-filter:blur(12px);
+    border:1px solid var(--glass-brd);box-shadow:0 4px 14px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.12);
+    display:grid;place-items:center;font-size:1.3rem;transition:transform .1s,border-color .1s,background .1s}
+  .icon-btn:hover{border-color:var(--gold);background:var(--glass-2);transform:translateY(-2px)}
+  .panel{background:var(--glass);backdrop-filter:blur(16px) saturate(1.2);border:1px solid var(--glass-brd);border-radius:22px;
+    box-shadow:0 12px 40px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.14)}
+  .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+  /* food visual (emoji under, photo over) */
+  .fv{position:relative;display:grid;place-items:center;overflow:hidden;border-radius:50%}
+  .fv .emo{position:absolute;inset:0;display:grid;place-items:center;line-height:1}
+  .fv img{position:relative;width:90%;height:90%;object-fit:contain;opacity:0;transition:opacity .3s;
+    filter:drop-shadow(0 3px 5px rgba(0,0,0,.4))}
+  .fv img.on{opacity:1}
+  /* shelf */
+  #shelf{display:flex;gap:12px;overflow-x:auto;padding:10px 14px calc(10px + env(safe-area-inset-bottom));
+    scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
+  #shelf::-webkit-scrollbar{height:7px}#shelf::-webkit-scrollbar-thumb{background:var(--stall);border-radius:4px}
+  .food{flex:0 0 auto;width:104px;min-height:132px;border-radius:20px;
+    background:var(--glass);backdrop-filter:blur(12px) saturate(1.15);border:1px solid var(--glass-brd);
+    padding:8px;display:flex;flex-direction:column;align-items:center;gap:5px;scroll-snap-align:center;
+    transition:transform .12s,border-color .12s,box-shadow .12s,background .12s;
+    box-shadow:0 6px 18px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.12)}
+  .food:hover{transform:translateY(-3px);border-color:var(--gold);background:var(--glass-2)}
+  .food:active{transform:scale(.94)}
+  .food.hint{animation:hint 1.4s ease-in-out infinite}
+  @keyframes hint{0%,100%{box-shadow:0 4px 10px rgba(0,0,0,.28),0 0 0 0 rgba(255,215,154,.5)}
+    50%{box-shadow:0 4px 10px rgba(0,0,0,.28),0 0 0 8px rgba(255,215,154,0)}}
+  .food .fv{width:72px;height:72px}
+  .food .fv .emo{font-size:2.5rem}
+  .food .nm{font-size:.86rem;font-weight:600;text-align:center;line-height:1.05}
+  .food .grp{width:100%;height:5px;border-radius:3px}
+  .kid .food{width:122px;min-height:152px}.kid .food .fv{width:88px;height:88px}.kid .food .nm{font-size:.98rem}
+  /* plate */
+  .plate-wrap{flex:1;position:relative;display:grid;place-items:center;min-height:0;padding:8px}
+  /* Fine bone-china plate: flat cream surface, raised rim, thin gold ring, glass sheen */
+  .plate{position:relative;z-index:1;width:min(78vw,460px);height:min(78vw,460px);flex:0 0 auto;border-radius:50%;
+    background:radial-gradient(circle at 50% 40%, #ffffff 0%, #f7f2ea 44%, #ece4d4 68%, #ded3bf 100%);
+    overflow:hidden;
+    box-shadow:
+      0 30px 60px rgba(0,0,0,.55),
+      0 0 60px rgba(217,178,90,.14),
+      inset 0 0 0 7px rgba(255,255,255,.9),
+      inset 0 0 0 9px rgba(201,178,90,.55),
+      inset 0 0 0 11px rgba(255,255,255,.55),
+      inset 0 4px 14px rgba(255,255,255,.9),
+      inset 0 -22px 44px rgba(150,128,86,.18);
+    display:flex;flex-wrap:wrap;align-content:center;justify-content:center;gap:8px;padding:12%}
+  /* inner well groove */
+  .plate::before{content:"";position:absolute;inset:12%;border-radius:50%;pointer-events:none;z-index:0;
+    box-shadow:inset 0 5px 16px rgba(130,108,66,.22),inset 0 -3px 8px rgba(255,255,255,.65),0 1px 0 rgba(255,255,255,.5)}
+  /* glass top-left sheen */
+  .plate::after{content:"";position:absolute;inset:0;border-radius:50%;pointer-events:none;z-index:2;
+    background:radial-gradient(130% 85% at 28% 16%, rgba(255,255,255,.6), rgba(255,255,255,0) 44%)}
+  .plate.empty::after{content:attr(data-hint);position:absolute;inset:0;display:grid;place-items:center;z-index:3;
+    color:#7a6f57;font-size:1.02rem;text-align:center;padding:26%;font-weight:600;background:none}
+  .placed{width:var(--tok,60px);height:var(--tok,60px);position:relative;flex:0 0 auto;z-index:1;
+    background:radial-gradient(ellipse at 50% 82%, rgba(70,52,24,.22), transparent 62%);
+    animation:hop .4s cubic-bezier(.2,1.5,.5,1) both}
+  .placed .fv{width:100%;height:100%}
+  .placed .fv .emo{font-size:calc(var(--tok,60px)*.62)}
+  .placed .fv img{filter:drop-shadow(0 5px 6px rgba(60,45,20,.5))}
+  .placed .rm{position:absolute;top:-4px;right:-4px;width:max(18px,calc(var(--tok,60px)*.32));height:max(18px,calc(var(--tok,60px)*.32));
+    border-radius:50%;background:#d0405a;color:#fff;border:2px solid var(--ink);font-size:.72rem;display:grid;place-items:center;
+    line-height:1;box-shadow:0 2px 5px rgba(0,0,0,.4);opacity:0;transition:opacity .15s}
+  .plate:hover .placed .rm,.placed:focus-within .rm,.placed.show-rm .rm{opacity:1}
+  @media(hover:none){.placed .rm{opacity:1}}
+  @keyframes hop{0%{transform:translateY(-46px) scale(.4);opacity:0}70%{opacity:1}100%{transform:none;opacity:1}}
+  /* rainbow (kid aurora) — crowns ABOVE the plate */
+  #rainbow{position:absolute;top:-1%;left:50%;transform:translateX(-50%);width:min(101vw,600px);z-index:0;pointer-events:none}
+  #rainbow path{fill:none;stroke-width:2.4;opacity:.1;stroke-linecap:round;transition:opacity .5s,stroke-width .5s}
+  #rainbow path.on{opacity:.98;stroke-width:2.9;filter:drop-shadow(0 0 3px currentColor)}
+  .plate.ready{box-shadow:
+      0 30px 60px rgba(0,0,0,.55),
+      0 0 52px rgba(55,178,107,.6),
+      inset 0 0 0 7px rgba(255,255,255,.9),
+      inset 0 0 0 10px rgba(55,178,107,.7),
+      inset 0 4px 14px rgba(255,255,255,.9),
+      inset 0 -22px 44px rgba(150,128,86,.18)}
+  /* live goal pill */
+  #goal{position:absolute;top:2px;left:50%;transform:translateX(-50%);z-index:3;
+    background:rgba(16,24,40,.62);backdrop-filter:blur(10px);border:1px solid var(--glass-brd);border-radius:999px;padding:7px 15px;
+    font-weight:700;font-size:.92rem;display:flex;align-items:center;gap:7px;
+    box-shadow:0 6px 18px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.14);
+    transition:border-color .25s,background .25s;white-space:nowrap}
+  #goal.met{border-color:var(--veg);background:rgba(37,80,55,.75)}
+  /* sprout */
+  #sprout{position:absolute;bottom:2px;right:6px;font-size:2.8rem;pointer-events:none;z-index:2;
+    animation:idle 2.6s ease-in-out infinite;transform-origin:bottom center}
+  @keyframes idle{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-6px) rotate(2deg)}}
+  /* score ring (teen/parent) */
+  .ring{position:absolute;top:8px;left:8px;width:66px;height:66px;z-index:2}
+  .ring text{font-family:"Bricolage Grotesque",sans-serif;font-weight:700;fill:var(--chalk)}
+  /* meters */
+  .meter{height:12px;border-radius:7px;background:var(--stall);overflow:hidden}
+  .meter>i{display:block;height:100%;border-radius:7px;transition:width .4s}
+  /* header */
+  #top{display:flex;align-items:center;gap:8px;padding:12px 12px 2px}
+  .brief{flex:1;background:var(--glass);backdrop-filter:blur(14px) saturate(1.2);border:1px solid var(--glass-brd);border-radius:16px;
+    padding:10px 14px;display:flex;align-items:center;gap:10px;font-weight:600;min-height:52px;
+    box-shadow:0 8px 24px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.14)}
+  .brief .big{font-size:1.5rem;flex:0 0 auto}
+  /* screens */
+  .screen{flex:1;display:flex;flex-direction:column;min-height:0}
+  .screen>*{animation:fade .35s ease both}
+  @keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px;overflow:auto}
+  .doors{display:grid;gap:14px;width:100%;max-width:600px}
+  @media(min-width:640px){.doors{grid-template-columns:1fr 1fr 1fr}}
+  .door{padding:24px;border-radius:24px;background:var(--glass);backdrop-filter:blur(16px) saturate(1.2);border:1px solid var(--glass-brd);
+    display:flex;flex-direction:column;align-items:center;gap:6px;min-height:160px;justify-content:center;
+    transition:transform .14s,border-color .14s,box-shadow .14s,background .14s;
+    box-shadow:0 12px 34px rgba(0,0,0,.36),inset 0 1px 0 rgba(255,255,255,.14)}
+  .door:hover{transform:translateY(-5px);border-color:var(--gold);background:var(--glass-2);box-shadow:0 18px 40px rgba(0,0,0,.46),0 0 22px rgba(217,178,90,.18)}
+  .door .g{font-size:3.2rem}.door .n{font-size:1.3rem;font-weight:700}.door .s{color:var(--chalk-dim);font-size:.9rem}
+  .lvl{padding:16px;border-radius:18px;background:var(--glass);backdrop-filter:blur(14px) saturate(1.2);border:1px solid var(--glass-brd);
+    display:flex;align-items:center;gap:12px;text-align:left;width:100%;transition:transform .12s,border-color .12s,background .12s;
+    box-shadow:0 8px 24px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.12)}
+  .lvl:hover{transform:translateX(3px);border-color:var(--gold);background:var(--glass-2)}
+  .lvl .ic{font-size:1.9rem}.lvl .t{flex:1}.lvl .t b{font-size:1.06rem}.lvl .t span{color:var(--chalk-dim);font-size:.86rem}
+  .card{background:var(--glass);backdrop-filter:blur(14px) saturate(1.2);border:1px solid var(--glass-brd);border-left-width:5px;border-radius:14px;padding:14px 16px;text-align:left;width:100%;box-shadow:0 8px 24px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.12)}
+  .card.win{border-color:var(--veg)}.card.next{border-color:var(--lamp)}.card.fact{border-color:var(--dairy)}
+  #bottom{padding-top:4px;background:linear-gradient(180deg,transparent,rgba(8,14,24,.55))}
+  #actions{display:flex;gap:12px;justify-content:center;padding:6px 14px calc(12px + env(safe-area-inset-bottom))}
+  #modal{position:fixed;inset:0;background:rgba(8,14,24,.82);backdrop-filter:blur(7px);display:none;
+    place-items:center;padding:20px;z-index:60}
+  #modal.open{display:grid}
+  #modal>.panel{animation:pop .28s cubic-bezier(.2,1.4,.5,1) both}
+  @keyframes pop{from{transform:scale(.88);opacity:0}to{transform:scale(1);opacity:1}}
+  .cube{width:26px;height:26px;border-radius:5px;background:linear-gradient(180deg,#fff,#e6e9ef);
+    box-shadow:inset -4px -4px 0 rgba(0,0,0,.12),0 2px 4px rgba(0,0,0,.3);animation:hop .3s both}
+  /* confetti */
+  #confetti{position:fixed;inset:0;pointer-events:none;z-index:70;overflow:hidden}
+  #confetti span{position:absolute;top:-20px;font-size:1.4rem;animation:fall linear forwards}
+  @keyframes fall{to{transform:translateY(105vh) rotate(600deg);opacity:.9}}
+  /* desktop: bigger plate, comfy shelf */
+  @media(min-width:1024px){
+    .plate{width:min(52vh,520px)}
+    #shelf{justify-content:center;flex-wrap:wrap;max-height:200px;overflow-y:auto}
+    .center{gap:22px}
+  }
+  @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}
+    #sprout,#stars i{animation:none!important}}
 </style>
 </head>
-
 <body>
-  <canvas id="canvas-root" aria-hidden="true"></canvas>
-
-  <div id="boot-msg"><p style="color:var(--chalk-dim)">Lighting the market…</p></div>
-
-  <div id="ui" hidden>
-    <header id="hud" class="flex items-start justify-between gap-2">
-      <div id="brief-chip" class="chip" hidden></div>
-      <div id="score-chip" class="chip" hidden style="font-family:'IBM Plex Mono',monospace"></div>
-      <div class="flex gap-2 ml-auto">
-        <button id="btn-myth" class="icon-btn" aria-label="Myth Buster cards" title="Myth Buster">💡</button>
-        <button id="btn-audio" class="icon-btn" aria-label="Toggle sound" title="Sound">🔇</button>
-        <button id="btn-settings" class="icon-btn" aria-label="Settings" title="Settings">⚙</button>
-        <button id="btn-about" class="icon-btn" aria-label="About" title="About">ⓘ</button>
-      </div>
-    </header>
-
-    <div id="stage-ui" class="flex-1 relative"></div>
-
-    <div id="bottom">
-      <div id="food-rail" role="group" aria-label="Foods available" class="flex gap-3 overflow-x-auto px-3 pb-2"></div>
-      <div id="primary-action" class="flex justify-center gap-3"></div>
-    </div>
-
-    <div id="modal-layer" role="dialog" aria-modal="true" aria-label="Dialog"></div>
+<div id="stars"></div>
+<div id="app">
+  <div id="top" hidden>
+    <div id="brief" class="brief" hidden></div>
+    <button id="b-speak" class="icon-btn" aria-label="Read aloud" hidden>🔊</button>
+    <button id="b-mute" class="icon-btn" aria-label="Sound on or off">🔇</button>
+    <button id="b-myth" class="icon-btn" aria-label="Myth cards">💡</button>
+    <button id="b-set" class="icon-btn" aria-label="Settings">⚙</button>
+    <button id="b-about" class="icon-btn" aria-label="About">ⓘ</button>
   </div>
-
-  <div id="a11y-mirror" class="sr-only">
-    <h2>Foods you can add</h2><ul id="a11y-foods"></ul>
-    <p id="a11y-live" aria-live="polite"></p>
+  <div id="screen" class="screen"></div>
+  <div id="bottom" hidden>
+    <div id="shelf" role="group" aria-label="Foods you can add"></div>
+    <div id="actions"></div>
   </div>
+</div>
+<p id="live" class="sr-only" aria-live="polite"></p>
+<div id="confetti"></div>
+<div id="modal" role="dialog" aria-modal="true"></div>
+<noscript><p style="padding:2rem">Plate Planet needs JavaScript to run.</p></noscript>
 
-  <noscript><p style="padding:2rem">Plate Planet needs JavaScript to run.</p></noscript>
-  <section id="fallback" hidden></section>
+<script>
+/* ═══ UTIL ═══ */
+const $=(s,r=document)=>r.querySelector(s);
+const el=(t,c,h)=>{const n=document.createElement(t);if(c)n.className=c;if(h!=null)n.innerHTML=h;return n;};
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v)), clamp01=v=>clamp(v,0,1);
+const sum=(a,k)=>a.reduce((s,i)=>s+(i[k]||0),0);
+function speak(t){ if(!State.sound||!window.speechSynthesis)return; try{speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(t);u.rate=.96;u.pitch=1.05;speechSynthesis.speak(u);}catch{} }
+function live(t){ $('#live').textContent=t; }
 
-<script type="module">
-import {
-  Scene, PerspectiveCamera, WebGLRenderer, Color, Group, Mesh, Vector2, Vector3,
-  Raycaster, Plane, HemisphereLight, DirectionalLight, PointLight, AdditiveBlending,
-  MeshStandardMaterial, MeshBasicMaterial, PointsMaterial, Points, BufferGeometry,
-  BufferAttribute, IcosahedronGeometry, CylinderGeometry, LatheGeometry, BoxGeometry,
-  RingGeometry, CircleGeometry, SphereGeometry, DoubleSide, SRGBColorSpace,
-  ACESFilmicToneMapping, CanvasTexture, Sprite, SpriteMaterial
-} from 'three';
+/* ═══ IMAGES ═══ real photo (TheMealDB) with emoji fallback underneath ═══ */
+const IMG=n=>`https://www.themealdb.com/images/ingredients/${encodeURIComponent(n)}-Medium.png`;
+function foodVisual(def){
+  const w=el('div','fv');
+  const emo=el('div','emo',def.emoji); w.append(emo);
+  if(def.img){
+    const im=new Image(); im.alt=def.name; im.loading='lazy';
+    im.onload=()=>{ im.classList.add('on'); emo.style.opacity=.001; };
+    im.onerror=()=>{ im.remove(); };            // keep emoji
+    im.src=IMG(def.img); w.append(im);
+  }
+  return w;
+}
 
-/* ══ 01 CONFIG ══════════════════════════════════════════════════════════ */
-const CONFIG = {
-  version: '1.0.0',
-  reducedMotion: matchMedia('(prefers-reduced-motion: reduce)').matches,
-  LAYER_INTERACTIVE: 1,
-  camera: { fovPortrait: 52, fovLandscape: 42, dist: 4.2 },
-  pixelCap: { low: 1, mid: 1.5, high: 2 },
-  ringRadius: 2.7,
-  orbitClampRad: 35 * Math.PI / 180,
-  plateSlots: 9
-};
-
-/* ══ 02 DATA ════════════════════════════════════════════════════════════
-   Per-serving fibreG/freeSugarG precomputed for scoring speed.
-   PLACEHOLDER VALUES — dietitian sign-off + sourced values required. */
-const FOOD_DB = [
-  // veg
-  {id:'broccoli', name:'Broccoli', group:'veg', produce:true, colour:'green', archetype:'cluster', tint:0x2E9E5B, portions:1, fibreG:2.6, freeSugarG:0, tags:['fresh','vitamin-c'], allergens:[], cost:2, prepMin:6, acceptance:3, fact:'The vitamin C in broccoli helps your body take in iron from beans.'},
-  {id:'spinach', name:'Spinach', group:'veg', produce:true, colour:'green', archetype:'leaf', tint:0x2E7D4B, portions:1, fibreG:1.6, freeSugarG:0, tags:['fresh','iron','vitamin-c'], allergens:[], cost:2, prepMin:2, acceptance:2, fact:'Spinach brings iron; add a squeeze of lemon to help absorb it.'},
-  {id:'carrot', name:'Carrot', group:'veg', produce:true, colour:'orange', archetype:'taper', tint:0xD9932F, portions:1, fibreG:2.4, freeSugarG:0, tags:['fresh','beta-carotene'], allergens:[], cost:1, prepMin:4, acceptance:4, fact:'The orange in carrots becomes vitamin A, good for your eyes.'},
-  {id:'tomato', name:'Tomato', group:'veg', produce:true, colour:'red', archetype:'sphere', tint:0xC3305F, portions:1, fibreG:1.2, freeSugarG:0, tags:['fresh'], allergens:[], cost:2, prepMin:2, acceptance:4, fact:'Cooked tomatoes give more lycopene than raw ones.'},
-  {id:'sweetcorn', name:'Sweetcorn', group:'veg', produce:true, colour:'yellow', archetype:'grain', tint:0xF2C438, portions:1, fibreG:2.0, freeSugarG:0, tags:['fresh'], allergens:[], cost:1, prepMin:5, acceptance:5, fact:'Sweetcorn adds fibre and a little natural sweetness.'},
-  {id:'pepper', name:'Red Pepper', group:'veg', produce:true, colour:'red', archetype:'sphere', tint:0xD23B4A, portions:1, fibreG:1.5, freeSugarG:0, tags:['fresh','vitamin-c'], allergens:[], cost:2, prepMin:3, acceptance:3, fact:'A red pepper carries more vitamin C than an orange.'},
-  {id:'peas', name:'Peas', group:'veg', produce:true, colour:'green', archetype:'grain', tint:0x4E9E4A, portions:1, fibreG:3.6, freeSugarG:0, tags:['frozen','plant-protein'], allergens:[], cost:1, prepMin:3, acceptance:4, fact:'Frozen peas are frozen at peak, so they keep their vitamins.'},
-  {id:'potato', name:'Potato', group:'veg', produce:true, colour:'white', archetype:'sphere', tint:0xC9A96B, portions:1, fibreG:1.8, freeSugarG:0, tags:['fresh'], allergens:[], cost:1, prepMin:15, acceptance:5, fact:'Keep the skin on a potato for extra fibre.'},
-  // fruit
-  {id:'apple', name:'Apple', group:'fruit', produce:true, colour:'red', archetype:'sphere', tint:0xC3305F, portions:1, fibreG:2.4, freeSugarG:0, tags:['fresh'], allergens:[], cost:1, prepMin:0, acceptance:5, fact:'Most of an apple’s fibre sits just under the skin.'},
-  {id:'banana', name:'Banana', group:'fruit', produce:true, colour:'yellow', archetype:'taper', tint:0xE7C64A, portions:1, fibreG:2.6, freeSugarG:0, tags:['fresh','potassium'], allergens:[], cost:1, prepMin:0, acceptance:5, fact:'Bananas carry potassium, which helps muscles work.'},
-  {id:'blueberry', name:'Blueberries', group:'fruit', produce:true, colour:'purple', archetype:'cluster', tint:0x5B57B0, portions:1, fibreG:2.4, freeSugarG:0, tags:['fresh','antioxidant'], allergens:[], cost:3, prepMin:0, acceptance:4, fact:'The deep purple in blueberries is an antioxidant.'},
-  {id:'orange', name:'Orange', group:'fruit', produce:true, colour:'orange', archetype:'sphere', tint:0xE08A2B, portions:1, fibreG:3.1, freeSugarG:0, tags:['fresh','vitamin-c'], allergens:[], cost:1, prepMin:1, acceptance:5, fact:'A whole orange gives fibre that orange juice does not.'},
-  {id:'grapes', name:'Grapes', group:'fruit', produce:true, colour:'green', archetype:'cluster', tint:0x8FB44A, portions:1, fibreG:0.9, freeSugarG:0, tags:['fresh'], allergens:[], cost:2, prepMin:0, acceptance:5, fact:'Grapes count towards your five a day.'},
-  {id:'plum', name:'Plum', group:'fruit', produce:true, colour:'purple', archetype:'sphere', tint:0x6A5AC9, portions:1, fibreG:1.4, freeSugarG:0, tags:['fresh'], allergens:[], cost:1, prepMin:0, acceptance:4, fact:'Plums add a different purple to your rainbow.'},
-  // grain
-  {id:'oats', name:'Oats', group:'grain', produce:false, colour:null, archetype:'grain', tint:0xD9BE8A, portions:1, fibreG:3.6, freeSugarG:0, tags:['wholegrain','slow-release'], allergens:['gluten?'], cost:1, prepMin:5, acceptance:4, fact:'Oats release energy slowly, so porridge lasts until lunch.'},
-  {id:'brownrice', name:'Brown Rice', group:'grain', produce:false, colour:null, archetype:'grain', tint:0xB79A6B, portions:1, fibreG:1.8, freeSugarG:0, tags:['wholegrain'], allergens:[], cost:1, prepMin:25, acceptance:3, fact:'Brown rice keeps the bran, so it has more fibre than white.'},
-  {id:'wholebread', name:'Wholemeal Bread', group:'grain', produce:false, colour:null, archetype:'slab', tint:0xC79A5E, portions:1, fibreG:2.0, freeSugarG:0, tags:['wholegrain'], allergens:['gluten','wheat'], cost:1, prepMin:0, acceptance:4, fact:'Wholemeal keeps the whole grain, giving lasting energy.'},
-  {id:'pasta', name:'Wholewheat Pasta', group:'grain', produce:false, colour:null, archetype:'grain', tint:0xD8B87A, portions:1, fibreG:4.0, freeSugarG:0, tags:['wholegrain'], allergens:['gluten','wheat'], cost:1, prepMin:11, acceptance:4, fact:'Wholewheat pasta adds fibre without changing the meal.'},
-  {id:'whiterice', name:'White Rice', group:'grain', produce:false, colour:null, archetype:'grain', tint:0xF0EAD8, portions:1, fibreG:0.4, freeSugarG:0, tags:['refined'], allergens:[], cost:1, prepMin:12, acceptance:5, fact:'White rice is fine; pairing it with beans adds fibre back.'},
-  // protein
-  {id:'egg', name:'Egg', group:'protein', produce:false, colour:null, archetype:'sphere', tint:0xEAE0C8, portions:1, fibreG:0, freeSugarG:0, tags:['protein','vitamin-d'], allergens:['egg'], cost:1, prepMin:6, acceptance:4, fact:'Eggs are one of the few foods that carry vitamin D.'},
-  {id:'lentils', name:'Lentils', group:'protein', produce:false, colour:null, archetype:'grain', tint:0xC4703A, portions:1, fibreG:4.5, freeSugarG:0, tags:['iron','plant-protein','budget'], allergens:[], cost:1, prepMin:20, acceptance:2, fact:'Lentils bring iron and fibre, and are among the cheapest protein.'},
-  {id:'chicken', name:'Chicken', group:'protein', produce:false, colour:null, archetype:'slab', tint:0xE7CDA0, portions:1, fibreG:0, freeSugarG:0, tags:['protein'], allergens:[], cost:3, prepMin:18, acceptance:5, fact:'Chicken is a lean protein that helps you grow and repair.'},
-  {id:'salmon', name:'Salmon', group:'protein', produce:false, colour:null, archetype:'slab', tint:0xE58A6A, portions:1, fibreG:0, freeSugarG:0, tags:['protein','omega-3','vitamin-d'], allergens:['fish'], cost:4, prepMin:14, acceptance:3, fact:'Oily fish like salmon carries omega-3 for your brain.'},
-  {id:'beans', name:'Baked Beans', group:'protein', produce:false, colour:null, archetype:'grain', tint:0xC96A3A, portions:1, fibreG:4.9, freeSugarG:5, tags:['iron','plant-protein','budget','fibre'], allergens:[], cost:1, prepMin:4, acceptance:4, fact:'Beans on toast is cheap, fast and full of fibre.'},
-  {id:'tofu', name:'Tofu', group:'protein', produce:false, colour:null, archetype:'slab', tint:0xF2ECD8, portions:1, fibreG:0.7, freeSugarG:0, tags:['plant-protein','calcium'], allergens:['soya'], cost:2, prepMin:8, acceptance:2, fact:'Tofu takes on any flavour and often carries added calcium.'},
-  // dairy
-  {id:'milk', name:'Milk', group:'dairy', produce:false, colour:null, archetype:'vessel', tint:0xF3F3F0, liquid:0xF3F3F0, portions:1, fibreG:0, freeSugarG:0, tags:['calcium','drink','vitamin-d'], allergens:['milk'], cost:1, prepMin:0, acceptance:4, fact:'Milk is a food as much as a drink — it brings calcium.'},
-  {id:'yoghurt', name:'Plain Yoghurt', group:'dairy', produce:false, colour:null, archetype:'pack', tint:0xF0F0EA, portions:1, fibreG:0, freeSugarG:0, tags:['calcium','protein'], allergens:['milk'], cost:2, prepMin:0, acceptance:4, fact:'Plain yoghurt with fruit beats the pre-sweetened tubs.'},
-  {id:'cheese', name:'Cheese', group:'dairy', produce:false, colour:null, archetype:'slab', tint:0xF0C24B, portions:1, fibreG:0, freeSugarG:0, tags:['calcium','protein'], allergens:['milk'], cost:2, prepMin:0, acceptance:5, fact:'A small piece of cheese is a strong calcium source.'},
-  // water / drinks
-  {id:'water', name:'Water', group:'dairy', produce:false, colour:null, archetype:'vessel', tint:0xBFE7EC, liquid:0x2BB3C0, portions:0, fibreG:0, freeSugarG:0, tags:['water','drink'], allergens:[], cost:0, prepMin:0, acceptance:4, fact:'Water is the default drink. It costs nothing and fills the gap.'},
-  // sometimes / packaged (Sugar Reveal eligible via 'reveal' tag)
-  {id:'cola', name:'Cola', group:'sometimes', produce:false, colour:null, archetype:'vessel', tint:0x8A93A3, liquid:0x2A1410, portions:0, fibreG:0, freeSugarG:35, tags:['drink','free-sugar','reveal'], allergens:[], cost:2, prepMin:0, acceptance:5, fact:'One can holds about nine teaspoons of sugar.'},
-  {id:'juice', name:'Fruit Juice', group:'sometimes', produce:false, colour:null, archetype:'vessel', tint:0xE0A93C, liquid:0xE0A93C, portions:0, fibreG:0, freeSugarG:24, tags:['drink','free-sugar','reveal'], allergens:[], cost:2, prepMin:0, acceptance:5, fact:'Juicing frees the sugar and removes most of the fibre.'},
-  {id:'energydrink', name:'Energy Drink', group:'sometimes', produce:false, colour:null, archetype:'vessel', tint:0x7A9E3A, liquid:0xB0E020, portions:0, fibreG:0, freeSugarG:27, tags:['drink','free-sugar','caffeine','reveal'], allergens:[], cost:2, prepMin:0, acceptance:4, fact:'Energy drinks stack caffeine and sugar, and wreck sleep for hours.'},
-  {id:'crisps', name:'Crisps', group:'sometimes', produce:false, colour:null, archetype:'pack', tint:0xE0B84A, portions:1, fibreG:1.2, freeSugarG:0, tags:['salt','reveal'], allergens:[], cost:1, prepMin:0, acceptance:5, fact:'Crisps are a sometimes food — fine on a varied plate.'},
-  {id:'cake', name:'Cake Slice', group:'sometimes', produce:false, colour:null, archetype:'slab', tint:0xD9A05B, portions:1, fibreG:0.6, freeSugarG:20, tags:['free-sugar','reveal'], allergens:['gluten','egg','milk'], cost:2, prepMin:0, acceptance:5, fact:'Cake belongs on a plate that is varied everywhere else.'},
-  {id:'chocbar', name:'Chocolate Bar', group:'sometimes', produce:false, colour:null, archetype:'pack', tint:0x6B4A2E, portions:1, fibreG:1.0, freeSugarG:24, tags:['free-sugar','reveal'], allergens:['milk','soya'], cost:1, prepMin:0, acceptance:5, fact:'Room for a treat is part of balance, not the opposite of it.'}
+/* ═══ DATA ═══ (placeholder nutrition — needs dietitian review) ═══ */
+const FOOD_DB=[
+ {id:'broccoli',name:'Broccoli',emoji:'🥦',img:'Broccoli',group:'veg',produce:1,colour:'green',portions:1,fibreG:2.6,freeSugarG:0,tags:['veg'],fact:'Broccoli helps your body take in iron.'},
+ {id:'spinach',name:'Spinach',emoji:'🥬',img:'Spinach',group:'veg',produce:1,colour:'green',portions:1,fibreG:1.6,freeSugarG:0,tags:['veg','iron'],fact:'Spinach brings iron for strong blood.'},
+ {id:'carrot',name:'Carrot',emoji:'🥕',img:'Carrots',group:'veg',produce:1,colour:'orange',portions:1,fibreG:2.4,freeSugarG:0,tags:['veg'],fact:'Carrots are good for your eyes.'},
+ {id:'tomato',name:'Tomato',emoji:'🍅',img:'Tomatoes',group:'veg',produce:1,colour:'red',portions:1,fibreG:1.2,freeSugarG:0,tags:['veg'],fact:'Tomatoes add a juicy red to your plate.'},
+ {id:'sweetcorn',name:'Sweetcorn',emoji:'🌽',img:'Sweetcorn',group:'veg',produce:1,colour:'yellow',portions:1,fibreG:2,freeSugarG:0,tags:['veg'],fact:'Sweetcorn is sweet and full of fibre.'},
+ {id:'pepper',name:'Red pepper',emoji:'🫑',img:'Red Pepper',group:'veg',produce:1,colour:'red',portions:1,fibreG:1.5,freeSugarG:0,tags:['veg','vitamin-c'],fact:'A red pepper has lots of vitamin C.'},
+ {id:'peas',name:'Peas',emoji:'🟢',img:'Peas',group:'veg',produce:1,colour:'green',portions:1,fibreG:3.6,freeSugarG:0,tags:['veg'],fact:'Little green peas pack big fibre.'},
+ {id:'potato',name:'Potato',emoji:'🥔',img:'Potatoes',group:'veg',produce:1,colour:'white',portions:1,fibreG:1.8,freeSugarG:0,tags:['veg'],fact:'Keep the skin on for extra fibre.'},
+ {id:'apple',name:'Apple',emoji:'🍎',img:'Apple',group:'fruit',produce:1,colour:'red',portions:1,fibreG:2.4,freeSugarG:0,tags:['fruit'],fact:'An apple a day is a crunchy snack.'},
+ {id:'banana',name:'Banana',emoji:'🍌',img:'Banana',group:'fruit',produce:1,colour:'yellow',portions:1,fibreG:2.6,freeSugarG:0,tags:['fruit'],fact:'Bananas give you quick, natural energy.'},
+ {id:'blueberry',name:'Blueberries',emoji:'🫐',img:'Blueberries',group:'fruit',produce:1,colour:'blue',portions:1,fibreG:2.4,freeSugarG:0,tags:['fruit'],fact:'Blueberries add a deep blue to the rainbow.'},
+ {id:'orange',name:'Orange',emoji:'🍊',img:'Orange',group:'fruit',produce:1,colour:'orange',portions:1,fibreG:3.1,freeSugarG:0,tags:['fruit','vitamin-c'],fact:'A whole orange gives fibre and vitamin C.'},
+ {id:'grapes',name:'Grapes',emoji:'🍇',img:'Grapes',group:'fruit',produce:1,colour:'purple',portions:1,fibreG:.9,freeSugarG:0,tags:['fruit'],fact:'Grapes are a sweet purple treat.'},
+ {id:'strawberry',name:'Strawberry',emoji:'🍓',img:'Strawberries',group:'fruit',produce:1,colour:'red',portions:1,fibreG:1.5,freeSugarG:0,tags:['fruit'],fact:'Strawberries are bright red and juicy.'},
+ {id:'oats',name:'Oats',emoji:'🥣',img:'Oats',group:'grain',produce:0,colour:null,portions:1,fibreG:3.6,freeSugarG:0,tags:['wholegrain','slow-release'],fact:'Oats keep you full all morning.'},
+ {id:'rice',name:'Brown rice',emoji:'🍚',img:'Rice',group:'grain',produce:0,colour:null,portions:1,fibreG:1.8,freeSugarG:0,tags:['wholegrain'],fact:'Brown rice has more fibre than white.'},
+ {id:'bread',name:'Bread',emoji:'🍞',img:'Bread',group:'grain',produce:0,colour:null,portions:1,fibreG:2,freeSugarG:0,tags:['wholegrain'],fact:'Wholemeal bread gives lasting energy.'},
+ {id:'pasta',name:'Pasta',emoji:'🍝',img:'Pasta',group:'grain',produce:0,colour:null,portions:1,fibreG:3,freeSugarG:0,tags:['grain'],fact:'Pasta is fuel for running and playing.'},
+ {id:'egg',name:'Egg',emoji:'🥚',img:'Egg',group:'protein',produce:0,colour:null,portions:1,fibreG:0,freeSugarG:0,tags:['protein'],fact:'Eggs help you grow strong.'},
+ {id:'lentils',name:'Lentils',emoji:'🫘',img:'Lentils',group:'protein',produce:0,colour:null,portions:1,fibreG:4.5,freeSugarG:0,tags:['protein','iron'],fact:'Lentils bring iron and fibre together.'},
+ {id:'chicken',name:'Chicken',emoji:'🍗',img:'Chicken',group:'protein',produce:0,colour:null,portions:1,fibreG:0,freeSugarG:0,tags:['protein'],fact:'Chicken helps build and repair you.'},
+ {id:'salmon',name:'Salmon',emoji:'🐟',img:'Salmon',group:'protein',produce:0,colour:null,portions:1,fibreG:0,freeSugarG:0,tags:['protein'],fact:'Fish like salmon is good for your brain.'},
+ {id:'beans',name:'Beans',emoji:'🫘',img:'Baked Beans',group:'protein',produce:0,colour:null,portions:1,fibreG:4.9,freeSugarG:5,tags:['protein','iron'],fact:'Beans on toast is cheap and full of fibre.'},
+ {id:'milk',name:'Milk',emoji:'🥛',img:'Milk',group:'dairy',produce:0,colour:null,portions:1,fibreG:0,freeSugarG:0,tags:['calcium','drink'],fact:'Milk gives calcium for strong bones.'},
+ {id:'cheese',name:'Cheese',emoji:'🧀',img:'Cheese',group:'dairy',produce:0,colour:null,portions:1,fibreG:0,freeSugarG:0,tags:['calcium'],fact:'A little cheese is packed with calcium.'},
+ {id:'yoghurt',name:'Yoghurt',emoji:'🥛',img:'Yogurt',group:'dairy',produce:0,colour:null,portions:1,fibreG:0,freeSugarG:0,tags:['calcium'],fact:'Plain yoghurt with fruit beats sweet tubs.'},
+ {id:'water',name:'Water',emoji:'💧',img:null,group:'dairy',produce:0,colour:null,portions:0,fibreG:0,freeSugarG:0,tags:['water','drink'],fact:'Water is the best everyday drink.'},
+ {id:'cola',name:'Cola',emoji:'🥤',img:null,group:'sometimes',produce:0,colour:null,portions:0,fibreG:0,freeSugarG:35,tags:['drink','reveal'],fact:'A can of cola hides about 9 spoons of sugar.'},
+ {id:'juice',name:'Juice',emoji:'🧃',img:'Orange Juice',group:'sometimes',produce:0,colour:null,portions:0,fibreG:0,freeSugarG:24,tags:['drink','reveal'],fact:'Juicing frees the sugar and loses the fibre.'},
+ {id:'crisps',name:'Crisps',emoji:'🍟',img:null,group:'sometimes',produce:0,colour:null,portions:1,fibreG:1,freeSugarG:0,tags:['reveal'],fact:'Crisps are a sometimes food. That is okay.'},
+ {id:'cake',name:'Cake',emoji:'🍰',img:null,group:'sometimes',produce:0,colour:null,portions:1,fibreG:.5,freeSugarG:20,tags:['reveal'],fact:'Room for cake is part of balance too.'},
+ {id:'choc',name:'Chocolate',emoji:'🍫',img:null,group:'sometimes',produce:0,colour:null,portions:1,fibreG:1,freeSugarG:24,tags:['reveal'],fact:'A treat fits on a plate full of colour.'},
+ // ── extra variety ──
+ {id:'cucumber',name:'Cucumber',emoji:'🥒',img:'Cucumber',group:'veg',produce:1,colour:'green',portions:1,fibreG:.5,freeSugarG:0,tags:['veg'],fact:'Cucumber is mostly water — cool and crunchy.'},
+ {id:'mushroom',name:'Mushrooms',emoji:'🍄',img:'Mushrooms',group:'veg',produce:1,colour:'white',portions:1,fibreG:1,freeSugarG:0,tags:['veg'],fact:'Mushrooms add a savoury, meaty taste.'},
+ {id:'avocado',name:'Avocado',emoji:'🥑',img:'Avocado',group:'veg',produce:1,colour:'green',portions:1,fibreG:6.7,freeSugarG:0,tags:['veg','healthy-fat'],fact:'Avocado has healthy fats and lots of fibre.'},
+ {id:'aubergine',name:'Aubergine',emoji:'🍆',img:'Aubergine',group:'veg',produce:1,colour:'purple',portions:1,fibreG:2.3,freeSugarG:0,tags:['veg'],fact:'Aubergine brings a deep purple to your plate.'},
+ {id:'sweetpotato',name:'Sweet potato',emoji:'🍠',img:'Sweet Potatoes',group:'veg',produce:1,colour:'orange',portions:1,fibreG:3,freeSugarG:0,tags:['veg'],fact:'Sweet potato is orange, sweet and full of fibre.'},
+ {id:'pineapple',name:'Pineapple',emoji:'🍍',img:'Pineapple',group:'fruit',produce:1,colour:'yellow',portions:1,fibreG:1.4,freeSugarG:0,tags:['fruit'],fact:'Pineapple is a sweet tropical yellow fruit.'},
+ {id:'mango',name:'Mango',emoji:'🥭',img:'Mango',group:'fruit',produce:1,colour:'orange',portions:1,fibreG:1.6,freeSugarG:0,tags:['fruit'],fact:'Mango is juicy and full of vitamin C.'},
+ {id:'watermelon',name:'Watermelon',emoji:'🍉',img:'Watermelon',group:'fruit',produce:1,colour:'red',portions:1,fibreG:.4,freeSugarG:0,tags:['fruit'],fact:'Watermelon is a refreshing summer treat.'},
+ {id:'pear',name:'Pear',emoji:'🍐',img:'Pear',group:'fruit',produce:1,colour:'green',portions:1,fibreG:3.1,freeSugarG:0,tags:['fruit'],fact:'A pear packs plenty of gentle fibre.'},
+ {id:'kiwi',name:'Kiwi',emoji:'🥝',img:'Kiwi',group:'fruit',produce:1,colour:'green',portions:1,fibreG:3,freeSugarG:0,tags:['fruit','vitamin-c'],fact:'One kiwi has more vitamin C than an orange.'},
+ {id:'cherry',name:'Cherries',emoji:'🍒',img:'Cherries',group:'fruit',produce:1,colour:'red',portions:1,fibreG:2.1,freeSugarG:0,tags:['fruit'],fact:'Cherries are a sweet pop of red.'},
+ {id:'quinoa',name:'Quinoa',emoji:'🌾',img:'Quinoa',group:'grain',produce:0,colour:null,portions:1,fibreG:2.8,freeSugarG:0,tags:['wholegrain','protein'],fact:'Quinoa is a grain that also carries protein.'},
+ {id:'noodles',name:'Noodles',emoji:'🍜',img:'Noodles',group:'grain',produce:0,colour:null,portions:1,fibreG:1.8,freeSugarG:0,tags:['grain'],fact:'Noodles are quick fuel for busy days.'},
+ {id:'chickpeas',name:'Chickpeas',emoji:'🫛',img:'Chickpeas',group:'protein',produce:0,colour:null,portions:1,fibreG:7.6,freeSugarG:0,tags:['protein','iron','plant-protein'],fact:'Chickpeas bring protein, iron and lots of fibre.'},
+ {id:'turkey',name:'Turkey',emoji:'🍗',img:'Turkey',group:'protein',produce:0,colour:null,portions:1,fibreG:0,freeSugarG:0,tags:['protein'],fact:'Turkey is a lean protein for growing bodies.'},
+ {id:'prawns',name:'Prawns',emoji:'🦐',img:'Prawns',group:'protein',produce:0,colour:null,portions:1,fibreG:0,freeSugarG:0,tags:['protein'],fact:'Prawns are a light, quick-cooking protein.'},
+ {id:'tuna',name:'Tuna',emoji:'🐟',img:'Tuna',group:'protein',produce:0,colour:null,portions:1,fibreG:0,freeSugarG:0,tags:['protein'],fact:'Tinned tuna is cheap protein for sandwiches.'},
+ {id:'nuts',name:'Nuts',emoji:'🥜',img:'Almonds',group:'protein',produce:0,colour:null,portions:1,fibreG:3,freeSugarG:0,tags:['protein','healthy-fat'],fact:'A small handful of nuts is a filling snack.'},
+ {id:'biscuits',name:'Biscuits',emoji:'🍪',img:'Biscuits',group:'sometimes',produce:0,colour:null,portions:1,fibreG:.6,freeSugarG:14,tags:['reveal'],fact:'Biscuits are a sometimes food — enjoy a couple.'},
+ {id:'icecream',name:'Ice cream',emoji:'🍦',img:null,group:'sometimes',produce:0,colour:null,portions:1,fibreG:0,freeSugarG:16,tags:['reveal'],fact:'Ice cream is a treat, best now and then.'},
+ {id:'donut',name:'Doughnut',emoji:'🍩',img:null,group:'sometimes',produce:0,colour:null,portions:1,fibreG:.8,freeSugarG:15,tags:['reveal'],fact:'A doughnut fits on a plate full of colour.'},
+ // ── more variety (batch 2) ──
+ {id:'kale',name:'Kale',emoji:'🥬',img:'Kale',group:'veg',produce:1,colour:'green',portions:1,fibreG:2,freeSugarG:0,tags:['veg','iron'],fact:'Kale is a dark leafy green full of vitamins.'},
+ {id:'onion',name:'Onion',emoji:'🧅',img:'Onion',group:'veg',produce:1,colour:'white',portions:1,fibreG:1.7,freeSugarG:0,tags:['veg'],fact:'Onions add flavour to almost any dish.'},
+ {id:'asparagus',name:'Asparagus',emoji:'🥬',img:'Asparagus',group:'veg',produce:1,colour:'green',portions:1,fibreG:2.1,freeSugarG:0,tags:['veg'],fact:'Asparagus is a tender green spear.'},
+ {id:'greenbeans',name:'Green beans',emoji:'🫛',img:'Green Beans',group:'veg',produce:1,colour:'green',portions:1,fibreG:2.7,freeSugarG:0,tags:['veg'],fact:'Green beans snap fresh and cook fast.'},
+ {id:'butternut',name:'Butternut squash',emoji:'🎃',img:'Butternut Squash',group:'veg',produce:1,colour:'orange',portions:1,fibreG:2,freeSugarG:0,tags:['veg'],fact:'Butternut squash roasts up sweet and orange.'},
+ {id:'beetroot',name:'Beetroot',emoji:'🟣',img:'Beetroot',group:'veg',produce:1,colour:'purple',portions:1,fibreG:2.8,freeSugarG:0,tags:['veg'],fact:'Beetroot brings a deep purple-red to the plate.'},
+ {id:'lemon',name:'Lemon',emoji:'🍋',img:'Lemon',group:'fruit',produce:1,colour:'yellow',portions:1,fibreG:2.8,freeSugarG:0,tags:['fruit','vitamin-c'],fact:'A squeeze of lemon helps you absorb iron.'},
+ {id:'pomegranate',name:'Pomegranate',emoji:'🔴',img:'Pomegranate',group:'fruit',produce:1,colour:'red',portions:1,fibreG:4,freeSugarG:0,tags:['fruit'],fact:'Pomegranate seeds are little red jewels.'},
+ {id:'raspberry',name:'Raspberries',emoji:'🍓',img:'Raspberries',group:'fruit',produce:1,colour:'red',portions:1,fibreG:6.5,freeSugarG:0,tags:['fruit'],fact:'Raspberries carry some of the most fibre of any fruit.'},
+ {id:'couscous',name:'Couscous',emoji:'🌾',img:'Couscous',group:'grain',produce:0,colour:null,portions:1,fibreG:1.4,freeSugarG:0,tags:['grain'],fact:'Couscous cooks in minutes with hot water.'},
+ {id:'hummus',name:'Hummus',emoji:'🥣',img:'Hummus',group:'protein',produce:0,colour:null,portions:1,fibreG:6,freeSugarG:0,tags:['protein','plant-protein','iron'],fact:'Hummus is made from chickpeas — protein and fibre.'},
+ {id:'sardines',name:'Sardines',emoji:'🐟',img:'Sardines',group:'protein',produce:0,colour:null,portions:1,fibreG:0,freeSugarG:0,tags:['protein'],fact:'Tinned sardines are cheap and full of omega-3.'},
+ {id:'muffin',name:'Muffin',emoji:'🧁',img:null,group:'sometimes',produce:0,colour:null,portions:1,fibreG:1,freeSugarG:18,tags:['reveal'],fact:'A muffin is a treat, not an everyday breakfast.'},
+ {id:'sweets',name:'Sweets',emoji:'🍬',img:null,group:'sometimes',produce:0,colour:null,portions:1,fibreG:0,freeSugarG:20,tags:['reveal'],fact:'Sweets are pure free sugar — enjoy a few, sometimes.'},
+ {id:'popcorn',name:'Popcorn',emoji:'🍿',img:null,group:'sometimes',produce:0,colour:null,portions:1,fibreG:1.2,freeSugarG:0,tags:['snack'],fact:'Plain popcorn is a light wholegrain snack.'}
 ];
-const FOOD = Object.fromEntries(FOOD_DB.map(f => [f.id, f]));
+const FOOD=Object.fromEntries(FOOD_DB.map(f=>[f.id,f]));
+const GTINT={veg:'#37B26B',fruit:'#E24A73',grain:'#E0A83A',protein:'#7C6BE0',dairy:'#54C3DE',sometimes:'#94A0B0'};
 
-// Preset meals for Family Table (aggregate stats derived from FOOD_DB).
-const MEALS = [
-  {id:'m_veg_pasta', name:'Veg pasta bake', items:['pasta','tomato','pepper','cheese'], cost:2, prepMin:30, acceptance:4},
-  {id:'m_beans_toast', name:'Beans on wholemeal toast', items:['beans','wholebread','tomato'], cost:1, prepMin:8, acceptance:4},
-  {id:'m_salmon_rice', name:'Salmon, rice & greens', items:['salmon','brownrice','broccoli'], cost:4, prepMin:22, acceptance:3},
-  {id:'m_chicken_stir', name:'Chicken stir-fry', items:['chicken','pepper','carrot','brownrice'], cost:3, prepMin:20, acceptance:5},
-  {id:'m_lentil_dhal', name:'Lentil dhal & rice', items:['lentils','tomato','brownrice','spinach'], cost:1, prepMin:25, acceptance:3},
-  {id:'m_egg_veg', name:'Veg omelette & salad', items:['egg','pepper','tomato','wholebread'], cost:2, prepMin:12, acceptance:4},
-  {id:'m_tofu_noodle', name:'Tofu noodle bowl', items:['tofu','peas','carrot','pasta'], cost:2, prepMin:18, acceptance:3},
-  {id:'m_jacket', name:'Jacket potato, beans, cheese', items:['potato','beans','cheese'], cost:1, prepMin:35, acceptance:5}
+const LEVELS={
+ kid:[
+  {id:'A1',ic:'🌈',name:'Rainbow plate',brief:'Put 4 different colours on the plate.',speak:'Put four different colours on the plate.',
+   food:['broccoli','carrot','tomato','blueberry','banana','grapes','apple','watermelon','kiwi','pineapple','aubergine','cherry','bread','egg','water','cake'],win:{colours:4}},
+  {id:'A2',ic:'🌅',name:'Good morning',brief:'Build a happy breakfast.',speak:'Build a happy breakfast.',
+   food:['oats','banana','blueberry','milk','bread','egg','water','apple','yoghurt','strawberry','cola'],win:{groups:['grain','fruit']}},
+  {id:'A3',ic:'💧',name:'Best drink',brief:'Pick the everyday drink.',speak:'Pick the everyday drink for Sprout.',
+   food:['water','milk','juice','cola','apple','banana'],win:{tag:'water'}},
+  {id:'A4',ic:'🍽️',name:'Dinner time',brief:'Half veg and fruit, then grain and protein.',speak:'Half the plate veg and fruit. Then a grain and a protein.',
+   food:['broccoli','carrot','potato','peas','sweetpotato','chicken','beans','rice','apple','water','cheese','cake'],win:{groups:['veg','grain','protein'],colours:3}},
+  {id:'A5',ic:'🍎',name:'Snack box',brief:'Make a snack with two colours and water.',speak:'Make a snack with two colours and some water.',
+   food:['apple','grapes','carrot','cucumber','cheese','yoghurt','water','crisps','strawberry','biscuits'],win:{colours:2,tag:'water'}},
+  {id:'A6',ic:'🎉',name:'Party plate',brief:'It is a party! Add a treat and still keep colours.',speak:'It is a party! Add a treat, and keep three colours too.',
+   food:['strawberry','watermelon','grapes','carrot','pepper','cheese','cake','icecream','biscuits','choc','water'],win:{colours:3}},
+  {id:'A7',ic:'🍱',name:'Lunchbox',brief:'Pack a veg, a fruit, a grain and a protein.',speak:'Pack a lunchbox: a veg, a fruit, a grain and a protein.',
+   food:['carrot','cucumber','tomato','apple','grapes','strawberry','bread','rice','egg','cheese','hummus','water','crisps'],win:{groups:['veg','fruit','grain','protein'],colours:3}}
+ ],
+ teen:[
+  {id:'B1',ic:'⚽',name:'Fuel for football',brief:'Ravi has football at 5. Build his plate.',goal:'sport',
+   food:['pasta','chicken','banana','broccoli','water','beans','tomato','cheese','cola','crisps','rice','turkey'],win:{score:60}},
+  {id:'B2',ic:'📝',name:'Exam breakfast',brief:"A breakfast that doesn't crash at 10:30.",goal:'focus',
+   food:['oats','egg','blueberry','milk','bread','banana','water','yoghurt','nuts','juice','cola','choc'],win:{score:62}},
+  {id:'B3',ic:'🥤',name:'The drinks wall',brief:'Guess the sugar, then pick a day of drinks.',
+   food:['water','milk','juice','cola'],win:{tag:'water',maxTsp:6}},
+  {id:'B4',ic:'🌿',name:'Iron challenge',brief:'Build a plate with a plant iron source.',goal:'growth',
+   food:['lentils','spinach','beans','chickpeas','pepper','rice','tomato','orange','kiwi','water','cheese'],win:{score:66,tag:'iron'}},
+  {id:'B5',ic:'💷',name:'£3 lunch',brief:'Build a cheap, balanced lunch.',
+   food:['beans','bread','egg','potato','carrot','peas','tuna','tomato','water','crisps','banana'],win:{score:62,groups:['veg','grain','protein']}},
+  {id:'B6',ic:'⏱️',name:'15-minute dinner',brief:'A balanced dinner, ready in 15 minutes.',goal:'recover',
+   food:['noodles','prawns','pepper','broccoli','egg','tomato','tuna','water','cheese','cola'],win:{score:64}},
+  {id:'B7',ic:'💪',name:'Recover after sport',brief:'You just trained hard. Build a recovery plate.',goal:'recover',
+   food:['chicken','rice','banana','spinach','yoghurt','water','beans','tomato','pasta','milk','cola','crisps'],win:{score:66}}
+ ],
+ adult:[
+  {id:'C1',ic:'📅',name:'Plan the week',brief:'Plan seven dinners within the four dials.',week:true},
+  {id:'C2',ic:'👪',name:'Family dinner',brief:'Build one dinner the whole table will eat.',goal:'growth',
+   food:['chicken','rice','broccoli','carrot','potato','beans','pasta','tomato','cheese','peas','water','salmon','sweetcorn'],win:{score:66,groups:['veg','grain','protein']}},
+  {id:'C3',ic:'🍽️',name:'Fussy-eater dinner',brief:'Build a dinner even a fussy eater will try.',
+   food:['pasta','chicken','sweetcorn','carrot','cheese','tomato','potato','peas','rice','water','crisps','banana'],win:{score:62,groups:['veg','grain','protein']}}
+ ]
+};
+
+const MEALS=[
+ {id:'m1',name:'Veg pasta bake',items:['pasta','tomato','pepper','cheese'],cost:2,prepMin:30,acceptance:4},
+ {id:'m2',name:'Beans on toast',items:['beans','bread','tomato'],cost:1,prepMin:8,acceptance:4},
+ {id:'m3',name:'Salmon, rice & greens',items:['salmon','rice','broccoli'],cost:4,prepMin:22,acceptance:3},
+ {id:'m4',name:'Chicken stir-fry',items:['chicken','pepper','carrot','rice'],cost:3,prepMin:20,acceptance:5},
+ {id:'m5',name:'Lentil dhal & rice',items:['lentils','tomato','rice','spinach'],cost:1,prepMin:25,acceptance:3},
+ {id:'m6',name:'Veg omelette',items:['egg','pepper','tomato','bread'],cost:2,prepMin:12,acceptance:4},
+ {id:'m7',name:'Jacket potato & beans',items:['potato','beans','cheese'],cost:1,prepMin:35,acceptance:5},
+ {id:'m8',name:'Chickpea curry & rice',items:['chickpeas','tomato','spinach','rice'],cost:1,prepMin:25,acceptance:3},
+ {id:'m9',name:'Tuna pasta',items:['tuna','pasta','sweetcorn','tomato'],cost:2,prepMin:15,acceptance:4},
+ {id:'m10',name:'Turkey & veg wrap',items:['turkey','bread','pepper','tomato'],cost:2,prepMin:10,acceptance:5},
+ {id:'m11',name:'Prawn noodle bowl',items:['prawns','noodles','broccoli','carrot'],cost:3,prepMin:18,acceptance:3},
+ {id:'m12',name:'Hummus & salad wrap',items:['hummus','bread','pepper','tomato'],cost:1,prepMin:8,acceptance:4},
+ {id:'m13',name:'Sardines on toast',items:['sardines','bread','tomato'],cost:1,prepMin:6,acceptance:2},
+ {id:'m14',name:'Roast veg couscous',items:['couscous','butternut','pepper','onion'],cost:2,prepMin:28,acceptance:3}
+];
+const MYTHS=[
+ ['Frozen veg is worse than fresh.',false,'Frozen produce is frozen at peak, so it keeps its vitamins.'],
+ ['Brown sugar is healthier sugar.',false,'Free sugars are free sugars — colour makes no difference.'],
+ ['Juice is the same as whole fruit.',false,'Juicing frees the sugar and removes most of the fibre.'],
+ ['Carbs make you gain weight.',false,'Type and amount matter, and the whole diet matters more.'],
+ ['Skipping breakfast helps you eat less.',false,'It shifts eating later and hurts focus at school.'],
+ ['“Natural” means healthy.',false,'“Natural” is a marketing word, not a rule.'],
+ ['Detox teas clean out your body.',false,'Your liver and kidneys do that already.'],
+ ['Vegetarians can’t get enough iron.',false,'Beans, lentils and greens with vitamin C cover it.'],
+ ['Energy drinks are just strong coffee.',false,'Caffeine plus sugar plus additives — and wrecked sleep.'],
+ ['Expensive food is healthier food.',false,'Beans, oats, frozen veg and eggs are great value.'],
+ ['Honey is a sugar-free sweetener.',false,'Honey is still free sugars — treat it like sugar.'],
+ ['You must drink exactly 8 glasses of water a day.',false,'Needs vary with body, weather and activity. Drink to thirst.'],
+ ['Eating fat makes you fat.',false,'Some fats are needed; the whole diet and amount matter more.'],
+ ['White bread and brown bread are the same.',false,'Wholemeal keeps the bran, giving more fibre and slower energy.'],
+ ['Snacking is always bad for you.',false,'A fruit, yoghurt or nuts between meals can be a good idea.']
 ];
 
-const MYTH_CARDS = [
-  ['Fresh is always more nutritious than frozen.', false, 'Frozen produce is picked and frozen at peak, so it keeps its vitamins.'],
-  ['Brown sugar is a healthier sugar.', false, 'Free sugars are free sugars — the colour makes no real difference.'],
-  ['Fruit juice counts the same as whole fruit.', false, 'Juicing releases the sugars and removes most of the fibre.'],
-  ['Carbs make you gain weight.', false, 'The type and amount matter, and the whole diet matters more.'],
-  ['You need protein powder to build muscle.', false, 'Food usually covers it; total protein matters more than timing.'],
-  ['Skipping breakfast is a good way to eat less.', false, 'It tends to shift eating later and hurts focus at school.'],
-  ['Anything labelled "natural" is better for you.', false, '"Natural" is a marketing word, not a regulated one.'],
-  ['Detox teas clean out your body.', false, 'Your liver and kidneys do that; these mostly move water.'],
-  ['Eating late at night is automatically bad.', false, 'Your total pattern matters far more than the clock.'],
-  ['Vegetarians can’t get enough iron.', false, 'Beans, lentils, tofu and greens with vitamin C cover it.'],
-  ['Energy drinks are just strong coffee.', false, 'High caffeine plus sugar plus additives, and they wreck sleep.'],
-  ['Expensive food is healthier food.', false, 'Beans, frozen veg, oats and eggs are among the best value anywhere.']
-];
-
-// LEVELS — 4 per mode is enough to prove the loop end-to-end.
-const LEVELS = {
-  kid: [
-    {id:'A1', name:'Rainbow lunch', icon:'🌈', brief:"Fill Sprout's box with four different colours.", available:['broccoli','carrot','tomato','blueberry','banana','sweetcorn','apple','wholebread','egg','cheese','water','chocbar'], win:{minColours:4, groups:['grain','protein']}, teach:'A4', card:'Different colours bring different vitamins. That is why we say eat the rainbow.'},
-    {id:'A2', name:'Breakfast start', icon:'🌅', brief:'Build a breakfast to start the day.', available:['oats','banana','blueberry','milk','wholebread','egg','water','juice','apple'], win:{groups:['grain','fruit'], minScore:55}, teach:'A6', card:'Breakfast wakes up your body and helps you focus at school.'},
-    {id:'A3', name:'Drinks aisle', icon:'💧', brief:'Pick the everyday drink for Sprout.', available:['water','milk','juice','cola','apple','banana'], win:{needTag:'water'}, teach:'A3', card:'Water is the everyday drink. Milk is food too. The rest are sometimes.'},
-    {id:'A4', name:'Dinner plate', icon:'🍽️', brief:'Half the plate veg and fruit, then grain and protein.', available:['broccoli','carrot','potato','peas','chicken','beans','brownrice','apple','water','cheese','cake'], win:{groups:['veg','grain','protein'], minColours:3, minScore:60}, teach:'A2', card:'Half your plate veg and fruit is the shape to remember.'}
-  ],
-  teen: [
-    {id:'B1', name:'Fuel for football', icon:'⚽', brief:'Ravi has football at 5. Build his after-school plate.', goal:'sport', available:['pasta','chicken','banana','broccoli','water','beans','tomato','cheese','cola','crisps','brownrice'], win:{minScore:65, goal:'sport'}, teach:'B1', card:'Carbs for fuel, protein to repair, water to replace what you sweat.'},
-    {id:'B2', name:'Exam breakfast', icon:'📝', brief:"Exam at 9. Build a breakfast that doesn't crash at 10:30.", goal:'focus', available:['oats','egg','blueberry','milk','wholebread','banana','water','juice','cola','chocbar'], win:{minScore:65, goal:'focus'}, teach:'B5', card:'Slow carbs plus protein give steady energy. Sugar spikes then dips.'},
-    {id:'B3', name:'The drinks wall', icon:'🥤', brief:'Build a day of drinks. Guess the sugar first.', available:['water','milk','juice','cola','energydrink'], win:{needTag:'water', maxTsp:6}, teach:'B3', card:'Liquid sugar arrives fast and does not fill you up. Water is the default.'},
-    {id:'B4', name:'Veggie iron challenge', icon:'🌿', brief:'Build a plate with a plant iron source.', goal:'growth', available:['lentils','spinach','beans','tofu','pepper','brownrice','tomato','orange','water','cheese'], win:{minScore:65, needTag:'iron'}, teach:'B6', card:'Beans, lentils and greens carry iron; vitamin C helps you absorb it.'}
-  ],
-  adult: [
-    {id:'C1', name:'Plan the week', icon:'📅', brief:'Plan seven dinners within all four dials.', week:true, teach:'C1', card:'A balanced week beats a perfect single meal. Aim for the pattern.'}
-  ]
-};
-
-/* ══ 03 UTIL ════════════════════════════════════════════════════════════ */
-const clamp   = (v,a,b) => Math.min(b, Math.max(a, v));
-const clamp01 = v => clamp(v,0,1);
-const lerp    = (a,b,t) => a+(b-a)*t;
-const sum     = (arr,k) => arr.reduce((s,i)=>s+(i[k]||0),0);
-const $  = (s,r=document) => r.querySelector(s);
-const el = (t,c,h) => { const n=document.createElement(t); if(c)n.className=c; if(h!=null)n.innerHTML=h; return n; };
-function debounce(fn,ms){ let t; return (...a)=>{clearTimeout(t); t=setTimeout(()=>fn(...a),ms);}; }
-const hex = n => '#'+n.toString(16).padStart(6,'0');
-const GROUP_TINT = { veg:'#2E9E5B', fruit:'#C3305F', grain:'#D9932F', protein:'#6A5AC9', dairy:'#4FB8D4', sometimes:'#8A93A3' };
-const GROUP_GLYPH = { veg:'🥦', fruit:'🍎', grain:'🌾', protein:'🥚', dairy:'🥛', sometimes:'🍰' };
-
-/* ══ 04 CAPABILITY ═════════════════════════════════════════════════════ */
-function probeWebGL(){ try{ const c=document.createElement('canvas'); return !!(c.getContext('webgl2')||c.getContext('webgl')); }catch{ return false; } }
-function detectTier(){
-  const mem=navigator.deviceMemory||4, cores=navigator.hardwareConcurrency||4;
-  const small=Math.min(innerWidth,innerHeight)<400;
-  const gl=document.createElement('canvas').getContext('webgl2');
-  if(!gl||cores<=2||mem<=2) return 'low';
-  if(cores<=4||small) return 'mid';
-  return 'high';
-}
-
-/* ══ 05 STORE ══════════════════════════════════════════════════════════ */
-const Store = (() => {
-  const L=new Map();
-  const state={ screen:'boot', tier:'mid', aud:'kid', plate:[], level:null,
-    muted:true, tapToPlace:true, week:{}, overlayStack:[] };
-  return { state,
-    on(e,f){ if(!L.has(e))L.set(e,[]); L.get(e).push(f); },
-    emit(e,p){ (L.get(e)||[]).forEach(f=>f(p)); },
-    set(p){ Object.assign(state,p); this.emit('change',state); } };
-})();
-
-/* ══ 06 PERSIST ════════════════════════════════════════════════════════ */
-const Persist = (() => {
-  const KEY='plateplanet.v1'; let mem=null;
-  const read =()=>{ try{ return JSON.parse(localStorage.getItem(KEY))??mem; }catch{ return mem; } };
-  const write=o=>{ mem=o; try{ localStorage.setItem(KEY,JSON.stringify(o)); }catch{} };
-  return { read, write, KEY };
-})();
-const Save = {
-  data: Object.assign({ done:[], seeds:0, plants:[], objectives:[], settings:{} }, Persist.read()||{}),
-  flush(){ Persist.write(this.data); },
-  markDone(lvl, obj){ if(!this.data.done.includes(lvl)) this.data.done.push(lvl);
-    if(obj && !this.data.objectives.includes(obj)) this.data.objectives.push(obj); this.flush(); },
-  addSeeds(n){ this.data.seeds+=n; this.flush(); },
-  plant(id){ if(!this.data.plants.includes(id)) this.data.plants.push(id); this.flush(); }
-};
-
-/* ══ 07 AUDIO ══════════════════════════════════════════════════════════ */
-const Audio = (() => {
-  let ctx=null;
-  const pitch={ veg:220, fruit:277, grain:330, protein:392, dairy:494, sometimes:180 };
-  function ensure(){ if(!ctx && !Store.state.muted) ctx=new (window.AudioContext||window.webkitAudioContext)(); return ctx; }
-  function tone(freq,type='triangle',dur=0.12,vol=0.15){
-    const c=ensure(); if(!c) return;
-    const o=c.createOscillator(), g=c.createGain();
-    o.type=type; o.frequency.value=freq; g.gain.value=0.0001;
-    o.connect(g).connect(c.destination); o.start();
-    g.gain.exponentialRampToValueAtTime(vol, c.currentTime+0.01);
-    g.gain.exponentialRampToValueAtTime(0.0001, c.currentTime+dur);
-    o.stop(c.currentTime+dur+0.02);
-  }
-  function blip(group){ tone(pitch[group]||300); }
-  function arpeggio(){ [392,494,587,784].forEach((f,i)=>setTimeout(()=>tone(f,'sine',0.18,0.12),i*90)); }
-  function soft(){ [330,392,440].forEach((f,i)=>setTimeout(()=>tone(f,'sine',0.16,0.08),i*80)); }
-  function cube(i){ tone(1200 - i*40,'square',0.05,0.08); }
-  return { blip, arpeggio, soft, cube, ensure, suspend(){ctx&&ctx.suspend();}, resume(){ctx&&ctx.resume();} };
-})();
-
-/* ══ 08 FACTORY ════════════════════════════════════════════════════════ */
-const geoCache=new Map();
-function labelTexture(name){
-  const cv=document.createElement('canvas'); cv.width=128; cv.height=128;
-  const x=cv.getContext('2d');
-  x.fillStyle='#EDE6D6'; x.fillRect(0,0,128,128);
-  x.fillStyle='#C3305F'; x.fillRect(0,20,128,26);
-  x.fillStyle='#EDE6D6'; x.font='bold 13px sans-serif'; x.textAlign='center';
-  x.fillText(name.slice(0,10), 64, 38);
-  x.fillStyle='#101B2E'; x.font='9px monospace';
-  x.fillText('per 100g', 64, 66); x.fillText('read the back', 64, 86);
-  return new CanvasTexture(cv);
-}
-const ARCH = {
-  sphere:()=>{ const g=new IcosahedronGeometry(0.3,1); g.scale(1,0.9,1); return g; },
-  taper:()=>{ const p=[[0,0.9],[0.12,0.55],[0.16,0],[0.1,-0.6],[0,-0.95]].map(([x,y])=>new Vector2(x,y));
-    const g=new LatheGeometry(p,10); g.scale(0.55,0.55,0.55); g.computeVertexNormals(); return g; },
-  slab:()=>{ const g=new BoxGeometry(0.5,0.18,0.34); return g; }
-};
-function buildFood(def){
-  const mat=new MeshStandardMaterial({ color:def.tint, roughness:0.6, metalness:0,
-    flatShading:!!def.produce, emissive:def.produce?def.tint:0x000000,
-    emissiveIntensity:def.produce?0.09:0 });
-  let node;
-  if(def.archetype==='cluster'){
-    node=new Group();
-    const stem=new Mesh(new CylinderGeometry(0.04,0.05,0.34,6), new MeshStandardMaterial({color:0x5A7A38,roughness:0.7}));
-    stem.position.y=-0.14; node.add(stem);
-    for(let i=0;i<6;i++){ const h=new Mesh(new IcosahedronGeometry(0.13,0),mat);
-      const a=(i/6)*Math.PI*2; h.position.set(Math.cos(a)*0.13,0.14+Math.random()*0.05,Math.sin(a)*0.13); node.add(h); }
-  } else if(def.archetype==='leaf'){
-    node=new Group();
-    for(let i=0;i<5;i++){ const lf=new Mesh(new IcosahedronGeometry(0.16,0),mat);
-      lf.scale.set(1.3,0.25,0.8); lf.rotation.y=i*1.2; lf.position.set(Math.cos(i*1.2)*0.1,i*0.03,Math.sin(i*1.2)*0.1); node.add(lf); }
-  } else if(def.archetype==='grain'){
-    node=new Group();
-    const bowl=new Mesh(new CylinderGeometry(0.32,0.24,0.14,16), new MeshStandardMaterial({color:0x21344E,roughness:0.5}));
-    node.add(bowl);
-    for(let i=0;i<40;i++){ const gr=new Mesh(new SphereGeometry(0.035,5,4),mat);
-      gr.position.set((Math.random()-0.5)*0.5,0.08+Math.random()*0.04,(Math.random()-0.5)*0.5); node.add(gr); }
-  } else if(def.archetype==='vessel'){
-    node=new Group();
-    const bodyMat=new MeshStandardMaterial({color:def.tint,roughness:0.3,metalness:0.1,transparent:true,opacity:0.55});
-    const body=new Mesh(new CylinderGeometry(0.2,0.17,0.6,16),bodyMat); node.add(body);
-    if(def.liquid!=null){ const liq=new Mesh(new CylinderGeometry(0.17,0.15,0.5,16),
-      new MeshStandardMaterial({color:def.liquid,roughness:0.2})); liq.position.y=-0.03; node.add(liq); }
-  } else if(def.archetype==='pack'){
-    node=new Mesh(new BoxGeometry(0.34,0.5,0.14),
-      new MeshStandardMaterial({map:labelTexture(def.name),roughness:0.7}));
-  } else {
-    const k=def.archetype;
-    if(!geoCache.has(k)) geoCache.set(k, ARCH[def.archetype]());
-    node=new Mesh(geoCache.get(k),mat);
-  }
-  node.userData={ foodId:def.id, group:def.group, home:null, grabbable:true };
-  node.traverse(o=>{ if(o.isMesh) o.layers.enable(CONFIG.LAYER_INTERACTIVE); });
-  node.layers.enable(CONFIG.LAYER_INTERACTIVE);
-  return node;
-}
-
-/* ══ 09 SCENE ══════════════════════════════════════════════════════════ */
-const canvas=$('#canvas-root');
-const renderer=new WebGLRenderer({ canvas, antialias:true, alpha:false });
-renderer.outputColorSpace=SRGBColorSpace;
-renderer.toneMapping=ACESFilmicToneMapping; renderer.toneMappingExposure=1.05;
-
-const scene=new Scene(); scene.background=new Color(TOKENS.ink);
-const camera=new PerspectiveCamera(52,1,0.1,60);
-camera.position.set(0,2.1,CONFIG.camera.dist); camera.lookAt(0,0.35,0);
-
-scene.add(new HemisphereLight(TOKENS.stall,TOKENS.ink,0.55));
-const keyLight=new DirectionalLight(TOKENS.lamp,1.1); keyLight.position.set(-2.4,4,3); scene.add(keyLight);
-const plateLamp=new PointLight(TOKENS.lamp,0.6,8); plateLamp.position.set(0,1.6,0); scene.add(plateLamp);
-
-const marketRing=new Group(), plateGroup=new Group(), platedGroup=new Group();
-scene.add(marketRing,plateGroup); plateGroup.add(platedGroup);
-
-const plate=new Mesh(new CylinderGeometry(1.15,1.05,0.12,48),
-  new MeshStandardMaterial({color:TOKENS.ink2,roughness:0.5,metalness:0}));
-plateGroup.add(plate);
-
-let marketFoods=[];
-function buildMarket(ids){
-  marketFoods.forEach(m=>marketRing.remove(m)); marketFoods=[];
-  ids.forEach((id,i)=>{
-    const def=FOOD[id]; if(!def) return;
-    const f=buildFood(def);
-    const a=(i/ids.length)*Math.PI*2;
-    f.position.set(Math.cos(a)*CONFIG.ringRadius,0.9,Math.sin(a)*CONFIG.ringRadius);
-    f.userData.home=f.position.clone();
-    marketRing.add(f); marketFoods.push(f);
-  });
-}
-function layoutPlated(){
-  const n=platedGroup.children.length;
-  platedGroup.children.forEach((m,i)=>{
-    const a=(i/Math.max(n,1))*Math.PI*2;
-    const r=n<=1?0:0.55;
-    m.position.set(Math.cos(a)*r,0.28,Math.sin(a)*r);
-  });
-}
-
-const orbit={angle:0,vel:0,dragging:false};
-function updateMarketInertia(){
-  if(!orbit.dragging){ orbit.angle=clamp(orbit.angle+orbit.vel,-CONFIG.orbitClampRad,CONFIG.orbitClampRad);
-    orbit.vel*=0.92; if(Math.abs(orbit.vel)<1e-4) orbit.vel=0; }
-  marketRing.rotation.y=lerp(marketRing.rotation.y,orbit.angle,0.2);
-}
-
-let rw=0,rh=0;
-function resize(){
-  const w=canvas.clientWidth||innerWidth, h=canvas.clientHeight||innerHeight;
-  if(w===rw&&h===rh) return; rw=w; rh=h;
-  const portrait=h>w, cap=CONFIG.pixelCap[Store.state.tier]||1.5;
-  renderer.setPixelRatio(Math.min(devicePixelRatio,cap));
-  renderer.setSize(w,h,false);
-  camera.aspect=w/h; camera.fov=portrait?CONFIG.camera.fovPortrait:CONFIG.camera.fovLandscape;
-  camera.position.z=CONFIG.camera.dist*(portrait?1.12:1); camera.updateProjectionMatrix();
-}
-new ResizeObserver(debounce(resize,150)).observe(canvas);
-
-/* ══ 10 AURORA ═════════════════════════════════════════════════════════ */
-const Aurora = (() => {
-  let group, base, arcs=[], shimmer, haze, underglow;
-  const target={ bands:0, variety:0, fibre:0, sugar:0, hydration:0 };
-  const cur   ={ bands:0, variety:0, fibre:0, sugar:0, hydration:0 };
-  const groupOrder=['veg','fruit','grain','protein','dairy'];
-
-  function hazeSprite(){
-    const cv=document.createElement('canvas'); cv.width=128; cv.height=128;
-    const g=cv.getContext('2d').createRadialGradient(64,64,4,64,64,64);
-    g.addColorStop(0,'rgba(232,163,60,0.9)'); g.addColorStop(1,'rgba(232,163,60,0)');
-    const x=cv.getContext('2d'); x.fillStyle=g; x.fillRect(0,0,128,128);
-    return new CanvasTexture(cv);
-  }
-  function init(parent){
-    group=new Group(); group.position.y=0.2; parent.add(group);
-    base=new Mesh(new RingGeometry(0.4,1.25,48),
-      new MeshBasicMaterial({color:TOKENS.stall,transparent:true,opacity:0.15,side:DoubleSide,blending:AdditiveBlending}));
-    base.rotation.x=-Math.PI/2; base.position.y=0.1; group.add(base);
-    groupOrder.forEach((g,i)=>{
-      const m=new Mesh(new CylinderGeometry(0.06,0.06,0.02,8),
-        new MeshBasicMaterial({color:GROUP_TINT[g],transparent:true,opacity:0.85,blending:AdditiveBlending}));
-      m.userData.group=g; arcs.push(m); group.add(m);
-    });
-    const geo=new BufferGeometry(); const N=200; const pos=new Float32Array(N*3);
-    for(let i=0;i<N;i++){ const a=Math.random()*Math.PI*2, r=0.3+Math.random()*0.9;
-      pos[i*3]=Math.cos(a)*r; pos[i*3+1]=Math.random()*1.2; pos[i*3+2]=Math.sin(a)*r; }
-    geo.setAttribute('position',new BufferAttribute(pos,3));
-    shimmer=new Points(geo,new PointsMaterial({color:TOKENS.chalk,size:0.03,transparent:true,opacity:0,blending:AdditiveBlending}));
-    group.add(shimmer);
-    haze=new Sprite(new SpriteMaterial({map:hazeSprite(),transparent:true,opacity:0,blending:AdditiveBlending,depthWrite:false}));
-    haze.scale.set(2,2,1); haze.position.y=0.4; group.add(haze);
-    underglow=new Mesh(new CircleGeometry(1.3,40),
-      new MeshBasicMaterial({color:TOKENS.water,transparent:true,opacity:0,side:DoubleSide,blending:AdditiveBlending}));
-    underglow.rotation.x=-Math.PI/2; underglow.position.y=-0.08; plateGroup.add(underglow);
-  }
-  function setChannels(ch, groupsPresent){
-    target.bands=ch.groupsCount/5; target.variety=ch.variety; target.fibre=ch.fibre;
-    target.sugar=ch.sugar_amt; target.hydration=ch.hydration; Aurora._present=groupsPresent;
-  }
-  function reset(){ target.bands=target.variety=target.fibre=target.sugar=target.hydration=0; }
-  function update(t){
-    if(!group) return;
-    for(const k in cur) cur[k]=lerp(cur[k],target[k], CONFIG.reducedMotion?1:0.12);
-    arcs.forEach((m,i)=>{
-      const on=Aurora._present?Aurora._present.includes(m.userData.group):false;
-      const h=on?(0.35+cur.fibre*0.9):0.02;
-      m.scale.y=h; const radius=0.55+i*0.13;
-      const ang=(i/5)*Math.PI*2 + (t||0)*0.0002;
-      m.position.set(Math.cos(ang)*radius, 0.1+h*0.5, Math.sin(ang)*radius);
-      m.material.opacity=on?0.85:0.06;
-    });
-    shimmer.material.opacity=cur.fibre*0.7;
-    shimmer.rotation.y=(t||0)*0.0001;
-    const sp=shimmer.geometry.attributes.position;
-    if(!CONFIG.reducedMotion){ for(let i=0;i<sp.count;i++){ let y=sp.getY(i)+0.004; if(y>1.2)y=0; sp.setY(i,y);} sp.needsUpdate=true; }
-    haze.material.opacity=cur.sugar*0.6; haze.scale.setScalar(1.4+cur.sugar*1.4);
-    underglow.material.opacity=cur.hydration*0.4;
-  }
-  return { init, setChannels, reset, update };
-})();
-
-/* ══ 11 INPUT ══════════════════════════════════════════════════════════ */
-const ray=new Raycaster(); ray.layers.set(CONFIG.LAYER_INTERACTIVE);
-const dragPlane=new Plane(); const ptr=new Vector2();
-let held=null, downAt=0, downPos=new Vector2(), lpTimer=null, orbitLast=null, movedFar=false;
-
-function toNDC(e){ const r=canvas.getBoundingClientRect();
-  ptr.set(((e.clientX-r.left)/r.width)*2-1, -((e.clientY-r.top)/r.height)*2+1); }
-function topFood(o){ while(o&&!o.userData?.grabbable) o=o.parent; return o; }
-
-canvas.addEventListener('pointerdown',e=>{
-  if(Store.state.screen!=='play') return;
-  toNDC(e); downAt=performance.now(); downPos.set(e.clientX,e.clientY); movedFar=false;
-  ray.setFromCamera(ptr,camera);
-  const hit=ray.intersectObjects(marketRing.children,true)[0];
-  if(hit){ held=topFood(hit.object); canvas.setPointerCapture(e.pointerId);
-    dragPlane.setFromNormalAndCoplanarPoint(camera.getWorldDirection(new Vector3()).negate(), held.position);
-    Audio.blip(held.userData.group);
-    lpTimer=setTimeout(()=>{ if(held) showFoodCard(held.userData.foodId); },450);
-  } else { orbit.dragging=true; orbitLast=e.clientX; }
-},{passive:true});
-
-canvas.addEventListener('pointermove',e=>{
-  if(orbit.dragging&&orbitLast!=null){ const dx=e.clientX-orbitLast; orbitLast=e.clientX;
-    orbit.vel=dx*0.0016; orbit.angle=clamp(orbit.angle+dx*0.0016,-CONFIG.orbitClampRad,CONFIG.orbitClampRad); return; }
-  if(!held) return;
-  if(downPos.distanceTo(new Vector2(e.clientX,e.clientY))>8){ movedFar=true; clearTimeout(lpTimer); }
-  toNDC(e); ray.setFromCamera(ptr,camera);
-  const p=new Vector3(); if(ray.ray.intersectPlane(dragPlane,p)) held.position.lerp(p,0.35);
-},{passive:true});
-
-canvas.addEventListener('pointerup',e=>{
-  clearTimeout(lpTimer);
-  if(orbit.dragging){ orbit.dragging=false; orbitLast=null; return; }
-  if(!held) return;
-  const tap=performance.now()-downAt<250 && !movedFar;
-  if(tap){ if(Store.state.tapToPlace) addToPlate(held.userData.foodId); else showFoodCard(held.userData.foodId); }
-  else {
-    // dropped near plate centre → add
-    if(held.position.length()<1.6) addToPlate(held.userData.foodId);
-    held.position.copy(held.userData.home);
-  }
-  held=null;
-},{passive:true});
-
-/* ══ 12 SCORE ══════════════════════════════════════════════════════════ */
-const NUTRI_MODEL = {
-  targetProportions:{ veg:0.30, fruit:0.20, grain:0.25, protein:0.20, dairy:0.05 },
-  weights:{ balance:40, variety:20, fibre:15, sugar:15, hydration:10 },
-  freeSugarTeaspoonGrams:4,
-  sugarSoftCapTsp:{ kid:5, teen:7, adult:7 },
-  fibreTargetG:{ kid:6, teen:9, adult:10 },
-  colourFamilies:['red','orange','yellow','green','purple','white','blue']
-};
-function goalBonus(items, goal){
-  if(!goal) return 0;
-  const has=t=>items.some(i=>(FOOD[i.id].tags||[]).includes(t));
-  const grp=g=>items.some(i=>FOOD[i.id].group===g);
-  const map={
-    sport:()=>(grp('grain')?4:0)+(grp('protein')?4:0)+(has('water')||grp('dairy')?2:0),
+/* ═══ SCORING ═══ */
+const NUTRI={ target:{veg:.30,fruit:.20,grain:.25,protein:.20,dairy:.05},
+  W:{balance:40,variety:20,fibre:15,sugar:15,hydration:10},
+  tsp:4, sugarCap:{kid:5,teen:7,adult:7}, fibreTarget:{kid:6,teen:9,adult:10} };
+function goalBonus(items,goal){ if(!goal)return 0;
+  const has=t=>items.some(i=>(FOOD[i.id].tags||[]).includes(t)), grp=g=>items.some(i=>FOOD[i.id].group===g);
+  const m={ sport:()=>(grp('grain')?4:0)+(grp('protein')?4:0)+(has('water')||grp('dairy')?2:0),
     focus:()=>(has('slow-release')||has('wholegrain')?4:0)+(grp('protein')?4:0)+(has('water')?2:0),
-    growth:()=>(has('iron')?4:0)+(has('calcium')||grp('dairy')?3:0)+(grp('protein')?3:0),
-    recover:()=>(grp('protein')?4:0)+(grp('fruit')||grp('veg')?4:0)+(has('water')?2:0)
-  };
-  return Math.min(10, (map[goal]?map[goal]():0));
+    growth:()=>(has('iron')?5:0)+(grp('protein')?3:0)+(grp('dairy')?2:0) };
+  return Math.min(10,m[goal]?m[goal]():0);
 }
-function scorePlate(items, ctx){
-  const W=NUTRI_MODEL.weights;
-  const total=items.reduce((s,i)=>s+(FOOD[i.id].portions||0),0)||1;
-  const actual={}; for(const g of Object.keys(NUTRI_MODEL.targetProportions)) actual[g]=0;
-  items.forEach(i=>{ const g=FOOD[i.id].group; if(actual[g]!==undefined) actual[g]+=FOOD[i.id].portions; });
-  let dev=0; for(const [g,t] of Object.entries(NUTRI_MODEL.targetProportions)) dev+=Math.abs(actual[g]/total - t);
-  const balance=clamp01(1 - dev/1.4);
-  const colours=new Set(items.filter(i=>FOOD[i.id].produce).map(i=>FOOD[i.id].colour));
-  const variety=clamp01(colours.size/5);
-  const fibre=clamp01(sum(items.map(i=>FOOD[i.id]),'fibreG')/NUTRI_MODEL.fibreTargetG[ctx.tier]);
-  const tsp=sum(items.map(i=>FOOD[i.id]),'freeSugarG')/NUTRI_MODEL.freeSugarTeaspoonGrams;
-  const cap=NUTRI_MODEL.sugarSoftCapTsp[ctx.tier];
-  const sugar= tsp<=cap ? 1 : clamp01(1-(tsp-cap)/(cap*1.5));
-  const hydration=items.some(i=>(FOOD[i.id].tags||[]).includes('water'))?1
-    : items.some(i=>(FOOD[i.id].tags||[]).includes('drink'))?0.5:0;
-  let score=balance*W.balance+variety*W.variety+fibre*W.fibre+sugar*W.sugar+hydration*W.hydration;
-  score+=goalBonus(items,ctx.goal);
+function score(items,ctx){
+  const W=NUTRI.W, tot=items.reduce((s,i)=>s+(FOOD[i.id].portions||0),0)||1, actual={};
+  for(const g in NUTRI.target) actual[g]=0;
+  items.forEach(i=>{const g=FOOD[i.id].group; if(actual[g]!==undefined)actual[g]+=FOOD[i.id].portions;});
+  let dev=0; for(const g in NUTRI.target) dev+=Math.abs(actual[g]/tot-NUTRI.target[g]);
+  const balance=clamp01(1-dev/1.4);
+  const cols=new Set(items.filter(i=>FOOD[i.id].produce).map(i=>FOOD[i.id].colour));
+  const variety=clamp01(cols.size/5);
+  const fibre=clamp01(sum(items.map(i=>FOOD[i.id]),'fibreG')/NUTRI.fibreTarget[ctx.tier]);
+  const tsp=sum(items.map(i=>FOOD[i.id]),'freeSugarG')/NUTRI.tsp, cap=NUTRI.sugarCap[ctx.tier];
+  const sugar=tsp<=cap?1:clamp01(1-(tsp-cap)/(cap*1.5));
+  const hyd=items.some(i=>(FOOD[i.id].tags||[]).includes('water'))?1:items.some(i=>(FOOD[i.id].tags||[]).includes('drink'))?.5:0;
+  let s=balance*W.balance+variety*W.variety+fibre*W.fibre+sugar*W.sugar+hyd*W.hydration+goalBonus(items,ctx.goal);
   const present=Object.keys(actual).filter(g=>actual[g]>0);
-  return {
-    total:Math.round(clamp(score,0,100)),
-    channels:{ balance,variety,fibre,sugar,hydration,
-      groupsCount:present.length, colours:colours.size, sugar_amt:clamp01(tsp/(cap*2)) },
-    present, teaspoons:Math.round(tsp*10)/10,
-    missing:Object.keys(actual).filter(g=>actual[g]===0)
-  };
+  return {total:Math.round(clamp(s,0,100)),balance,variety,fibre,sugar,hyd,colours:cols.size,
+    colourSet:cols,present,teaspoons:Math.round(tsp*10)/10,missing:Object.keys(actual).filter(g=>actual[g]===0)};
 }
-function coachingCards(res, level, items){
-  const ch=res.channels, cards=[];
-  const names={balance:'balance',variety:'colour',fibre:'fibre',sugar:'sugar',hydration:'water'};
-  const chanVals={ balance:ch.balance, variety:ch.variety, fibre:ch.fibre, hydration:ch.hydration };
-  const top=Object.entries(chanVals).sort((a,b)=>b[1]-a[1])[0];
-  const low=Object.entries(chanVals).sort((a,b)=>a[1]-b[1])[0];
-  const winTxt={ balance:'The shape of this plate is spot on.', variety:`${ch.colours} colours on one plate. That is the rainbow lesson in one go.`,
-    fibre:'Plenty of fibre here — this plate will keep you going.', hydration:'Water on the plate. That is the default done right.' };
-  cards.push({t:'win', h:'Nailed it', b:winTxt[top[0]]||'A varied plate — nicely done.'});
-  const nextTxt={
-    variety:'Add another colour. A handful of something green or red would widen the rainbow.',
-    fibre:'Light on fibre. A wholegrain or some beans would add it.',
-    hydration:'No water yet. Add a glass and the plate is complete.',
-    balance:'One group is doing the heavy lifting. Spread it across veg, grain and protein.'
-  };
-  if(res.missing.length){ const g=res.missing[0];
-    cards.push({t:'next', h:'Try next', b:`No ${g} yet. Adding one would round out the plate.`}); }
-  else cards.push({t:'next', h:'Try next', b:nextTxt[low[0]]||'Small tweaks would push this higher.'});
-  const placed=items.map(i=>FOOD[i.id]).filter(f=>f.fact);
-  if(placed.length) cards.push({t:'fact', h:'Good to know', b:placed[Math.floor(Math.random()*placed.length)].fact});
-  return cards.slice(0,3);
+function coaching(r,lvl,items){
+  const c=[], vals={balance:r.balance,variety:r.variety,fibre:r.fibre,hydration:r.hyd};
+  const top=Object.entries(vals).sort((a,b)=>b[1]-a[1])[0][0];
+  const low=Object.entries(vals).sort((a,b)=>a[1]-b[1])[0][0];
+  const win={balance:'The shape of this plate is just right.',variety:`${r.colours} colours! That is the rainbow lesson in one plate.`,
+    fibre:'Lots of fibre — this plate keeps you going.',hydration:'Water on the plate. Nicely done.'};
+  c.push({t:'win',h:'You nailed it',b:win[top]||'A lovely varied plate.'});
+  const nxt={variety:'Add another colour — something green or red.',fibre:'Add a wholegrain or some beans for fibre.',
+    hydration:'Add a glass of water to finish it off.',balance:'Spread it across veg, grain and protein.'};
+  if(r.missing.length) c.push({t:'next',h:'Try next',b:`No ${r.missing[0]} yet. One would round it out.`});
+  else c.push({t:'next',h:'Try next',b:nxt[low]||'Small tweaks would push it higher.'});
+  const facts=items.map(i=>FOOD[i.id]).filter(f=>f.fact);
+  if(facts.length) c.push({t:'fact',h:'Good to know',b:facts[Math.floor(Math.random()*facts.length)].fact});
+  return c.slice(0,3);
 }
 
-/* ══ 13 MODES / PLATE STATE ════════════════════════════════════════════ */
-function currentCtx(){ const l=Store.state.level; return { tier:Store.state.aud, goal:l&&l.goal }; }
-function recompute(){
-  const items=Store.state.plate;
-  const res=scorePlate(items,currentCtx());
-  Aurora.setChannels(res.channels, res.present);
-  UI.updateChannels(res);
-  return res;
+/* ═══ PERSIST ═══ */
+const KEY='plateplanet2.v1'; let saved=null;
+try{saved=JSON.parse(localStorage.getItem(KEY));}catch{}
+const Save=Object.assign({done:[],seeds:0,plants:[]},saved||{});
+function flush(){ try{localStorage.setItem(KEY,JSON.stringify(Save));}catch{} }
+
+/* ═══ STATE ═══ */
+const State={ screen:'title', aud:'kid', level:null, plate:[], week:{}, sound:false, tapSpeak:true, revealed:{} };
+
+/* ═══ SUGAR REVEAL ═══ */
+function sugarReveal(def,done){
+  const cubes=Math.round(def.freeSugarG/4);
+  const guess=State.aud!=='kid';
+  openModal(`<div style="text-align:center">
+    <div class="display" style="font-size:1.3rem">${def.emoji} ${def.name}</div>
+    <div style="color:var(--chalk-dim);margin:6px 0 14px">Let's see the hidden sugar.</div>
+    ${guess?`<div style="margin-bottom:10px">Guess the spoons: <b id="gv">4</b><br><input id="gs" type="range" min="0" max="12" value="4" style="width:100%"></div>`:''}
+    <button id="go" class="btn" style="width:100%;margin-bottom:12px">Show the sugar</button>
+    <div id="stack" style="display:flex;flex-wrap:wrap;gap:5px;justify-content:center;min-height:30px;margin-bottom:10px"></div>
+    <div id="msg" style="color:var(--chalk-dim);margin-bottom:14px"></div>
+    <div style="display:flex;gap:10px"><button class="btn btn-ghost" style="flex:1" data-close>Not now</button>
+    <button id="add" class="btn" style="flex:1" disabled>Add anyway</button></div></div>`);
+  const gs=$('#gs'); if(gs)gs.oninput=()=>{ const gv=$('#gv'); if(gv)gv.textContent=gs.value; };
+  $('#go').onclick=()=>{ const st=$('#stack');
+    for(let i=0;i<cubes;i++) setTimeout(()=>{ if(st.isConnected){ st.append(el('div','cube')); beep(880-i*30,.05); } },i*80);
+    setTimeout(()=>{ let m=`${cubes} spoons of sugar!`;
+      if(gs){const d=Math.abs(+gs.value-cubes); m+=d<=1?' Great guess.':d<=2?' Close.':` You guessed ${gs.value}.`;}
+      const msg=$('#msg'), add=$('#add'); if(!msg||!add)return; // modal closed early
+      msg.textContent=m; add.disabled=false; speak(m);
+    },cubes*80+150);
+  };
+  $('#add').onclick=()=>{ State.revealed[def.id]=1; closeModal(); done&&done(); };
 }
-function addToPlate(id){
-  const def=FOOD[id]; if(!def) return;
-  if(def.tags && def.tags.includes('reveal') && def.freeSugarG>0 && !Store.state._revealed?.[id]){
-    SugarReveal.show(def, ()=>reallyAdd(id));
-    return;
-  }
+
+/* ═══ AUDIO (tiny synth) ═══ */
+let actx=null;
+function beep(f=440,d=.1,type='sine',v=.12){ if(!State.sound)return; try{ actx=actx||new (AudioContext||webkitAudioContext)();
+  const o=actx.createOscillator(),g=actx.createGain(); o.type=type;o.frequency.value=f;g.gain.value=.0001;
+  o.connect(g).connect(actx.destination);o.start(); g.gain.exponentialRampToValueAtTime(v,actx.currentTime+.01);
+  g.gain.exponentialRampToValueAtTime(.0001,actx.currentTime+d);o.stop(actx.currentTime+d+.02);}catch{} }
+function happy(){ [523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,.18,'sine',.1),i*90)); }
+
+/* ═══ POLISH: haptics, stars, confetti, mute ═══ */
+function vibrate(ms){ try{ navigator.vibrate&&navigator.vibrate(ms); }catch{} }
+function makeStars(){ const s=$('#stars'); if(!s||s.childElementCount)return; let h='';
+  for(let i=0;i<46;i++){ h+=`<i style="left:${Math.random()*100}%;top:${Math.random()*70}%;animation-delay:${(Math.random()*4).toFixed(2)}s"></i>`; }
+  s.innerHTML=h; }
+function confetti(){ if(matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+  const c=$('#confetti'), gl=['🎉','⭐','🌟','🍎','🥦','🌈','✨']; let h='';
+  for(let i=0;i<26;i++){ h+=`<span style="left:${Math.random()*100}%;animation-duration:${(1.4+Math.random()*1.6).toFixed(2)}s;animation-delay:${(Math.random()*.4).toFixed(2)}s">${gl[i%gl.length]}</span>`; }
+  c.innerHTML=h; setTimeout(()=>c.innerHTML='',3200); }
+function flyFood(cardEl){ if(matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+  const fv=cardEl.querySelector('.fv'), plate=$('#plate'); if(!fv||!plate)return;
+  const a=fv.getBoundingClientRect(), pr=plate.getBoundingClientRect();
+  const clone=fv.cloneNode(true);
+  clone.style.cssText=`position:fixed;left:${a.left}px;top:${a.top}px;width:${a.width}px;height:${a.height}px;
+    z-index:80;pointer-events:none;transition:transform .45s cubic-bezier(.4,0,.2,1),opacity .45s`;
+  document.body.append(clone);
+  const tx=(pr.left+pr.width/2)-(a.left+a.width/2), ty=(pr.top+pr.height*0.42)-(a.top+a.height/2);
+  requestAnimationFrame(()=>{ clone.style.transform=`translate(${tx}px,${ty}px) scale(.55) rotate(20deg)`; clone.style.opacity='.15'; });
+  setTimeout(()=>clone.remove(),470);
+}
+function refreshMute(){ const b=$('#b-mute'); if(b) b.textContent=State.sound?'🔊':'🔇'; }
+function toggleSound(v){ State.sound=v!=null?v:!State.sound; refreshMute();
+  if(State.sound){ try{actx=actx||new (AudioContext||webkitAudioContext)(); actx.resume(); beep(660,.1,'sine',.08);}catch{} } }
+
+/* ═══ PLATE ACTIONS ═══ */
+function addFood(id){
+  const def=FOOD[id]; if(!def)return;
+  if((def.tags||[]).includes('reveal')&&def.freeSugarG>0&&!State.revealed[id]){ sugarReveal(def,()=>reallyAdd(id)); return; }
   reallyAdd(id);
 }
-function reallyAdd(id){
-  const def=FOOD[id];
-  Store.state.plate.push({ id, uid:Math.random().toString(36).slice(2) });
-  const m=buildFood(def); platedGroup.add(m); layoutPlated();
-  Audio.blip(def.group);
-  liveSay(`${def.name} added.`);
-  recompute(); UI.renderPlated();
+function reallyAdd(id){ const def=FOOD[id]; State.plate.push({id,uid:Math.random().toString(36).slice(2)});
+  beep({veg:262,fruit:330,grain:392,protein:440,dairy:523,sometimes:196}[def.group]||330,.12,'triangle');
+  vibrate(12); document.querySelectorAll('.food.hint').forEach(f=>f.classList.remove('hint'));
+  if(State.aud==='kid'&&State.tapSpeak) speak(def.name);
+  live(def.name+' added'); renderPlate(); }
+function removeFood(uid){ const i=State.plate.findIndex(p=>p.uid===uid); if(i<0)return;
+  State.plate.splice(i,1); renderPlate(); }
+function clearPlate(){ State.plate=[]; renderPlate(); }
+function ctx(){ return {tier:State.aud,goal:State.level&&State.level.goal}; }
+
+/* ═══ RAINBOW ═══ */
+const RB=[['red','#E24A73'],['orange','#E88A2B'],['yellow','#E7C64A'],['green','#37B26B'],['blue','#3D8FE0'],['purple','#7C6BE0'],['white','#D8E0EA']];
+function rainbowSVG(){
+  // Tight 7-colour crown that hugs the plate top so every lit band is visible.
+  let p=''; RB.forEach((c,i)=>{ const r=47.5-i*0.95; p+=`<path data-c="${c[0]}" d="M ${50-r} 55 A ${r} ${r} 0 0 1 ${50+r} 55" stroke="${c[1]}"/>`; });
+  return `<svg id="rainbow" viewBox="0 0 100 56">${p}</svg>`;
 }
-function removeFromPlate(uid){
-  const idx=Store.state.plate.findIndex(p=>p.uid===uid); if(idx<0) return;
-  Store.state.plate.splice(idx,1);
-  const m=platedGroup.children[idx]; if(m) platedGroup.remove(m);
-  layoutPlated(); recompute(); UI.renderPlated();
+function updateRainbow(colourSet){
+  document.querySelectorAll('#rainbow path').forEach(p=>{
+    p.classList.toggle('on', colourSet.has(p.dataset.c));
+  });
 }
-function clearPlate(){
-  Store.state.plate.length=0;
-  [...platedGroup.children].forEach(c=>platedGroup.remove(c));
-  Aurora.reset(); recompute(); UI.renderPlated();
+const SPROUT=['😴','🙂','😊','😄','🤩'];
+
+/* ═══ RENDER ═══ */
+const Screen=$('#screen'), Actions=$('#actions'), Shelf=$('#shelf'), Brief=$('#brief');
+function show(s){ State.screen=s; document.body.classList.toggle('kid',State.aud==='kid');
+  Screen.innerHTML=''; Actions.innerHTML=''; Shelf.innerHTML='';
+  $('#top').hidden=(s==='title'); $('#bottom').hidden=!(s==='play');
+  Brief.hidden=true; $('#b-speak').hidden=true;
+  if(s==='title')return renderTitle();
+  if(s==='hub')return renderHub();
+  if(s==='play')return renderPlay();
+  if(s==='week')return renderWeek();
+  if(s==='garden')return renderGarden();
 }
-function liveSay(t){ $('#a11y-live').textContent=t; }
-
-/* ══ 14 MINIGAMES / INTERACTIONS ═══════════════════════════════════════ */
-const SugarReveal = (() => {
-  function show(def, done){
-    const cubes=Math.round(def.freeSugarG/4);
-    let guessHtml = Store.state.aud!=='kid'
-      ? `<div class="mb-3"><label class="text-sm" style="color:var(--chalk-dim)">Guess the teaspoons first:</label>
-         <input id="sugar-guess" type="range" min="0" max="12" value="4" class="w-full"></div>
-         <button id="reveal-go" class="btn w-full mb-3">Reveal</button>` : `<button id="reveal-go" class="btn w-full mb-3">Show the sugar</button>`;
-    openModal(`<div class="text-center">
-      <div class="font-display text-xl mb-1">${def.name}</div>
-      <div class="text-sm mb-3" style="color:var(--chalk-dim)">Tap to see the free sugars.</div>
-      ${guessHtml}
-      <div id="cube-stack" class="flex flex-wrap gap-1 justify-center min-h-[30px] mb-3"></div>
-      <div id="reveal-msg" class="text-sm mb-4" style="color:var(--chalk-dim)"></div>
-      <div class="flex gap-2"><button class="btn btn-ghost flex-1" data-close>Not now</button>
-      <button id="reveal-add" class="btn flex-1" disabled>Add anyway</button></div></div>`);
-    $('#reveal-go').addEventListener('click',()=>{
-      const guess=$('#sugar-guess')?+$('#sugar-guess').value:null;
-      const stack=$('#cube-stack');
-      for(let i=0;i<cubes;i++){ setTimeout(()=>{ const c=el('div','cube'); stack.appendChild(c); Audio.cube(i); },i*70); }
-      setTimeout(()=>{
-        let msg=`${cubes} teaspoons of free sugar.`;
-        if(guess!=null){ const diff=Math.abs(guess-cubes);
-          msg += diff<=1?' Great guess — you have a feel for this.':diff<=2?' Close guess.':` You guessed ${guess}.`; }
-        $('#reveal-msg').textContent=msg;
-        $('#reveal-add').disabled=false;
-      }, cubes*70+150);
-    });
-    $('#reveal-add').addEventListener('click',()=>{
-      Store.state._revealed=Store.state._revealed||{}; Store.state._revealed[def.id]=true;
-      closeModal(); done&&done();
-    });
-  }
-  return { show };
-})();
-
-const Myth = (() => {
-  let i=0;
-  function open(){ i=0; render(); }
-  function render(){
-    const [claim,ans,expl]=MYTH_CARDS[i];
-    openModal(`<div class="text-center">
-      <div class="text-xs mb-2" style="color:var(--chalk-dim)">Myth Buster ${i+1}/${MYTH_CARDS.length}</div>
-      <div class="font-display text-lg mb-4">${claim}</div>
-      <div id="myth-body">
-        <div class="flex gap-2 mb-3"><button id="m-true" class="btn btn-ghost flex-1">True</button>
-        <button id="m-false" class="btn btn-ghost flex-1">Not quite</button></div>
-      </div>
-      <button class="btn btn-ghost" data-close>Close deck</button></div>`);
-    const reveal=guess=>{
-      $('#myth-body').innerHTML=`<div class="card ${guess===ans?'win':'next'} mb-3 text-left">
-        <div class="font-semibold mb-1">${guess===ans?'You got it.':'Have another look.'}</div>
-        <div class="text-sm">${expl}</div></div>
-        <button id="m-next" class="btn w-full">${i<MYTH_CARDS.length-1?'Next card':'Done'}</button>`;
-      Audio.soft();
-      $('#m-next').addEventListener('click',()=>{ if(i<MYTH_CARDS.length-1){ i++; render(); } else closeModal(); });
-    };
-    $('#m-true').addEventListener('click',()=>reveal(true));
-    $('#m-false').addEventListener('click',()=>reveal(false));
-  }
-  return { open };
-})();
-
-/* ══ 15 UI ═════════════════════════════════════════════════════════════ */
-const UI = (() => {
-  const stage=$('#stage-ui'), primary=$('#primary-action'), rail=$('#food-rail');
-  const brief=$('#brief-chip'), scoreChip=$('#score-chip');
-
-  function render(screen){
-    Store.set({ screen });
-    stage.innerHTML=''; primary.innerHTML=''; rail.innerHTML=''; rail.hidden=true;
-    brief.hidden=true; scoreChip.hidden=true;
-    document.body.classList.toggle('kid', Store.state.aud==='kid');
-    plateGroup.visible=false; marketRing.visible=false;
-    if(screen==='title') return renderTitle();
-    if(screen==='hub')   return renderHub();
-    if(screen==='play')  return renderPlay();
-    if(screen==='week')  return renderWeek();
-    if(screen==='debrief') return; // built by showDebrief
-    if(screen==='garden') return Garden.render(stage,primary);
-  }
-
-  function renderTitle(){
-    const w=el('div','fade-in absolute inset-0 flex flex-col items-center justify-center gap-6 px-6');
-    w.style.pointerEvents='auto';
-    w.append(el('div','text-center',`<div class="font-display" style="font-size:2.4rem;line-height:1.05">Plate Planet</div>
-      <div style="color:var(--chalk-dim)" class="mt-2">Build a balanced plate. Who's playing?</div>`));
-    const doors=el('div','grid grid-cols-1 sm:grid-cols-3 gap-3 w-full max-w-2xl');
-    [['🌱','Sprout Kitchen','Ages 5–9','kid'],['⚡','Fuel Lab','Ages 10–17','teen'],['🍽️','Family Table','Parents & carers','adult']]
-      .forEach(([g,n,s,a])=>{ const d=el('button','door');
-        d.innerHTML=`<span class="glyph">${g}</span><span class="name">${n}</span><span class="sub">${s}</span>`;
-        d.addEventListener('click',()=>{ Store.set({aud:a}); render('hub'); }); doors.append(d); });
-    w.append(doors);
-    const seeds=el('div','mt-2',`<span style="color:var(--chalk-dim)">🌰 ${Save.data.seeds} seeds grown</span>`);
-    w.append(seeds); stage.append(w);
-  }
-
-  function renderHub(){
-    const w=el('div','fade-in absolute inset-0 overflow-auto px-6 py-6');
-    w.style.pointerEvents='auto';
-    const list=el('div','max-w-md mx-auto flex flex-col gap-3');
-    list.append(el('div','font-display text-2xl',`${GROUP_GLYPH[Store.state.aud]||''} ${({kid:'Sprout Kitchen',teen:'Fuel Lab',adult:'Family Table'})[Store.state.aud]}`));
-    LEVELS[Store.state.aud].forEach(lvl=>{
-      const done=Save.data.done.includes(lvl.id);
-      const b=el('button','lvl');
-      b.innerHTML=`<span><span style="font-size:1.3rem">${lvl.icon}</span> <b>${lvl.name}</b><br>
-        <span class="text-sm" style="color:var(--chalk-dim)">${lvl.brief}</span></span>
-        <span class="done">${done?'✓':''}</span>`;
-      b.addEventListener('click',()=>startLevel(lvl)); list.append(b);
-    });
-    w.append(list);
-    const back=el('button','btn btn-ghost','← Modes'); back.addEventListener('click',()=>render('title'));
-    const grd=el('button','btn','🌱 Garden'); grd.addEventListener('click',()=>render('garden'));
-    primary.append(back,grd); stage.append(w);
-  }
-
-  function renderPlay(){
-    plateGroup.visible=true; marketRing.visible=true;
-    const lvl=Store.state.level;
-    brief.hidden=false; brief.innerHTML=`${lvl.icon} ${lvl.brief}`;
-    if(Store.state.aud!=='kid'){ scoreChip.hidden=false; }
-    rail.hidden=false; buildRail(lvl.available);
-    // plated chips overlay
-    const overlay=el('div','plated'); overlay.id='plated-overlay'; stage.append(overlay);
-    renderPlated();
-    const serveLabel={kid:'Feed Sprout',teen:'Serve it',adult:'Serve'}[Store.state.aud];
-    const clear=el('button','btn btn-ghost','Clear'); clear.addEventListener('click',clearPlate);
-    const serve=el('button','btn',serveLabel); serve.addEventListener('click',()=>serveLevel());
-    primary.append(clear,serve);
-    recompute();
-  }
-
-  function buildRail(ids){
-    rail.innerHTML='';
-    const mirror=$('#a11y-foods'); mirror.innerHTML='';
-    ids.forEach(id=>{
-      const def=FOOD[id]; if(!def) return;
-      const b=el('button','food-btn'); b.setAttribute('data-focus','');
-      b.innerHTML=`<span class="g" style="background:${GROUP_TINT[def.group]||'#333'}22;border:1px solid ${GROUP_TINT[def.group]||'#333'}">${GROUP_GLYPH[def.group]||'•'}</span>
-        <span class="nm">${def.name}</span>`;
-      b.setAttribute('aria-label',`${def.name}, ${def.group}. Add to plate.`);
-      b.addEventListener('click',()=>addToPlate(id));
-      rail.append(b);
-      const li=el('li'); const ab=el('button',null,`${def.name}, ${def.group}. Add to plate.`);
-      ab.addEventListener('click',()=>addToPlate(id)); li.append(ab); mirror.append(li);
-    });
-  }
-
-  function renderPlated(){
-    const o=$('#plated-overlay'); if(!o) return; o.innerHTML='';
-    Store.state.plate.forEach(p=>{
-      const def=FOOD[p.id]; const c=el('button','p-chip');
-      c.innerHTML=`<span>${GROUP_GLYPH[def.group]||'•'} ${def.name}</span><span class="x">✕</span>`;
-      c.setAttribute('aria-label',`${def.name} on plate. Remove.`);
-      c.addEventListener('click',()=>removeFromPlate(p.uid)); o.append(c);
-    });
-    if(!Store.state.plate.length){
-      o.append(el('div','text-sm',`<span style="color:var(--chalk-dim)">${({kid:"The plate's waiting. Pick something.",teen:'Empty plate. Where are you starting?',adult:'No meal yet. Add anything.'})[Store.state.aud]}</span>`));
-    }
-  }
-
-  function updateChannels(res){
-    if(Store.state.aud==='kid'){
-      const stars=Math.max(1,Math.round(res.total/20));
-      brief.innerHTML=`${Store.state.level.icon} ${'⭐'.repeat(stars)}${'☆'.repeat(5-stars)}`;
-    } else {
-      scoreChip.hidden=false;
-      scoreChip.textContent=`${res.total}/100 · ${res.teaspoons} tsp sugar`;
-    }
-  }
-
-  // Family Table week planner
-  function renderWeek(){
-    const w=el('div','fade-in absolute inset-0 overflow-auto px-4 py-4'); w.style.pointerEvents='auto';
-    const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-    const wk=Store.state.week;
-    const grid=el('div','max-w-md mx-auto flex flex-col gap-2');
-    grid.append(el('div','font-display text-xl mb-1','Plan the week'));
-    days.forEach(d=>{
-      const row=el('div','flex items-center gap-2');
-      const sel=el('select','flex-1 panel p-3'); sel.style.color='var(--chalk)';
-      sel.innerHTML=`<option value="">${d} — pick a dinner</option>`+
-        MEALS.map(m=>`<option value="${m.id}" ${wk[d]===m.id?'selected':''}>${m.name}</option>`).join('');
-      sel.addEventListener('change',()=>{ wk[d]=sel.value; updateDials(); });
-      row.append(sel); grid.append(row);
-    });
-    const dials=el('div','panel p-4 mt-2'); dials.id='dials';
-    grid.append(dials);
-    const exportBtn=el('button','btn w-full mt-2','📋 Export shopping list');
-    exportBtn.addEventListener('click',exportList); grid.append(exportBtn);
-    w.append(grid);
-    const back=el('button','btn btn-ghost','← Hub'); back.addEventListener('click',()=>render('hub'));
-    primary.append(back);
-    stage.append(w); updateDials();
-  }
-  function weekStats(){
-    const wk=Store.state.week; const chosen=Object.values(wk).filter(Boolean).map(id=>MEALS.find(m=>m.id===id));
-    if(!chosen.length) return null;
-    const items=chosen.flatMap(m=>m.items.map(id=>({id})));
-    const res=scorePlate(items,{tier:'adult'});
-    const cost=chosen.reduce((s,m)=>s+m.cost,0)/chosen.length;
-    const time=chosen.reduce((s,m)=>s+m.prepMin,0)/chosen.length;
-    const acc=chosen.reduce((s,m)=>s+m.acceptance,0)/chosen.length;
-    return { balance:res.total, cost, time, acc, count:chosen.length, tsp:res.teaspoons };
-  }
-  function updateDials(){
-    const d=$('#dials'); if(!d) return; const s=weekStats();
-    if(!s){ d.innerHTML='<div class="text-sm" style="color:var(--chalk-dim)">Pick some dinners to see the week balance.</div>'; return; }
-    const bar=(label,val,max,inv,col)=>{ const pct=clamp(inv?(1-val/max):(val/max),0,1)*100;
-      return `<div class="mb-2"><div class="flex justify-between text-sm mb-1"><span>${label}</span></div>
-        <div class="meter"><i style="width:${pct}%;background:${col}"></i></div></div>`; };
-    d.innerHTML=`
-      ${bar('Balance', s.balance, 100, false, 'var(--veg)')}
-      ${bar('Budget (lower = cheaper)', s.cost, 5, true, 'var(--grain)')}
-      ${bar('Time (lower = quicker)', s.time, 40, true, 'var(--dairy)')}
-      ${bar('Acceptance', s.acc, 5, false, 'var(--lamp)')}
-      <div class="text-sm mt-1" style="color:var(--chalk-dim)">${s.count}/7 dinners planned · about ${Math.round(s.tsp)} tsp sugar across them.</div>`;
-    if(s.count===7){ Save.markDone('C1','C1'); Save.addSeeds(3); Save.plant('herb'); }
-  }
-  function exportList(){
-    const wk=Store.state.week; const chosen=Object.values(wk).filter(Boolean).map(id=>MEALS.find(m=>m.id===id));
-    if(!chosen.length){ openModal('<div class="text-center"><p class="mb-4">Plan some dinners first.</p><button class="btn" data-close>OK</button></div>'); return; }
-    const cats={veg:[],fruit:[],grain:[],protein:[],dairy:[],sometimes:[]};
-    const seen=new Set();
-    chosen.flatMap(m=>m.items).forEach(id=>{ if(seen.has(id))return; seen.add(id);
-      const f=FOOD[id]; (cats[f.group]||cats.sometimes).push(f.name); });
-    let txt='PLATE PLANET — shopping list\n\n';
-    Object.entries(cats).forEach(([g,arr])=>{ if(arr.length) txt+=g.toUpperCase()+'\n'+arr.map(n=>'  - '+n).join('\n')+'\n\n'; });
-    openModal(`<div><div class="font-display text-lg mb-2">Shopping list</div>
-      <textarea readonly class="w-full panel p-2 text-sm" style="height:200px;color:var(--chalk);background:var(--ink)">${txt}</textarea>
-      <div class="flex gap-2 mt-3"><button id="copy-list" class="btn flex-1">Copy</button>
-      <button class="btn btn-ghost flex-1" data-close>Close</button></div></div>`);
-    $('#copy-list').addEventListener('click',()=>{ navigator.clipboard?.writeText(txt); $('#copy-list').textContent='Copied ✓'; });
-  }
-
-  return { render, updateChannels, renderPlated, buildRail, renderWeek };
-})();
-
-function startLevel(lvl){
-  if(lvl.week){ Store.set({level:lvl, screen:'week'}); UI.render('week'); return; }
-  Store.set({ level:lvl, plate:[], _revealed:{} });
-  clearPlate(); buildMarket(lvl.available);
-  UI.render('play');
+function renderTitle(){
+  const c=el('div','center');
+  c.append(el('div','display',`<div style="font-size:2.7rem;text-align:center">🪐 <span class="gold-text">Plate Planet</span></div>
+    <div style="color:var(--chalk-dim);font-weight:400;text-align:center;margin-top:6px">Build a happy, balanced plate.</div>`));
+  const doors=el('div','doors');
+  [['🌱','Sprout Kitchen','Ages 5–9','kid'],['⚡','Fuel Lab','Ages 10–17','teen'],['🍽️','Family Table','Grown-ups','adult']]
+   .forEach(([g,n,s,a])=>{ const d=el('button','door',`<div class="g">${g}</div><div class="n">${n}</div><div class="s">${s}</div>`);
+     d.onclick=()=>{State.aud=a; enableSoundOnce(); show('hub');}; doors.append(d); });
+  c.append(doors);
+  c.append(el('div',null,`<span style="color:var(--chalk-dim)">🌰 ${Save.seeds} seeds grown</span>`));
+  Screen.append(c);
 }
-function serveLevel(){
-  const lvl=Store.state.level; const items=Store.state.plate;
-  if(!items.length){ liveSay('Add something to the plate first.'); return; }
-  const res=scorePlate(items,currentCtx());
-  const won=checkWin(lvl,res,items);
-  Audio.arpeggio();
-  if(won){ Save.markDone(lvl.id, lvl.teach); Save.addSeeds(2); Save.plant(lvl.id.toLowerCase()); }
-  showDebrief(lvl,res,items,won);
+function renderHub(){
+  const c=el('div','center'); c.style.justifyContent='flex-start'; c.style.gap='12px';
+  c.append(el('div','display',`${({kid:'🌱 Sprout Kitchen',teen:'⚡ Fuel Lab',adult:'🍽️ Family Table'})[State.aud]}`));
+  const list=el('div',null); list.style.cssText='display:flex;flex-direction:column;gap:12px;width:100%;max-width:520px';
+  LEVELS[State.aud].forEach(l=>{ const done=Save.done.includes(l.id);
+    const b=el('button','lvl',`<span class="ic">${l.ic}</span><span class="t"><b>${l.name}</b><br><span>${l.brief}</span></span>${done?'<span style="color:var(--veg);font-size:1.3rem">✓</span>':''}`);
+    b.onclick=()=>startLevel(l); list.append(b); });
+  c.append(list);
+  const row=el('div',null,''); row.style.cssText='display:flex;gap:10px;margin-top:6px';
+  const back=el('button','btn btn-ghost','← Modes'); back.onclick=()=>show('title');
+  const g=el('button','btn','🌱 Garden'); g.onclick=()=>show('garden');
+  row.append(back,g); c.append(row);
+  Screen.append(c);
 }
-function checkWin(lvl,res,items){
-  const w=lvl.win; if(!w) return true;
-  if(w.minScore && res.total<w.minScore) return false;
-  if(w.minColours && res.channels.colours<w.minColours) return false;
-  if(w.groups && !w.groups.every(g=>res.present.includes(g))) return false;
-  if(w.needTag && !items.some(i=>(FOOD[i.id].tags||[]).includes(w.needTag))) return false;
-  if(w.maxTsp!=null && res.teaspoons>w.maxTsp) return false;
+function startLevel(l){ State.level=l; State.plate=[]; State.revealed={};
+  if(l.week){ show('week'); return; }
+  show('play');
+}
+function renderPlay(){
+  const l=State.level;
+  Brief.hidden=false; Brief.innerHTML=`<span class="big">${l.ic}</span><span>${l.brief}</span>`;
+  if(State.aud==='kid'){ $('#b-speak').hidden=false; $('#b-speak').onclick=()=>speak(l.speak||l.brief); speak(l.speak||l.brief); }
+  // plate area
+  const wrap=el('div','plate-wrap');
+  wrap.innerHTML=rainbowSVG();
+  const plate=el('div','plate'); plate.id='plate';
+  wrap.append(plate);
+  wrap.insertAdjacentHTML('beforeend','<div id="goal" hidden></div>');
+  if(State.aud==='kid'){ const sprout=el('div',null,'🌱'); sprout.id='sprout'; wrap.append(sprout); }
+  else { wrap.insertAdjacentHTML('beforeend',
+    `<svg class="ring" id="ring" viewBox="0 0 36 36"><circle cx="18" cy="18" r="15.5" fill="#0d1626" stroke="#28374F" stroke-width="3"/>
+     <circle id="ring-arc" cx="18" cy="18" r="15.5" fill="none" stroke="#37B26B" stroke-width="3" stroke-linecap="round"
+       stroke-dasharray="97.4" stroke-dashoffset="97.4" transform="rotate(-90 18 18)" style="transition:stroke-dashoffset .4s,stroke .4s"/>
+     <text id="ring-t" x="18" y="21" text-anchor="middle" font-size="10">0</text></svg>`); }
+  Screen.append(wrap);
+  // shelf
+  l.food.forEach((id,idx)=>{ const def=FOOD[id]; if(!def)return;
+    const b=el('button','food'); b.setAttribute('aria-label',`${def.name}, ${def.group}. Add to plate.`);
+    if(State.aud==='kid'&&idx===0) b.classList.add('hint');
+    const fv=foodVisual(def); b.append(fv);
+    b.append(el('div','nm',def.name));
+    const g=el('div','grp'); g.style.background=GTINT[def.group]||'#555'; b.append(g);
+    b.onclick=()=>{ flyFood(b); addFood(id); };
+    Shelf.append(b);
+  });
+  // actions
+  const clear=el('button','btn btn-ghost','Clear'); clear.onclick=clearPlate;
+  const serve=el('button','btn',{kid:'Feed Sprout 🌱',teen:'Serve it',adult:'Serve'}[State.aud]); serve.onclick=serveLevel;
+  Actions.append(clear,serve);
+  renderPlate();
+}
+function renderPlate(){
+  const plate=$('#plate'); if(!plate)return;
+  plate.innerHTML=''; plate.classList.toggle('empty',State.plate.length===0);
+  plate.dataset.hint={kid:'Tap food to add it! 🍎',teen:'Tap foods to build your plate.',adult:'Tap foods to add.'}[State.aud];
+  // auto-scale food tokens so any count fits inside the circle
+  const n=State.plate.length;
+  if(n){ const D=plate.clientWidth||320, gap=8, inner=D*0.64; // fit within the circle's inscribed square
+    const cols=Math.max(1,Math.ceil(Math.sqrt(n))), rows=Math.max(1,Math.ceil(n/cols));
+    let tok=Math.floor(Math.min((inner-gap*(cols-1))/cols,(inner-gap*(rows-1))/rows));
+    tok=clamp(tok,30,State.aud==='kid'?92:80);
+    plate.style.setProperty('--tok',tok+'px');
+  }
+  State.plate.forEach(p=>{ const def=FOOD[p.id];
+    const d=el('div','placed'); d.append(foodVisual(def));
+    const rm=el('button','rm','✕'); rm.setAttribute('aria-label','Remove '+def.name); rm.onclick=e=>{e.stopPropagation();removeFood(p.uid);};
+    d.onclick=()=>{ document.querySelectorAll('.placed.show-rm').forEach(x=>x!==d&&x.classList.remove('show-rm')); d.classList.toggle('show-rm'); };
+    d.append(rm); plate.append(d);
+  });
+  const r=score(State.plate,ctx());
+  updateRainbow(r.colourSet);
+  // live goal pill + ready glow
+  const lvl=State.level, won=State.plate.length>0&&checkWin(lvl,r,State.plate);
+  plate.classList.toggle('ready',won);
+  const goal=$('#goal');
+  if(goal){ const w=lvl.win||{}; let txt='';
+    if(won) txt='Ready to serve! ✓';
+    else if(w.colours) txt=`🌈 ${Math.min(r.colours,w.colours)}/${w.colours} colours`;
+    else if(w.groups) txt=`🍽️ ${w.groups.filter(g=>r.present.includes(g)).length}/${w.groups.length} food groups`;
+    else if(w.tag) txt='Pick the everyday drink 💧';
+    else if(w.score) txt=`⚡ ${r.total}/${w.score}`;
+    goal.hidden=!txt; goal.textContent=txt; goal.classList.toggle('met',won);
+  }
+  const sp=$('#sprout'); if(sp){ sp.textContent=SPROUT[Math.min(4,Math.floor(r.total/22))];
+    sp.style.fontSize=(2.6+r.total/120)+'rem'; }
+  const arc=$('#ring-arc'); if(arc){ const C=97.4, col=r.total>=70?'var(--veg)':r.total>=45?'var(--lamp)':'var(--fruit)';
+    arc.style.strokeDashoffset=C*(1-r.total/100); arc.style.stroke=col; $('#ring-t').textContent=r.total; }
+  // teen/parent live score in brief
+  if(State.aud!=='kid'){ Brief.innerHTML=`<span class="big">${State.level.ic}</span>
+    <span>${State.level.brief}<br><b style="font-family:monospace">${r.total}/100 · ${r.teaspoons} tsp sugar</b></span>`; }
+}
+function checkWin(l,r,items){ const w=l.win; if(!w)return true;
+  if(w.score&&r.total<w.score)return false;
+  if(w.colours&&r.colours<w.colours)return false;
+  if(w.groups&&!w.groups.every(g=>r.present.includes(g)))return false;
+  if(w.tag&&!items.some(i=>(FOOD[i.id].tags||[]).includes(w.tag)))return false;
+  if(w.maxTsp!=null&&r.teaspoons>w.maxTsp)return false;
   return true;
 }
-function showDebrief(lvl,res,items,won){
-  Store.set({ screen:'debrief' });
-  const stage=$('#stage-ui'), primary=$('#primary-action');
-  stage.innerHTML=''; primary.innerHTML=''; $('#brief-chip').hidden=true; $('#score-chip').hidden=true;
-  $('#food-rail').hidden=true;
-  const cards=coachingCards(res,lvl,items);
-  const w=el('div','fade-in absolute inset-0 overflow-auto px-6 py-6'); w.style.pointerEvents='auto';
-  const box=el('div','max-w-md mx-auto flex flex-col gap-3');
-  const head = Store.state.aud==='kid'
-    ? `${'⭐'.repeat(Math.max(1,Math.round(res.total/20)))}`
-    : `${res.total}/100 · ${res.teaspoons} tsp sugar`;
-  box.append(el('div','text-center',`<div class="font-display text-2xl">${won?'Served!':'Good start'}</div>
-    <div class="mt-1" style="color:var(--chalk-dim)">${head}</div>
-    <div class="mt-1" style="color:var(--veg)">🌰 +${won?2:1} seeds</div>`));
-  cards.forEach(c=>box.append(el('div',`card ${c.t}`,`<div class="font-semibold mb-1">${c.h}</div><div class="text-sm">${c.b}</div>`)));
-  if(lvl.card) box.append(el('div','card fact',`<div class="text-sm">${lvl.card}</div>`));
-  w.append(box);
-  const retry=el('button','btn btn-ghost',{kid:'Try again',teen:'Rebuild it',adult:'Adjust'}[Store.state.aud]);
-  retry.addEventListener('click',()=>startLevel(lvl));
-  const hub=el('button','btn','Hub'); hub.addEventListener('click',()=>UI.render('hub'));
-  primary.append(retry,hub); stage.append(w);
-  if(!won) Save.addSeeds(1);
+function serveLevel(){
+  const l=State.level, items=State.plate;
+  if(!items.length){ live('Add some food first'); speak('Add some food first'); return; }
+  const r=score(items,ctx()), won=checkWin(l,r,items);
+  if(won){ if(!Save.done.includes(l.id))Save.done.push(l.id); Save.seeds+=2;
+    if(!Save.plants.includes(l.id))Save.plants.push(l.id); flush(); happy(); confetti(); vibrate([20,40,30]); }
+  else { Save.seeds+=1; flush(); beep(392,.18,'sine',.09); vibrate(30); }
+  const cards=coaching(r,l,items);
+  $('#bottom').hidden=true; Brief.hidden=true; $('#b-speak').hidden=true;
+  Screen.innerHTML='';
+  const c=el('div','center'); c.style.justifyContent='flex-start';
+  const head=State.aud==='kid'?'⭐'.repeat(Math.max(1,Math.round(r.total/22))):`${r.total}/100 · ${r.teaspoons} tsp sugar`;
+  c.append(el('div','display',`<div style="font-size:2rem;text-align:center">${won?'🎉 '+({kid:'Yummy!',teen:'Served!',adult:'Planned!'})[State.aud]:'Good start!'}</div>
+    <div style="text-align:center;font-size:1.6rem;margin-top:4px">${head}</div>
+    <div style="text-align:center;color:var(--veg);margin-top:2px">🌰 +${won?2:1} seeds</div>`));
+  const box=el('div',null); box.style.cssText='display:flex;flex-direction:column;gap:12px;width:100%;max-width:520px';
+  cards.forEach(cd=>box.append(el('div','card '+cd.t,`<b>${cd.h}</b><br><span style="color:var(--chalk-dim)">${cd.b}</span>`)));
+  c.append(box);
+  if(State.aud==='kid') speak(won?'Yummy! '+cards[0].b:'Good start. '+cards[1].b);
+  const row=el('div',null); row.style.cssText='display:flex;gap:10px;margin-top:8px';
+  const again=el('button','btn btn-ghost',{kid:'Again',teen:'Rebuild',adult:'Adjust'}[State.aud]); again.onclick=()=>startLevel(l);
+  const hub=el('button','btn','Home'); hub.onclick=()=>show('hub');
+  row.append(again,hub); c.append(row);
+  Screen.append(c);
 }
 
-/* ══ MODALS ════════════════════════════════════════════════════════════ */
-function openModal(html){
-  const m=$('#modal-layer'); m.innerHTML=`<div class="panel p-6 max-w-sm w-full fade-in" style="max-height:88vh;overflow:auto">${html}</div>`;
-  m.classList.add('open');
-  m.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',closeModal));
-  m.onclick=e=>{ if(e.target===m) closeModal(); };
+/* ═══ FAMILY WEEK ═══ */
+function weekStats(){ const chosen=Object.values(State.week).filter(Boolean).map(id=>MEALS.find(m=>m.id===id));
+  if(!chosen.length)return null;
+  const items=chosen.flatMap(m=>m.items.map(id=>({id}))), r=score(items,{tier:'adult'});
+  return {balance:r.total,cost:chosen.reduce((s,m)=>s+m.cost,0)/chosen.length,
+    time:chosen.reduce((s,m)=>s+m.prepMin,0)/chosen.length,acc:chosen.reduce((s,m)=>s+m.acceptance,0)/chosen.length,
+    n:chosen.length,tsp:r.teaspoons}; }
+function renderWeek(){
+  const c=el('div','center'); c.style.justifyContent='flex-start';
+  c.append(el('div','display','📅 Plan the week'));
+  const g=el('div',null); g.style.cssText='display:flex;flex-direction:column;gap:8px;width:100%;max-width:520px';
+  ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].forEach(d=>{
+    const sel=el('select','panel'); sel.style.cssText='padding:12px;width:100%;background:var(--ink-2);color:var(--chalk)';
+    sel.innerHTML=`<option value="">${d} — pick a dinner</option>`+MEALS.map(m=>`<option value="${m.id}" ${State.week[d]===m.id?'selected':''}>${m.name}</option>`).join('');
+    sel.onchange=()=>{State.week[d]=sel.value;drawDials();}; g.append(sel);
+  });
+  const dials=el('div','panel'); dials.id='dials'; dials.style.padding='16px'; g.append(dials);
+  const exp=el('button','btn','📋 Export shopping list'); exp.onclick=exportList; g.append(exp);
+  c.append(g);
+  const back=el('button','btn btn-ghost','← Home'); back.onclick=()=>show('hub'); c.append(back);
+  Screen.append(c); drawDials();
 }
-function closeModal(){ const m=$('#modal-layer'); m.classList.remove('open'); m.innerHTML=''; }
-function showFoodCard(id){ const def=FOOD[id]; if(!def) return;
-  openModal(`<div class="text-center"><div class="text-2xl mb-1">${GROUP_GLYPH[def.group]||''}</div>
-    <div class="font-display text-xl mb-1">${def.name}</div>
-    <div class="text-sm mb-3" style="color:var(--chalk-dim)">${def.group}${def.allergens?.length?' · allergens: '+def.allergens.join(', '):''}</div>
-    <p class="text-sm mb-4">${def.fact||''}</p>
-    <div class="flex gap-2"><button class="btn flex-1" id="card-add">Add to plate</button>
-    <button class="btn btn-ghost flex-1" data-close>Close</button></div></div>`);
-  $('#card-add')?.addEventListener('click',()=>{ closeModal(); addToPlate(id); });
+function drawDials(){ const d=$('#dials'); if(!d)return; const s=weekStats();
+  if(!s){ d.innerHTML='<span style="color:var(--chalk-dim)">Pick dinners to see the week balance.</span>'; return; }
+  const bar=(l,v,mx,inv,col)=>{ const pct=clamp(inv?1-v/mx:v/mx,0,1)*100;
+    return `<div style="margin-bottom:10px"><div style="font-size:.9rem;margin-bottom:4px">${l}</div>
+      <div class="meter"><i style="width:${pct}%;background:${col}"></i></div></div>`; };
+  d.innerHTML=bar('Balance',s.balance,100,false,'var(--veg)')+bar('Budget (lower = cheaper)',s.cost,5,true,'var(--grain)')
+    +bar('Time (lower = quicker)',s.time,40,true,'var(--dairy)')+bar('Acceptance',s.acc,5,false,'var(--joy)')
+    +`<div style="color:var(--chalk-dim);font-size:.86rem">${s.n}/7 planned · about ${Math.round(s.tsp)} tsp sugar.</div>`;
+  if(s.n===7){ if(!Save.done.includes('C1'))Save.done.push('C1'); if(!Save.plants.includes('C1'))Save.plants.push('C1'); Save.seeds+=3; flush(); }
 }
-
-/* ══ 16 GARDEN ═════════════════════════════════════════════════════════ */
-const Garden = (() => {
-  function render(stage,primary){
-    plateGroup.visible=false; marketRing.visible=false;
-    const w=el('div','fade-in absolute inset-0 overflow-auto px-6 py-6'); w.style.pointerEvents='auto';
-    const box=el('div','max-w-md mx-auto text-center');
-    box.append(el('div','font-display text-2xl mb-2','Your Garden'));
-    box.append(el('div','mb-4',`<span style="color:var(--chalk-dim)">🌰 ${Save.data.seeds} seeds · ${Save.data.plants.length} plants grown</span>`));
-    const g=el('div','grid grid-cols-4 gap-3 justify-items-center');
-    const glyphs=['🌱','🌿','🍅','🥕','🌸','🌻','🌵','🍇','🌾','🫐','🥬','🌼'];
-    Save.data.plants.forEach((p,i)=>g.append(el('div','text-3xl',glyphs[i%glyphs.length])));
-    for(let i=Save.data.plants.length;i<8;i++) g.append(el('div','text-3xl',`<span style="opacity:.2">🌰</span>`));
-    box.append(g);
-    box.append(el('p','text-sm mt-4',`<span style="color:var(--chalk-dim)">The garden only ever grows. Play every mode to open the greenhouse.</span>`));
-    if(Save.data.done.some(d=>d.startsWith('A'))&&Save.data.done.some(d=>d.startsWith('B'))&&Save.data.done.includes('C1'))
-      box.append(el('div','text-4xl mt-3','🏡 Greenhouse open!'));
-    w.append(box);
-    const back=el('button','btn btn-ghost','← Hub'); back.addEventListener('click',()=>UI.render('hub'));
-    primary.append(back); stage.append(w);
-  }
-  return { render };
-})();
-
-/* ══ 17 FALLBACK (Card Mode) ═══════════════════════════════════════════ */
-function startCardMode(){
-  $('#boot-msg').hidden=true; const f=$('#fallback'); f.hidden=false;
-  let plate=[];
-  const wrap=el('div','max-w-lg mx-auto');
-  function draw(){
-    const res=scorePlate(plate.map(id=>({id})),{tier:'teen'});
-    const chan=(l,v,c)=>`<div class="mb-1"><div class="flex justify-between text-sm"><span>${l}</span></div>
-      <div class="meter"><i style="width:${Math.round(v*100)}%;background:${c}"></i></div></div>`;
-    wrap.innerHTML=`
-      <div class="panel p-5 mb-4">
-        <div class="font-display text-2xl mb-1">Plate Planet — Card Mode</div>
-        <p class="text-sm mb-3" style="color:var(--chalk-dim)">Same food database and scoring, no 3D. Every lesson is here.</p>
-        ${chan('Balance',res.channels.balance,'var(--veg)')}
-        ${chan('Colour variety',res.channels.variety,'var(--fruit)')}
-        ${chan('Fibre',res.channels.fibre,'var(--grain)')}
-        ${chan('Water',res.channels.hydration,'var(--water)')}
-        <div class="text-right font-display text-xl mt-2">${res.total}/100 · ${res.teaspoons} tsp</div>
-      </div>
-      <div class="mb-3"><b>Your plate:</b> ${plate.length?plate.map((id,i)=>`<button class="p-chip" data-rm="${i}">${FOOD[id].name} ✕</button>`).join(' '):'<span style="color:var(--chalk-dim)">empty</span>'}</div>
-      <div class="flex flex-wrap gap-2">${FOOD_DB.map(f=>`<button class="food-btn" data-add="${f.id}" style="min-width:70px;min-height:70px">
-        <span class="g" style="background:${GROUP_TINT[f.group]||'#333'}22;border:1px solid ${GROUP_TINT[f.group]||'#333'}">${GROUP_GLYPH[f.group]||'•'}</span>
-        <span class="nm">${f.name}</span></button>`).join('')}</div>`;
-    wrap.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>{ plate.push(b.dataset.add); draw(); });
-    wrap.querySelectorAll('[data-rm]').forEach(b=>b.onclick=()=>{ plate.splice(+b.dataset.rm,1); draw(); });
-  }
-  f.innerHTML=''; f.append(wrap); draw();
-  Store.set({ screen:'cardmode' });
+function exportList(){ const chosen=Object.values(State.week).filter(Boolean).map(id=>MEALS.find(m=>m.id===id));
+  if(!chosen.length){ openModal('<div style="text-align:center"><p>Plan some dinners first.</p><button class="btn" data-close>OK</button></div>'); return; }
+  const cats={veg:[],fruit:[],grain:[],protein:[],dairy:[],sometimes:[]}, seen=new Set();
+  chosen.flatMap(m=>m.items).forEach(id=>{ if(seen.has(id))return; seen.add(id); const f=FOOD[id]; (cats[f.group]||cats.sometimes).push(f.name); });
+  let txt='PLATE PLANET — shopping list\n\n';
+  for(const g in cats) if(cats[g].length) txt+=g.toUpperCase()+'\n'+cats[g].map(n=>'  - '+n).join('\n')+'\n\n';
+  openModal(`<div><div class="display" style="font-size:1.2rem;margin-bottom:8px">Shopping list</div>
+    <textarea readonly style="width:100%;height:200px;background:var(--ink);color:var(--chalk);border-radius:12px;border:2px solid var(--stall);padding:10px">${txt}</textarea>
+    <div style="display:flex;gap:10px;margin-top:10px"><button id="cp" class="btn" style="flex:1">Copy</button>
+    <button class="btn btn-ghost" style="flex:1" data-close>Close</button></div></div>`);
+  $('#cp').onclick=()=>{navigator.clipboard&&navigator.clipboard.writeText(txt);$('#cp').textContent='Copied ✓';};
 }
 
-/* ══ 18 BOOT ═══════════════════════════════════════════════════════════ */
-let raf=null, frames=[], lastT=performance.now();
-function monitorFrame(now){ frames.push(now-lastT); lastT=now;
-  if(frames.length===90){ const avg=frames.reduce((a,b)=>a+b)/90;
-    if(avg>26 && Store.state.tier!=='low'){ /* downgrade hook */ } frames=[]; } }
-function loop(t){ raf=requestAnimationFrame(loop); monitorFrame(t);
-  updateMarketInertia(); Aurora.update(t); renderer.render(scene,camera); }
-document.addEventListener('visibilitychange',()=>{
-  if(document.hidden){ cancelAnimationFrame(raf); raf=null; Audio.suspend(); }
-  else if(!raf){ lastT=performance.now(); raf=requestAnimationFrame(loop); } });
+/* ═══ GARDEN ═══ */
+function renderGarden(){
+  const c=el('div','center');
+  c.append(el('div','display','🌱 Your Garden'));
+  c.append(el('div',null,`<span style="color:var(--chalk-dim)">🌰 ${Save.seeds} seeds · ${Save.plants.length} plants grown</span>`));
+  const grid=el('div',null); grid.style.cssText='display:grid;grid-template-columns:repeat(4,1fr);gap:16px;font-size:2.6rem';
+  const gl=['🌻','🌷','🍅','🥕','🌸','🌵','🍇','🥬'];
+  Save.plants.forEach((p,i)=>grid.append(el('div',null,gl[i%gl.length])));
+  for(let i=Save.plants.length;i<8;i++) grid.append(el('div',null,'<span style="opacity:.25">🌰</span>'));
+  c.append(grid);
+  if(Save.done.some(d=>d[0]==='A')&&Save.done.some(d=>d[0]==='B')&&Save.done.includes('C1'))
+    c.append(el('div',null,'<div style="font-size:2.4rem">🏡 Greenhouse open!</div>'));
+  const back=el('button','btn btn-ghost','← Home'); back.onclick=()=>show('hub'); c.append(back);
+  Screen.append(c);
+}
 
-// HUD wiring
-$('#btn-audio').addEventListener('click',()=>{ const muted=!Store.state.muted; Store.set({muted});
-  $('#btn-audio').textContent=muted?'🔇':'🔊'; if(!muted){ Audio.ensure(); Audio.resume(); } });
-$('#btn-myth').addEventListener('click',()=>Myth.open());
-$('#btn-about').addEventListener('click',()=>openModal(`<div><div class="font-display text-xl mb-3">About Plate Planet</div>
-  <p class="text-sm mb-2">Plate Planet teaches general nutrition through balanced plates. It is educational, not medical advice.</p>
-  <p class="text-sm mb-2"><b>If food or eating feels stressful, talking to a doctor or a dietitian helps.</b></p>
-  <p class="text-sm mb-2" style="color:var(--chalk-dim)">No accounts, no analytics, no data leaves your device. Food and nutrition values are placeholders pending dietitian review and sourced food-composition data.</p>
-  <p class="text-xs mb-4" style="color:var(--chalk-dim)">Three.js (MIT) · Tailwind (MIT) · fonts (OFL).</p>
-  <button class="btn" data-close>Close</button></div>`));
-$('#btn-settings').addEventListener('click',()=>{ openModal(`<div><div class="font-display text-xl mb-3">Settings</div>
-  <label class="flex items-center justify-between mb-3"><span>Tap to place (no dragging)</span>
-    <input id="set-tap" type="checkbox" ${Store.state.tapToPlace?'checked':''}></label>
-  <label class="flex items-center justify-between mb-3"><span>Bigger text</span>
-    <input id="set-txt" type="checkbox" ${getComputedStyle(document.documentElement).getPropertyValue('--txt-scale').trim()>'1'?'checked':''}></label>
-  <label class="flex items-center justify-between mb-4"><span>Sound</span>
-    <input id="set-snd" type="checkbox" ${!Store.state.muted?'checked':''}></label>
-  <button id="set-erase" class="btn btn-ghost w-full mb-2">Erase everything</button>
-  <button class="btn w-full" data-close>Done</button></div>`);
-  $('#set-tap').onchange=e=>Store.set({tapToPlace:e.target.checked});
-  $('#set-txt').onchange=e=>document.documentElement.style.setProperty('--txt-scale',e.target.checked?'1.2':'1');
-  $('#set-snd').onchange=e=>{ Store.set({muted:!e.target.checked}); $('#btn-audio').textContent=e.target.checked?'🔊':'🔇'; if(e.target.checked){Audio.ensure();Audio.resume();} };
-  $('#set-erase').onclick=()=>{ try{localStorage.removeItem(Persist.KEY);}catch{} location.reload(); };
-});
+/* ═══ MODALS ═══ */
+function openModal(html){ const m=$('#modal'); m.innerHTML=`<div class="panel" style="padding:22px;max-width:400px;width:100%;max-height:88vh;overflow:auto">${html}</div>`;
+  m.classList.add('open'); m.querySelectorAll('[data-close]').forEach(b=>b.onclick=closeModal);
+  m.onclick=e=>{if(e.target===m)closeModal();}; }
+function closeModal(){ const m=$('#modal'); m.classList.remove('open'); m.innerHTML=''; }
 
-// Keyboard: Esc closes modal
-document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
+/* ═══ MYTH DECK ═══ */
+let myth=0;
+function openMyth(){ myth=0; renderMyth(); }
+function renderMyth(){ const [claim,ans,expl]=MYTHS[myth];
+  openModal(`<div style="text-align:center">
+    <div style="color:var(--chalk-dim);font-size:.8rem;margin-bottom:8px">Myth ${myth+1}/${MYTHS.length}</div>
+    <div class="display" style="font-size:1.15rem;margin-bottom:16px">${claim}</div>
+    <div id="mb"><div style="display:flex;gap:10px"><button id="mt" class="btn btn-ghost" style="flex:1">True</button>
+    <button id="mf" class="btn btn-ghost" style="flex:1">Not quite</button></div></div>
+    <button class="btn btn-ghost" style="margin-top:14px" data-close>Close deck</button></div>`);
+  const rev=g=>{ $('#mb').innerHTML=`<div class="card ${g===ans?'win':'next'}" style="margin-bottom:12px">
+    <b>${g===ans?'You got it.':'Have another look.'}</b><br><span style="color:var(--chalk-dim)">${expl}</span></div>
+    <button id="mn" class="btn" style="width:100%">${myth<MYTHS.length-1?'Next':'Done'}</button>`;
+    beep(660,.15,'sine',.08); $('#mn').onclick=()=>{ if(myth<MYTHS.length-1){myth++;renderMyth();}else closeModal(); }; };
+  $('#mt').onclick=()=>rev(true); $('#mf').onclick=()=>rev(false);
+}
 
-(function boot(){
-  if(!probeWebGL()) return startCardMode();
-  Store.set({ tier:detectTier() });
-  resize(); Aurora.init(plateGroup);
-  $('#boot-msg').hidden=true; $('#ui').hidden=false;
-  UI.render('title');
-  raf=requestAnimationFrame(loop);
-})();
+/* ═══ TOP BAR ═══ */
+function enableSoundOnce(){ /* first gesture — allow audio + speech */ }
+$('#b-mute').onclick=()=>toggleSound();
+$('#b-myth').onclick=openMyth;
+$('#b-about').onclick=()=>openModal(`<div><div class="display" style="font-size:1.2rem;margin-bottom:10px">About Plate Planet</div>
+  <p>Plate Planet teaches balanced plates for kids, teens and grown-ups. It is educational, not medical advice.</p>
+  <p><b>If food or eating feels stressful, talking to a doctor or a dietitian helps.</b></p>
+  <p style="color:var(--chalk-dim);font-size:.86rem">No accounts, no ads, nothing leaves your device. Food photos: TheMealDB. Nutrition values are placeholders pending dietitian review.</p>
+  <button class="btn" style="width:100%;margin-top:8px" data-close>Close</button></div>`);
+$('#b-set').onclick=()=>{ openModal(`<div><div class="display" style="font-size:1.2rem;margin-bottom:12px">Settings</div>
+  <label style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">Sound &amp; spoken words
+    <input id="s-snd" type="checkbox" ${State.sound?'checked':''} style="width:22px;height:22px"></label>
+  <label style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">Bigger text
+    <input id="s-txt" type="checkbox" style="width:22px;height:22px"></label>
+  <button id="s-erase" class="btn btn-ghost" style="width:100%;margin-bottom:10px">Erase everything</button>
+  <button class="btn" style="width:100%" data-close>Done</button></div>`);
+  $('#s-snd').onchange=e=>toggleSound(e.target.checked);
+  $('#s-txt').onchange=e=>document.documentElement.style.setProperty('--txt',e.target.checked?'1.2':'1');
+  $('#s-erase').onclick=()=>{ try{localStorage.removeItem(KEY);}catch{} location.reload(); };
+};
+document.addEventListener('keydown',e=>{ if(e.key==='Escape')closeModal(); });
+// first tap anywhere enables audio context resume
+document.addEventListener('pointerdown',()=>{ if(actx&&actx.state==='suspended')actx.resume(); },{once:false});
+
+/* ═══ BOOT ═══ */
+makeStars(); refreshMute();
+show('title');
 </script>
 </body>
 </html>
