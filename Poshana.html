@@ -45,15 +45,22 @@
   .disp{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-weight:700;letter-spacing:.01em}
   .gold-text{background:linear-gradient(180deg,#FDECB8,#E9C877 55%,#D6A94C);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:#E9C877}
   button{font-family:inherit;cursor:pointer;color:inherit}
-  .btn{border:1px solid rgba(255,255,255,.32);border-radius:16px;background:linear-gradient(180deg,#FFE7BE,#F0C066);color:#241804;font-weight:700;
+  .btn{border:1px solid rgba(255,255,255,.35);border-radius:16px;background:linear-gradient(180deg,#FFE7BE,#F0C066);color:#241804;font-weight:700;
     padding:14px 22px;min-height:56px;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-size:1.05rem;
-    box-shadow:0 5px 0 #b98a4e,0 10px 22px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.7);transition:transform .08s,box-shadow .08s}
+    box-shadow:0 5px 0 #b98a4e,0 12px 24px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.75);transition:transform .1s,box-shadow .1s,filter .1s}
+  .btn:hover{filter:brightness(1.05);transform:translateY(-1px)}
   .btn:active{transform:translateY(4px);box-shadow:0 1px 0 #b98a4e,0 3px 8px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.7)}
-  .btn:disabled{opacity:.4;box-shadow:none}
-  .btn-ghost{background:var(--glass);backdrop-filter:blur(12px);color:var(--chalk);border:1px solid var(--gbrd);box-shadow:0 6px 18px rgba(0,0,0,.3)}
+  .btn:disabled{opacity:.4;box-shadow:none;transform:none;filter:none}
+  .btn-ghost{background:var(--glass);backdrop-filter:blur(12px);color:var(--chalk);border:1px solid var(--gbrd);
+    box-shadow:0 6px 18px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.12)}
+  .btn-ghost:hover{background:var(--glass2);border-color:var(--gold);filter:none}
   .btn:focus-visible,.icon-btn:focus-visible,.food:focus-visible,.meal:focus-visible,.tab:focus-visible{outline:4px solid var(--gold);outline-offset:3px}
-  .icon-btn{width:48px;height:48px;border-radius:13px;background:var(--glass);backdrop-filter:blur(10px);border:1px solid var(--gbrd);
-    display:grid;place-items:center;font-size:1.25rem}
+  .icon-btn{width:46px;height:46px;border-radius:13px;background:var(--glass);backdrop-filter:blur(10px);border:1px solid var(--gbrd);
+    display:grid;place-items:center;font-size:1.2rem;box-shadow:0 4px 12px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.1);
+    transition:transform .1s,border-color .12s,background .12s}
+  .icon-btn:hover{border-color:var(--gold);background:var(--glass2);transform:translateY(-2px)}
+  .icon-btn.home{border-color:var(--gold);color:var(--gold2)}
+  #top{align-items:center}
   .panel{background:var(--glass);backdrop-filter:blur(15px) saturate(1.2);border:1px solid var(--gbrd);border-radius:20px;
     box-shadow:0 12px 40px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.13)}
   .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
@@ -157,16 +164,48 @@
   #stars-bg i{position:absolute;width:2px;height:2px;border-radius:50%;background:#bfe6cf;animation:tw 4s ease-in-out infinite}
   @keyframes tw{0%,100%{opacity:.15}50%{opacity:.8}}
   #app>*{position:relative;z-index:1}
-  @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+  /* ── landing / home page ── */
+  #home-scroll{scroll-behavior:smooth}
+  .nav{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;padding:12px 16px;
+    background:rgba(8,15,12,.72);backdrop-filter:blur(14px);border-bottom:1px solid var(--gbrd)}
+  .brand{font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:1.25rem;flex:0 0 auto}
+  .nav-links{margin-left:auto;display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+  .nav-links>button{background:none;border:0;color:var(--dim);font-weight:600;font-size:.9rem;padding:8px 10px;border-radius:10px}
+  .nav-links>button:hover{color:var(--chalk);background:var(--glass)}
+  .nav-cta{background:linear-gradient(180deg,#FFFFFF,#F1F6EF)!important;color:#123!important;
+    border:1px solid rgba(255,255,255,.85)!important;padding:10px 18px!important;min-height:0!important;font-size:.92rem!important;
+    box-shadow:0 3px 10px rgba(0,0,0,.35),0 0 0 1px rgba(0,0,0,.05)!important;border-radius:12px!important}
+  .nav-cta:hover{filter:brightness(1)!important;background:#fff!important;transform:translateY(-1px)}
+  .hero{max-width:720px;margin:0 auto;padding:34px 20px 12px;text-align:center}
+  .hero-badge{display:inline-block;background:var(--glass2);border:1px solid var(--gbrd);border-radius:999px;padding:6px 14px;font-size:.82rem;font-weight:600;margin-bottom:14px}
+  .hero h1{font-size:clamp(2rem,7vw,3rem);line-height:1.06;margin:0 0 14px}
+  .lead{color:var(--dim);line-height:1.6;font-size:1.02rem;max-width:640px;margin:0 auto}
+  .hero-cta{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:22px 0 10px}
+  .hero-stat{color:var(--dim);font-size:.86rem;margin-top:6px}
+  .sec{max-width:720px;margin:0 auto;padding:26px 20px;border-top:1px solid var(--gbrd)}
+  .sec h2{font-size:1.5rem;margin:0 0 14px;text-align:center}
+  .cards3{display:grid;gap:12px;grid-template-columns:1fr}
+  @media(min-width:640px){.cards3{grid-template-columns:1fr 1fr 1fr}}
+  .fcard{background:var(--glass);border:1px solid var(--gbrd);border-radius:16px;padding:16px;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.28)}
+  .fcard .fic{font-size:2rem}.fcard h3{margin:8px 0 6px;font-size:1.05rem}.fcard p{margin:0;color:var(--dim);font-size:.9rem;line-height:1.5}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+  .chips .chip{background:var(--glass2);border:1px solid var(--gbrd);border-radius:999px;padding:8px 14px;font-weight:700;font-size:.9rem}
+  .credits{background:var(--glass);border:1px solid var(--gbrd);border-radius:18px;padding:18px;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+  .crow{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px dashed var(--line);font-size:.95rem}
+  .crow span{color:var(--dim)} .crow b{text-align:right}
+  .credits .fine{margin:12px 0 0;color:var(--dim);font-size:.82rem;line-height:1.5}
+  .foot{text-align:center;color:var(--dim);font-size:.82rem;padding:22px 20px calc(28px + env(safe-area-inset-bottom))}
+  @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}#home-scroll{scroll-behavior:auto}}
 </style>
 </head>
 <body>
 <div id="stars-bg"></div>
 <div id="app">
   <div id="top" hidden>
+    <button id="b-home" class="icon-btn home" aria-label="Back to home" title="Home">🏠</button>
     <div class="ttl" id="top-ttl"></div>
-    <button id="b-info" class="icon-btn" aria-label="Learn about NCDs">📖</button>
-    <button id="b-about" class="icon-btn" aria-label="About">ⓘ</button>
+    <button id="b-info" class="icon-btn" aria-label="Learn about NCDs" title="NCD guide">📖</button>
+    <button id="b-about" class="icon-btn" aria-label="About" title="About">ⓘ</button>
   </div>
   <div id="screen" class="screen"></div>
   <div id="bottom" hidden>
@@ -380,16 +419,58 @@ function show(s){ State.screen=s; Screen.innerHTML=''; Shelf.innerHTML=''; Actio
   if(s==='outcome')return renderOutcome();
 }
 
+function goStart(){ if(!Save.seenIntro){showIntro();} else show('menu'); }
+function scrollTo(id){ const t=document.getElementById(id); if(t)t.scrollIntoView({behavior:'smooth',block:'start'}); }
 function renderTitle(){
-  const c=el('div','scroll'); const w=el('div','wrap');
-  w.style.cssText='display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;min-height:80vh;text-align:center';
-  w.append(el('div','disp',`<div style="font-size:2.5rem">🍛 <span class="gold-text">Poshana</span></div>
-    <div style="color:var(--dim);font-weight:400;margin-top:6px">Sri Lankan Day Balance — build your day, see your future.</div>`));
-  const start=el('button','btn','Start ▶'); start.style.minWidth='200px'; start.onclick=()=>{ if(!Save.seenIntro){showIntro();} else show('menu'); };
-  w.append(start);
-  const how=el('button','btn btn-ghost','❓ How it works'); how.onclick=showIntro; w.append(how);
-  w.append(el('div',null,`<span style="color:var(--dim)">🗓️ ${Save.daysDone} days balanced · best ${Save.best}/100</span>`));
-  c.append(w); Screen.append(c);
+  const c=el('div','scroll'); c.id='home-scroll';
+  c.innerHTML=`
+   <nav class="nav">
+     <div class="brand">🍛 <span class="gold-text">Poshana</span></div>
+     <div class="nav-links">
+       <button data-nav="s-how">How it works</button>
+       <button data-nav="s-learn">What you learn</button>
+       <button id="nav-ncd">NCDs</button>
+       <button class="btn nav-cta" id="nav-start">Start ▶</button>
+     </div>
+   </nav>
+
+   <header class="hero">
+     <div class="hero-badge">🇱🇰 Made for Sri Lankan families</div>
+     <h1 class="disp">Build your day.<br><span class="gold-text">See your future.</span></h1>
+     <p class="lead">Poshana ("nutrition") turns a normal Sri Lankan day of eating — rice &amp; curry, hoppers, short-eats, sweets and sugary tea — into a clear picture of your health. Add what you really eat across every meal, and watch how the pattern shapes your long-term risk of <b>diabetes, heart disease, high blood pressure, obesity and fatty liver</b> — with the early symptoms to watch and simple local swaps to lower it.</p>
+     <div class="hero-cta">
+       <button class="btn" id="hero-start" style="min-width:200px">Start building my day ▶</button>
+       <button class="btn btn-ghost" id="hero-how">❓ How it works</button>
+     </div>
+     <div class="hero-stat">🗓️ ${Save.daysDone} days balanced · best ${Save.best}/100 · ${FOOD_DB.length} local foods</div>
+   </header>
+
+   <section id="s-how" class="sec">
+     <h2 class="disp">How it works</h2>
+     <div class="cards3">
+       <div class="fcard"><div class="fic">🍛</div><h3>1 · Build your day</h3><p>Pick a meal — Breakfast, teas, Lunch, Dinner — then tap the real foods you ate. Every food is available for every meal.</p></div>
+       <div class="fcard"><div class="fic">🔬</div><h3>2 · See what it means</h3><p>Your day becomes a health score plus a risk projection across five major non-communicable diseases.</p></div>
+       <div class="fcard"><div class="fic">💚</div><h3>3 · Learn &amp; swap</h3><p>For any raised risk you get the early warning signs and a simple Sri Lankan swap to bring it down.</p></div>
+     </div>
+   </section>
+
+   <section id="s-learn" class="sec">
+     <h2 class="disp">What you learn to prevent</h2>
+     <p class="lead" style="margin-bottom:12px">NCDs are the leading cause of death in Sri Lanka — and largely preventable. Poshana makes the everyday link between food and these conditions visible:</p>
+     <div class="chips">
+       <span class="chip">🩸 Type 2 Diabetes</span><span class="chip">❤️ Heart Disease</span>
+       <span class="chip">🫀 High Blood Pressure</span><span class="chip">⚖️ Obesity</span><span class="chip">🫥 Fatty Liver</span>
+     </div>
+     <button class="btn btn-ghost" id="learn-ncd" style="margin-top:14px">📖 Open the NCD guide</button>
+   </section>
+
+   <footer class="foot">🍛 Poshana · Sri Lankan Day Balance · © ${new Date().getFullYear()} Ashen Wijesingha</footer>`;
+  Screen.append(c);
+  // wire
+  c.querySelectorAll('[data-nav]').forEach(b=>b.onclick=()=>scrollTo(b.dataset.nav));
+  $('#nav-start').onclick=goStart; $('#hero-start').onclick=goStart;
+  $('#hero-how').onclick=showIntro;
+  $('#nav-ncd').onclick=openNCDLib; $('#learn-ncd').onclick=openNCDLib;
 }
 const INTRO=[
  ['🍛','Build your whole day','Add real Sri Lankan foods to Breakfast, teas, Lunch and Dinner — everything you actually eat, including short-eats and drinks.'],
@@ -593,7 +674,7 @@ function closeModal(){ const m=$('#modal'); m.classList.remove('open'); m.innerH
 document.addEventListener('keydown',e=>{ if(e.key==='Escape')closeModal(); });
 
 /* ═══ NCD LIBRARY (top bar 📖) ═══ */
-$('#b-info').onclick=()=>{ let html='<div class="disp" style="font-size:1.3rem;margin-bottom:10px">📖 Know your NCDs</div>';
+function openNCDLib(){ let html='<div class="disp" style="font-size:1.3rem;margin-bottom:10px">📖 Know your NCDs</div>';
   for(const k in NCD){ const d=NCD[k]; html+=`<div class="warncard" style="border-left-color:${d.col}">
     <div style="font-weight:700">${d.icon} ${d.name}</div>
     <div style="color:var(--dim);font-size:.88rem;margin:5px 0">${d.build}</div>
@@ -601,7 +682,14 @@ $('#b-info').onclick=()=>{ let html='<div class="disp" style="font-size:1.3rem;m
     <div style="margin-top:6px;font-size:.88rem"><b>Prevent:</b> ${d.swap}</div></div>`; }
   html+='<button class="btn" style="width:100%;margin-top:4px" data-close>Close</button>';
   openModal(html);
-};
+}
+$('#b-info').onclick=openNCDLib;
+$('#b-home').onclick=()=>{ const t=[].concat(...Object.values(State.day)).length;
+  if(State.screen==='build'&&t>0){ openModal(`<div style="text-align:center"><div class="disp" style="font-size:1.2rem;margin-bottom:8px">Leave this day?</div>
+    <p style="color:var(--dim)">Your current day will not be saved.</p>
+    <div style="display:flex;gap:10px;margin-top:10px"><button class="btn btn-ghost" style="flex:1" data-close>Stay</button>
+    <button class="btn" style="flex:1" id="go-home">Go home</button></div></div>`); $('#go-home').onclick=()=>{closeModal();show('title');}; }
+  else show('title'); };
 $('#b-about').onclick=()=>openModal(`<div><div class="disp" style="font-size:1.25rem;margin-bottom:8px">About Poshana</div>
   <p style="font-size:.92rem">Poshana ("nutrition") helps Sri Lankan families see how everyday eating — rice & curry, hoppers, short-eats, sweets and sugary tea — shapes long-term risk of non-communicable diseases.</p>
   <p style="font-size:.92rem"><b>It is education, not medical advice.</b> If food, weight or your health feels worrying, a doctor or dietitian can help — and simple screening (blood sugar, blood pressure) finds problems early.</p>
