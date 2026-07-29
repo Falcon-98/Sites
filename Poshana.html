@@ -86,20 +86,31 @@
     display:flex;align-items:center;gap:6px;transition:background .12s,border-color .12s}
   .tab.on{background:linear-gradient(180deg,#2c4a3a,#1d3327);border-color:var(--gold)}
   .tab .n{background:var(--leaf);color:#08120c;border-radius:999px;font-size:.72rem;min-width:18px;height:18px;display:grid;place-items:center;padding:0 4px}
-  /* meal card */
-  .meal{border-radius:18px;background:var(--glass);border:1px solid var(--gbrd);padding:12px;margin-bottom:12px;cursor:pointer;transition:border-color .15s,box-shadow .15s,transform .1s}
-  .meal:hover{border-color:var(--gbrd);transform:translateY(-1px)}
-  .meal.active{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset,0 0 22px rgba(233,200,119,.14)}
-  .meal h3{margin:0 0 8px;font-size:1.02rem;display:flex;align-items:center;gap:8px}
-  .meal .cnt{margin-left:auto;background:var(--glass2);border:1px solid var(--gbrd);border-radius:999px;font-size:.76rem;font-weight:700;min-width:22px;text-align:center;padding:1px 8px}
+  /* meal cards — square tiles, contents visible at a glance */
+  .meals-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(min-width:760px){.meals-grid{grid-template-columns:1fr 1fr 1fr}}
+  .meal{border-radius:18px;background:var(--glass);border:1px solid var(--gbrd);padding:10px;cursor:pointer;
+    aspect-ratio:1;display:flex;flex-direction:column;overflow:hidden;transition:border-color .15s,box-shadow .15s,transform .1s}
+  .meal:hover{transform:translateY(-2px)}
+  .meal.active{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset,0 0 22px rgba(233,200,119,.16)}
+  .meal h3{margin:0 0 6px;font-size:.92rem;display:flex;align-items:center;gap:6px;flex:0 0 auto}
+  .meal h3 .mn{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .meal .cnt{margin-left:auto;background:var(--glass2);border:1px solid var(--gbrd);border-radius:999px;font-size:.74rem;font-weight:700;min-width:22px;text-align:center;padding:1px 8px}
   .meal.active .cnt{background:var(--gold);color:#20160a;border-color:var(--gold)}
-  .blocks{display:flex;flex-wrap:wrap;gap:8px;min-height:20px}
-  .blocks .empty{color:var(--dim);font-size:.86rem}
-  .block{display:flex;align-items:center;gap:7px;background:rgba(0,0,0,.22);border:1px solid var(--line);border-radius:12px;padding:5px 8px 5px 5px;font-size:.82rem;font-weight:600;color:inherit;font-family:inherit;cursor:pointer;transition:transform .1s,border-color .12s}
-  .block:hover{border-color:var(--chalk)}.block:active{transform:scale(.95)}
-  .block .fv{width:30px;height:30px;font-size:1.1rem;flex:0 0 auto}
-  .block .fv .emo{font-size:1.1rem}
-  .block .x{opacity:.55;font-weight:700}
+  .blocks{flex:1;display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start;overflow:auto;min-height:0}
+  .blocks::-webkit-scrollbar{width:5px}.blocks::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px}
+  .blocks .empty{color:var(--dim);font-size:.8rem;line-height:1.3}
+  .block{display:flex;flex-direction:column;align-items:center;gap:2px;background:rgba(0,0,0,.22);border:1px solid var(--line);border-radius:11px;
+    padding:5px 4px 4px;font-size:.62rem;font-weight:600;color:inherit;font-family:inherit;cursor:pointer;position:relative;width:54px;
+    transition:transform .1s,border-color .12s}
+  .block:hover{border-color:var(--chalk)}.block:active{transform:scale(.93)}
+  .block .fv{width:44px;height:38px;flex:0 0 auto}
+  .block .fv .emo{font-size:1.5rem}
+  .block>span:not(.x){max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center}
+  .block .x{position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:#c0394f;color:#fff;
+    border:1px solid var(--bg);font-size:.62rem;display:grid;place-items:center;opacity:0;transition:opacity .12s}
+  .block:hover .x,.block:focus .x{opacity:1}
+  @media(hover:none){.block .x{opacity:1}}
   .block.warn{border-color:var(--amber)} .block.bad{border-color:var(--chilli)}
   .block.new{animation:blockin .22s cubic-bezier(.2,1.5,.5,1)}
   @keyframes blockin{from{opacity:0;transform:scale(.55)}to{opacity:1;transform:none}}
@@ -170,6 +181,9 @@
 <script>
 /* ═══ IMAGE MAP (real Sri Lankan food photos, resolved from Wikipedia/Commons) ═══ */
 const IMG={"kiribath":"https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Kiribath.jpg/330px-Kiribath.jpg","stringhopper":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Idiyappam_with_Egg_Masala_Curry.jpg/330px-Idiyappam_with_Egg_Masala_Curry.jpg","hopper":"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Appam_-_%E0%AE%85%E0%AE%AA%E0%AF%8D%E0%AE%AA%E0%AE%AE%E0%AF%8D.jpg/330px-Appam_-_%E0%AE%85%E0%AE%AA%E0%AF%8D%E0%AE%AA%E0%AE%AE%E0%AF%8D.jpg","egghopper":"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Appam_-_%E0%AE%85%E0%AE%AA%E0%AF%8D%E0%AE%AA%E0%AE%AE%E0%AF%8D.jpg/330px-Appam_-_%E0%AE%85%E0%AE%AA%E0%AF%8D%E0%AE%AA%E0%AE%AE%E0%AF%8D.jpg","polroti":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/2020-05-08_19_34_28_Chapati_being_made_in_a_pan_in_the_Franklin_Farm_section_of_Oak_Hill%2C_Fairfax_County%2C_Virginia.jpg/330px-2020-05-08_19_34_28_Chapati_being_made_in_a_pan_in_the_Franklin_Farm_section_of_Oak_Hill%2C_Fairfax_County%2C_Virginia.jpg","roti":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/2020-05-08_19_34_28_Chapati_being_made_in_a_pan_in_the_Franklin_Farm_section_of_Oak_Hill%2C_Fairfax_County%2C_Virginia.jpg/330px-2020-05-08_19_34_28_Chapati_being_made_in_a_pan_in_the_Franklin_Farm_section_of_Oak_Hill%2C_Fairfax_County%2C_Virginia.jpg","pittu":"https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Puttu_%28Rice_Flour_steamed_cake%29.jpg/330px-Puttu_%28Rice_Flour_steamed_cake%29.jpg","kolakanda":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Kola_kanda.jpg/330px-Kola_kanda.jpg","bread":"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Korb_mit_Br%C3%B6tchen.JPG/330px-Korb_mit_Br%C3%B6tchen.JPG","parippu":"https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/3_types_of_lentil.png/330px-3_types_of_lentil.png","polsambol":"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Pol_Sambol.jpg/330px-Pol_Sambol.jpg","seenisambol":"https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Chutneykarnataka.jpg/330px-Chutneykarnataka.jpg","lunumiris":"https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/A_dish_of_Lunumiris.JPG/330px-A_dish_of_Lunumiris.JPG","katta":"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Sambal_cobek.JPG/330px-Sambal_cobek.JPG","fishcurry":null,"chickencurry":null,"beefcurry":"https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Taj_Mahal_-_Lamb_Curry_Madras.jpg/330px-Taj_Mahal_-_Lamb_Curry_Madras.jpg","eggcurry":"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Chicken_raw_egg_with_broken_shell.jpg/330px-Chicken_raw_egg_with_broken_shell.jpg","riceandcurry":null,"redrice":"https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Rice%2C_red-rice%2C_AIVANAM-like.JPG/330px-Rice%2C_red-rice%2C_AIVANAM-like.JPG","whiterice":"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Meshi_001.jpg/330px-Meshi_001.jpg","gotukola":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Mallung.jpg/330px-Mallung.jpg","mallum":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Mallung.jpg/330px-Mallung.jpg","wattakka":"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/FrenchMarketPumpkinsB.jpg/330px-FrenchMarketPumpkinsB.jpg","bandakka":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Hong_Kong_Okra_Aug_25_2012.JPG/330px-Hong_Kong_Okra_Aug_25_2012.JPG","karawila":"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Momordica_charantia_Blanco2.357.png/330px-Momordica_charantia_Blanco2.357.png","ala":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Patates.jpg/330px-Patates.jpg","beans":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Heaps_of_beans.jpg/330px-Heaps_of_beans.jpg","carrot":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Vegetable-Carrot-Bundle-wStalks.jpg/330px-Vegetable-Carrot-Bundle-wStalks.jpg","cabbage":"https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Cabbage_and_cross_section_on_white.jpg/330px-Cabbage_and_cross_section_on_white.jpg","papadam":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Roasted_Papad_-_Howrah_2013-11-02_4068.jpg/330px-Roasted_Papad_-_Howrah_2013-11-02_4068.jpg","polos":"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/The_jackfruit_is_holding_on_to_the_tree.jpg/330px-The_jackfruit_is_holding_on_to_the_tree.jpg","jackfruit":"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/The_jackfruit_is_holding_on_to_the_tree.jpg/330px-The_jackfruit_is_holding_on_to_the_tree.jpg","sprats":"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Odesa_bazaar_%285%29_sprats.JPG/330px-Odesa_bazaar_%285%29_sprats.JPG","driedfish":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Fish-Drying_Barn.jpg/330px-Fish-Drying_Barn.jpg","kottu":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Chicken_Kottu.jpg/330px-Chicken_Kottu.jpg","friedrice":"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Koh_Mak%2C_Thailand%2C_Fried_rice_with_seafood%2C_Thai_fried_rice.jpg/330px-Koh_Mak%2C_Thailand%2C_Fried_rice_with_seafood%2C_Thai_fried_rice.jpg","noodles":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Homemade_Chow_mein_with_shrimps_and_meat_with_a_choy_and_Choung.jpg/330px-Homemade_Chow_mein_with_shrimps_and_meat_with_a_choy_and_Choung.jpg","vadai":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Medu_Vadas.JPG/330px-Medu_Vadas.JPG","issovadai":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Medu_Vadas.JPG/330px-Medu_Vadas.JPG","cutlet":null,"fishbun":"https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Sesame_seed_hamburger_buns.jpg/330px-Sesame_seed_hamburger_buns.jpg","rolls":"https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Spring_Rolls_%283357696061%29.jpg/330px-Spring_Rolls_%283357696061%29.jpg","patties":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Karipap_Daging.jpg/330px-Karipap_Daging.jpg","samosa":"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Samosas%2C_snack_food_at_Wikipedia%27s_16th_Birthday_celebration_in_Chittagong_%2801%29.jpg/330px-Samosas%2C_snack_food_at_Wikipedia%27s_16th_Birthday_celebration_in_Chittagong_%2801%29.jpg","murukku":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/A_Traditional_Tamil_Snack_Murukku.jpg/330px-A_Traditional_Tamil_Snack_Murukku.jpg","kadala":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Chickpea_BNC.jpg/330px-Chickpea_BNC.jpg","kimbulabanis":"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Korb_mit_Br%C3%B6tchen.JPG/330px-Korb_mit_Br%C3%B6tchen.JPG","achcharu":"https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Chilli_pickle_in_a_plate_2.jpg/330px-Chilli_pickle_in_a_plate_2.jpg","curdtreacle":"https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Curd_Setting.jpg/330px-Curd_Setting.jpg","watalappan":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Watalappan-Sri_Lanka.jpg/330px-Watalappan-Sri_Lanka.jpg","kavum":null,"kokis":"https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Kokis.JPG/330px-Kokis.JPG","aluwa":null,"icecream":"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Ice_cream_with_whipped_cream%2C_chocolate_syrup%2C_and_a_wafer_%28cropped%29.jpg/330px-Ice_cream_with_whipped_cream%2C_chocolate_syrup%2C_and_a_wafer_%28cropped%29.jpg","biscuits":"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Bourbon_and_Custard_Cream.jpeg/330px-Bourbon_and_Custard_Cream.jpeg","milktea":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Chai_In_Sakora.jpg/330px-Chai_In_Sakora.jpg","plaintea":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Cup_of_black_tea.JPG/330px-Cup_of_black_tea.JPG","coffee":"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Latte_and_dark_coffee.jpg/330px-Latte_and_dark_coffee.jpg","thambili":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/%E0%B6%AD%E0%B7%90%E0%B6%B9%E0%B7%92%E0%B6%BD%E0%B7%92_%E0%B7%80%E0%B7%92%E0%B6%9A%E0%B7%92%E0%B6%B1%E0%B7%93%E0%B6%B8.jpg/330px-%E0%B6%AD%E0%B7%90%E0%B6%B9%E0%B7%92%E0%B6%BD%E0%B7%92_%E0%B7%80%E0%B7%92%E0%B6%9A%E0%B7%92%E0%B6%B1%E0%B7%93%E0%B6%B8.jpg","fruitjuice":"https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Orange_juice_1.jpg/330px-Orange_juice_1.jpg","softdrink":"https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Glass_of_Cola.jpg/330px-Glass_of_Cola.jpg","milo":"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Australian_milo.jpg/330px-Australian_milo.jpg","faluda":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Faluda.JPG/330px-Faluda.JPG","banana":"https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Bananavarieties.jpg/330px-Bananavarieties.jpg","papaya":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Carica_papaya_-_K%C3%B6hler%E2%80%93s_Medizinal-Pflanzen-029.jpg/330px-Carica_papaya_-_K%C3%B6hler%E2%80%93s_Medizinal-Pflanzen-029.jpg","woodapple":"https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Wood-apple_tree.JPG/330px-Wood-apple_tree.JPG","mango":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Mangos_-_single_and_halved.jpg/330px-Mangos_-_single_and_halved.jpg","rambutan":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Rambutan_white_background_alt.jpg/330px-Rambutan_white_background_alt.jpg","avocado":"https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Persea_americana_fruit_2.JPG/330px-Persea_americana_fruit_2.JPG","egg":"https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Soft-boiled-egg.jpg/330px-Soft-boiled-egg.jpg","curd":"https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Curd_in_a_traditional_Manipuri_earthen_pot.JPG/330px-Curd_in_a_traditional_Manipuri_earthen_pot.JPG"};
+
+/* reuse the curd photo for the new plain dairy items */
+if(IMG){ IMG.plaincurd=IMG.plaincurd||IMG.curd; IMG.yoghurt=IMG.yoghurt||IMG.curd; }
 
 /* ═══ UTIL ═══ */
 const $=(s,r=document)=>r.querySelector(s);
@@ -246,6 +260,8 @@ const FOOD_DB=[
  F('achcharu','Achcharu','අච්චාරු','🥭','snack','me',1,2,0,0,1,1,0,0,0,'Fruit pickle — tangy, but salted and sweetened.'),
  // ── Sweets / desserts ──
  F('curdtreacle','Curd & treacle','මී කිරි','🍯','dairy','ed',2,0,0,0,0,0,1,0,0,'Buffalo curd is good protein — the treacle (kithul) is sugar, so drizzle lightly.'),
+ F('yoghurt','Yoghurt','යෝගට්','🥛','dairy','bmled',0,0,0,0,0,0,1,0,0,'Plain yoghurt (or mee kiri) gives protein and calcium — pick unsweetened and add fruit yourself.'),
+ F('plaincurd','Plain curd','කිරි','🥛','dairy','bmled',0,0,0,0,0,0,1,0,0,'Buffalo curd on its own is a great protein snack — skip or go light on the treacle.'),
  F('watalappan','Watalappan','වටලප්පන්','🍮','sweet','ed',3,0,1,0,0,0,0,0,0,'A jaggery-and-coconut custard — delicious, and high in sugar. A small cup.'),
  F('kavum','Kavum','කැවුම්','🍯','sweet','me',3,0,2,1,0,0,0,0,1,'Oil cake with treacle — festival sweet, sugar + oil.'),
  F('kokis','Kokis','කොකිස්','🌼','fried','me',1,0,2,1,0,0,0,0,1,'Crispy fried sweet.'),
@@ -445,16 +461,18 @@ function renderBuild(){
   TopTtl.innerHTML = ch&&ch.id!=='free' ? `${ch.ic} ${ch.name}` : '🍽️ My Day';
   const c=el('div','scroll'); const w=el('div','wrap'); w.style.paddingBottom='6px';
   if(ch&&ch.brief) w.append(el('div','panel',`<div style="padding:10px 12px;font-size:.9rem;color:var(--dim)">${ch.brief}</div>`));
+  const grid=el('div','meals-grid');
   MEALS.forEach(([k,name,ic])=>{
     const card=el('div','meal'+(State.active===k?' active':'')); card.dataset.k=k;
     card.setAttribute('role','button'); card.tabIndex=0; card.setAttribute('aria-pressed',State.active===k);
     card.setAttribute('aria-label','Select '+name+' to add foods');
-    card.innerHTML=`<h3><span style="font-size:1.3rem">${ic}</span> ${name}<span class="cnt" id="cnt-${k}">${State.day[k].length}</span></h3>`;
+    card.innerHTML=`<h3><span style="font-size:1.2rem">${ic}</span> <span class="mn">${name}</span><span class="cnt" id="cnt-${k}">${State.day[k].length}</span></h3>`;
     const blocks=el('div','blocks'); card.append(blocks); mealBlocks[k]=blocks; fillBlocks(k);
     const sel=()=>setActive(k);
     card.onclick=sel; card.onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); sel(); } };
-    w.append(card);
+    grid.append(card);
   });
+  w.append(grid);
   c.append(w); Screen.append(c);
   renderMeters(); buildShelf(State.active);
   const reset=el('button','btn btn-ghost','↺ Reset'); reset.onclick=()=>{ State.day=State.challenge?.preset?JSON.parse(JSON.stringify(State.challenge.preset)):emptyDay(); renderBuild(); };
@@ -477,7 +495,7 @@ function updateLive(){
 }
 function buildShelf(meal){
   Shelf.innerHTML='';
-  const list=FOOD_DB.filter(f=>f.meals.includes(meal));
+  const list=FOOD_DB;   // every food is selectable for every meal
   Shelf.append(el('div',null,`<div style="align-self:center;color:var(--dim);font-size:.78rem;padding:0 4px;white-space:nowrap">Adding to<br><b style="color:var(--gold)">${MEAL_NAME[meal]}</b></div>`));
   list.forEach(def=>{ const b=el('button','food'); b.setAttribute('aria-label',`${def.name}. Add to ${MEAL_NAME[meal]}.`);
     b.append(foodVisual(def)); b.append(el('div','nm',def.name)); b.append(el('div','si',def.si||''));
