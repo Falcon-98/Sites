@@ -686,6 +686,178 @@
     .join-contact-box h3 em { font-style: italic; color: var(--gold-400); }
     .join-contact-box p { font-size: .9rem; color: var(--text-muted); margin-bottom: 28px; }
 
+    /* ═══════════ PREVIOUS PROJECTS ═══════════ */
+    #projects { background: var(--navy-900); }
+
+    .projects-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px;
+      margin-top: 56px;
+    }
+    @media (max-width: 900px) { .projects-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 560px) { .projects-grid { grid-template-columns: 1fr; } }
+
+    .project-card {
+      background: rgba(7,18,40,0.7); border: 1px solid rgba(126,168,204,0.08);
+      border-radius: var(--radius-lg); overflow: hidden;
+      display: flex; flex-direction: column;
+      transition: transform .35s var(--ease-out), box-shadow .35s, border-color .35s;
+    }
+    .project-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 56px rgba(0,0,0,0.4);
+      border-color: rgba(212,150,42,0.2);
+    }
+    .project-thumb { aspect-ratio: 16 / 10; overflow: hidden; position: relative; }
+    .project-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s var(--ease-out); }
+    .project-card:hover .project-thumb img { transform: scale(1.06); }
+    .project-year {
+      position: absolute; top: 12px; left: 12px; z-index: 2;
+      background: rgba(4,13,30,0.7); backdrop-filter: blur(6px);
+      border: 1px solid rgba(212,150,42,0.3); color: var(--gold-300);
+      font-size: .66rem; font-weight: 700; letter-spacing: .1em;
+      padding: 4px 12px; border-radius: var(--radius-full);
+    }
+    .project-body { padding: 22px 20px; flex: 1; display: flex; flex-direction: column; }
+    .project-title {
+      font-family: var(--font-heading); font-weight: 700; font-size: 1rem;
+      color: var(--text-bright); margin-bottom: 10px; letter-spacing: .02em;
+    }
+    .project-desc { font-size: .83rem; color: var(--text-muted); line-height: 1.6; }
+    .project-tag {
+      margin-top: 16px; align-self: flex-start;
+      font-size: .66rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--gold-400); background: rgba(212,150,42,0.1);
+      border: 1px solid rgba(212,150,42,0.2); padding: 4px 12px; border-radius: var(--radius-full);
+    }
+
+    /* ═══════════ PHOTO ALBUMS ═══════════ */
+    #albums {
+      background: linear-gradient(180deg, var(--navy-800) 0%, var(--navy-900) 100%);
+      border-top: 1px solid rgba(126,168,204,0.06);
+    }
+
+    .albums-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px;
+      margin-top: 56px;
+    }
+    @media (max-width: 900px) { .albums-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 560px) { .albums-grid { grid-template-columns: 1fr; } }
+
+    .album-card {
+      position: relative; aspect-ratio: 4 / 3; overflow: hidden; cursor: pointer;
+      border-radius: var(--radius-lg); border: 1px solid rgba(126,168,204,0.1);
+      background: var(--navy-800);
+    }
+    .album-card img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s var(--ease-out); }
+    .album-card:hover img { transform: scale(1.08); }
+    .album-card::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(180deg, transparent 38%, rgba(4,13,30,0.9) 100%);
+    }
+    .album-card:focus-visible { outline: 2px solid var(--gold-400); outline-offset: 2px; }
+    .album-meta { position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; padding: 20px; }
+    .album-title { font-family: var(--font-heading); font-weight: 700; color: var(--text-bright); font-size: 1rem; }
+    .album-count {
+      display: flex; align-items: center; gap: 6px; margin-top: 4px;
+      font-size: .7rem; color: var(--gold-400); letter-spacing: .08em; text-transform: uppercase;
+    }
+    .album-badge {
+      position: absolute; top: 14px; right: 14px; z-index: 3;
+      background: rgba(4,13,30,0.6); backdrop-filter: blur(6px);
+      border: 1px solid rgba(212,150,42,0.3); color: var(--gold-300);
+      font-size: .68rem; font-weight: 600; letter-spacing: .08em;
+      padding: 5px 12px; border-radius: var(--radius-full);
+    }
+
+    /* Lightbox */
+    .lightbox {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(2,7,18,0.95); backdrop-filter: blur(10px);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity .3s;
+    }
+    .lightbox.open { opacity: 1; pointer-events: auto; }
+    .lightbox-img-wrap { max-width: 90vw; text-align: center; }
+    .lightbox img { max-width: 90vw; max-height: 76vh; border-radius: var(--radius-md); box-shadow: 0 30px 80px rgba(0,0,0,0.6); }
+    .lb-caption { color: var(--text-mid); font-size: .85rem; margin-top: 14px; letter-spacing: .04em; }
+    .lb-btn {
+      position: fixed; top: 50%; transform: translateY(-50%);
+      width: 48px; height: 48px; border-radius: 50%;
+      border: 1px solid rgba(212,150,42,0.3); background: rgba(11,26,56,0.7);
+      color: var(--gold-300); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .25s, border-color .25s;
+    }
+    .lb-btn:hover { background: rgba(212,150,42,0.2); border-color: var(--gold-400); }
+    .lb-prev { left: 24px; } .lb-next { right: 24px; }
+    .lb-close {
+      position: fixed; top: 24px; right: 28px;
+      width: 44px; height: 44px; border-radius: 50%;
+      border: 1px solid rgba(126,168,204,0.25); background: rgba(11,26,56,0.7);
+      color: var(--text-bright); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color .25s, color .25s;
+    }
+    .lb-close:hover { border-color: var(--gold-400); color: var(--gold-400); }
+    @media (max-width: 600px) { .lb-prev { left: 8px; } .lb-next { right: 8px; } }
+
+    /* ═══════════ GALLERY SLIDESHOW ═══════════ */
+    #gallery {
+      background: linear-gradient(180deg, var(--navy-900) 0%, var(--navy-800) 100%);
+      border-top: 1px solid rgba(212,150,42,0.1);
+    }
+    .slideshow {
+      position: relative; max-width: 940px; margin: 56px auto 0;
+      aspect-ratio: 16 / 9;
+      border-radius: var(--radius-lg); overflow: hidden;
+      border: 1px solid rgba(126,168,204,0.12); background: var(--navy-800);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.4);
+    }
+    .slides { position: absolute; inset: 0; }
+    .slide {
+      position: absolute; inset: 0; opacity: 0;
+      transition: opacity 1s var(--ease-in-out);
+      will-change: opacity;
+    }
+    .slide.is-active { opacity: 1; z-index: 1; }
+    .slide img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+      transform: scale(1.03); transition: transform 6s ease-out;
+    }
+    .slide.is-active img { transform: scale(1.09); }   /* slow Ken-Burns while visible */
+    .slide::after {
+      content: ''; position: absolute; inset: 0; pointer-events: none;
+      background: linear-gradient(180deg, transparent 68%, rgba(4,13,30,0.55) 100%);
+    }
+    .slide-btn {
+      position: absolute; top: 50%; transform: translateY(-50%); z-index: 3;
+      width: 46px; height: 46px; border-radius: 50%;
+      border: 1px solid rgba(212,150,42,0.3); background: rgba(4,13,30,0.55);
+      backdrop-filter: blur(6px); color: var(--gold-300); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .25s, border-color .25s;
+    }
+    .slide-btn:hover { background: rgba(212,150,42,0.25); border-color: var(--gold-400); }
+    .slide-prev { left: 16px; } .slide-next { right: 16px; }
+    .slide-dots {
+      position: absolute; left: 0; right: 0; bottom: 16px; z-index: 3;
+      display: flex; gap: 8px; justify-content: center;
+    }
+    .slide-dot {
+      width: 9px; height: 9px; border-radius: 50%; border: none; padding: 0;
+      background: rgba(245,240,232,0.4); cursor: pointer;
+      transition: background .25s, transform .25s;
+    }
+    .slide-dot.active { background: var(--gold-400); transform: scale(1.25); }
+    @media (max-width: 600px) {
+      .slide-btn { width: 38px; height: 38px; }
+      .slide-prev { left: 8px; } .slide-next { right: 8px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .slide { transition: opacity .01ms; }
+      .slide img, .slide.is-active img { transition: none; transform: none; }
+    }
+
     /* ═══════════ FOOTER ═══════════ */
     footer {
       background: var(--navy-900);
@@ -788,6 +960,9 @@
   <div class="nav-links" id="desktop-nav">
     <a href="#bearers"  class="nav-link">Office Bearers</a>
     <a href="#benefits" class="nav-link">Benefits</a>
+    <!-- <a href="#projects" class="nav-link">Projects</a> -->
+    <a href="#gallery"  class="nav-link">Gallery</a>
+    <!-- <a href="#albums"   class="nav-link">Gallery</a> -->
     <a href="#support"  class="nav-link">Support Students</a>
     <a href="#join"     class="nav-link">How to Join</a>
     <a href="#contact"  class="nav-link">Contact</a>
@@ -804,6 +979,9 @@
     <div class="mobile-links-inner">
       <a href="#bearers"  class="mobile-link" onclick="closeMobile()">Office Bearers</a>
       <a href="#benefits" class="mobile-link" onclick="closeMobile()">Benefits</a>
+      <!-- <a href="#projects" class="mobile-link" onclick="closeMobile()">Projects</a> -->
+      <a href="#gallery"  class="mobile-link" onclick="closeMobile()">Gallery</a>
+      <!-- <a href="#albums"   class="mobile-link" onclick="closeMobile()">Gallery</a> -->
       <a href="#support"  class="mobile-link" onclick="closeMobile()">Support Students</a>
       <a href="#join"     class="mobile-link" onclick="closeMobile()">How to Join</a>
       <a href="#contact"  class="mobile-link" onclick="closeMobile()">Contact</a>
@@ -859,6 +1037,31 @@
   <div class="scroll-cue" aria-hidden="true">
     <span>Scroll</span>
     <svg width="14" height="18" viewBox="0 0 14 18" fill="none"><path d="M7 1v12M1 9l6 7 6-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
+</section>
+
+<!-- ═══════ GALLERY SLIDESHOW ═══════ -->
+<section id="gallery" class="section" aria-label="Photo Gallery">
+  <div class="container">
+    <div class="reveal" style="text-align:center;">
+      <div class="section-eyebrow" style="justify-content:center;">Gallery</div>
+      <h2 class="section-title" style="text-align:center;">Moments in <em>Focus</em></h2>
+      <p class="section-subtitle" style="margin: 0 auto; text-align:center; max-width:560px;">
+        Highlights from our events, projects, and gatherings across the DND community.
+      </p>
+      <div class="rule center"></div>
+    </div>
+
+    <div class="slideshow reveal" id="slideshow" role="region" aria-roledescription="carousel" aria-label="Photo slideshow">
+      <div class="slides" id="slidesTrack"><!-- slides rendered from galleryImages by JavaScript --></div>
+      <button class="slide-btn slide-prev" id="slidePrev" aria-label="Previous slide">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="slide-btn slide-next" id="slideNext" aria-label="Next slide">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="slide-dots" id="slideDots"><!-- dots rendered by JavaScript --></div>
+    </div>
   </div>
 </section>
 
@@ -1079,6 +1282,49 @@
   </div>
 </section>
 
+<!-- ═══════ PREVIOUS PROJECTS ═══════ -->
+<!-- TEMPORARILY HIDDEN: remove the inline `display:none` below to show the Previous Projects section again. -->
+<!-- Images are served from the Cloudinary CDN. Card images come from `projectsData`
+     in the script below — set each item's `image` to your Cloudinary public ID. -->
+<section id="projects" class="section" aria-label="Previous Projects" style="display:none;">
+  <div class="container">
+    <div class="reveal" style="text-align:center;">
+      <div class="section-eyebrow" style="justify-content:center;">Our Work</div>
+      <h2 class="section-title" style="text-align:center;">Previous <em>Projects</em></h2>
+      <p class="section-subtitle" style="margin: 0 auto; text-align:center; max-width:560px;">
+        A look back at initiatives our alumni community has delivered — from nutrition awareness campaigns to student support drives.
+      </p>
+      <div class="rule center"></div>
+    </div>
+
+    <div class="projects-grid" id="projectsGrid">
+      <!-- Project cards are rendered from projectsData by JavaScript -->
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ PHOTO ALBUMS ═══════ -->
+<!-- Images are served from the Cloudinary CDN. Album covers and photos come from
+     `albumsData` in the script below — set each `cover`/`photos` entry to your
+     Cloudinary public ID (a full http(s) URL is also accepted and passed through). -->
+<!-- TEMPORARILY HIDDEN: remove the inline `display:none` below to show the Photo Albums section again. -->
+<section id="albums" class="section" aria-label="Photo Albums" style="display:none;">
+  <div class="container">
+    <div class="reveal" style="text-align:center;">
+      <div class="section-eyebrow" style="justify-content:center;">Gallery</div>
+      <h2 class="section-title" style="text-align:center;">Photo <em>Albums</em></h2>
+      <p class="section-subtitle" style="margin: 0 auto; text-align:center; max-width:560px;">
+        Moments captured across our events, projects, and gatherings. Select an album to browse the photos.
+      </p>
+      <div class="rule center"></div>
+    </div>
+
+    <div class="albums-grid" id="albumsGrid">
+      <!-- Album cards are rendered from albumsData by JavaScript -->
+    </div>
+  </div>
+</section>
+
 <!-- ═══════ SUPPORT STUDENTS ═══════ -->
 <section id="support" class="section" aria-label="Support Current Students">
   <div class="container">
@@ -1239,6 +1485,9 @@
           <ul class="footer-links">
             <li><a href="#bearers">Office Bearers</a></li>
             <li><a href="#benefits">Alumni Benefits</a></li>
+            <!-- <li><a href="#projects">Previous Projects</a></li> -->
+            <li><a href="#gallery">Photo Gallery</a></li>
+            <!-- <li><a href="#albums">Photo Albums</a></li> -->
             <li><a href="#support">Support Students</a></li>
             <li><a href="#join">Membership Application</a></li>
             <li><a href="https://www.wyb.ac.lk" target="_blank" rel="noopener">Wayamba University</a></li>
@@ -1275,6 +1524,23 @@
 </footer>
 
 </div><!-- /content-wrapper -->
+
+<!-- ═══════ PHOTO ALBUM LIGHTBOX ═══════ -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Photo album viewer">
+  <button class="lb-close" id="lbClose" aria-label="Close album">
+    <svg width="18" height="18" viewBox="0 0 22 22" fill="none"><path d="M2 2l18 18M20 2L2 20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+  </button>
+  <button class="lb-btn lb-prev" id="lbPrev" aria-label="Previous photo">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <div class="lightbox-img-wrap">
+    <img id="lbImg" src="" alt="" />
+    <div class="lb-caption" id="lbCaption"></div>
+  </div>
+  <button class="lb-btn lb-next" id="lbNext" aria-label="Next photo">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+</div>
 
 
 <script>
@@ -1340,6 +1606,201 @@
     });
   }, { rootMargin: '-40% 0px -55% 0px' });
   sections.forEach(s => activeObserver.observe(s));
+
+  /* ── Image source resolver ────────────────────────────────────────
+     Each `image` / `cover` / `photos` value can be ONE of:
+       • 'gd:FILE_ID'          → Google Drive (temporary host, used for now)
+                                  e.g. 'gd:1AbCdEf...'  (the ID from the file's
+                                  share link: drive.google.com/file/d/FILE_ID/view)
+       • 'cloudinary_public_id' → Cloudinary CDN (final host, add later)
+                                  e.g. 'dnd/albums/reunion-01'
+       • 'https://...'          → any full URL, used as-is
+     To migrate from Drive to Cloudinary later, just replace each
+     'gd:FILE_ID' with its Cloudinary public ID — no code changes needed.
+     Project/album images below are Cloudinary public IDs on cloud dkj22lm1g. */
+  const CLD_CLOUD = 'dkj22lm1g';          // your Cloudinary cloud name
+  const CLD_BASE  = 'f_auto,q_auto';      // auto format + auto quality on every Cloudinary image
+
+  // Sizing presets: pixel width, height, and Cloudinary crop mode.
+  const P_PROJECT = { w: 640,  h: 400,  crop: 'c_fill'  };  // project card thumbnail (16:10)
+  const P_COVER   = { w: 600,  h: 450,  crop: 'c_fill'  };  // album cover (4:3)
+  const P_FULL    = { w: 1600, h: 1600, crop: 'c_limit' };  // lightbox full image (never upscales)
+
+  // Resolve any image reference to a delivery URL at the given device-pixel ratio.
+  function imgURL(ref, p, dpr) {
+    if (!ref) return '';
+    const s = dpr || 1;
+    if (ref.slice(0, 3) === 'gd:') {                               // Google Drive (temporary)
+      return `https://drive.google.com/thumbnail?id=${ref.slice(3)}&sz=w${p.w * s}`;
+    }
+    if (/^https?:\/\//i.test(ref)) return ref;                     // full URL → pass through
+    const t = `${CLD_BASE},${p.crop},w_${p.w * s}` +               // Cloudinary
+              (p.crop === 'c_fill' ? `,h_${p.h * s}` : '');
+    return `https://res.cloudinary.com/${CLD_CLOUD}/image/upload/${t}/${ref}`;
+  }
+  function imgTag(ref, p, alt) {
+    const src = imgURL(ref, p, 1), src2 = imgURL(ref, p, 2);
+    const ss = (src2 && src2 !== src) ? ` srcset="${src2} 2x"` : '';   // retina variant
+    return `<img src="${src}"${ss} alt="${alt}" loading="lazy"/>`;
+  }
+
+  /* ── Previous Projects ── */
+  const projectsData = [
+    { image: '1_mswmq6', year: '2024', title: 'Nutrition Awareness Camp',        desc: 'A community outreach camp promoting balanced diets and healthy eating habits among rural families in the North-Western Province.', tag: 'Community' },
+    { image: '4_vt9yut', year: '2023', title: 'School Meal Programme',            desc: 'Alumni partnered with local schools to design nutritious meal plans and educate students on the value of good nutrition.',          tag: 'Outreach' },
+    { image: '5_rouf6g', year: '2024', title: 'World Nutrition Day Symposium',    desc: 'A knowledge-sharing symposium featuring guest speakers and research presentations from academia and industry professionals.',    tag: 'Event' },
+    { image: '7_lgqmqx', year: '2023', title: 'Career Guidance Workshop',         desc: 'Senior alumni mentored final-year students on career pathways, higher studies, and professional development in nutrition.',         tag: 'Students' },
+    { image: '8_w5kgw0', year: '2022', title: 'Community Health Screening',       desc: 'A free health and nutritional screening drive offering BMI checks, dietary advice, and consultations to the wider community.',      tag: 'Health' },
+    { image: '9_lor6qu', year: '2024', title: 'Alumni Reunion &amp; Felicitation', desc: 'An evening celebrating our graduates — reconnecting generations of DND alumni and honouring outstanding contributions.',           tag: 'Networking' }
+  ];
+  const projectsGrid = document.getElementById('projectsGrid');
+  projectsData.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'project-card reveal';
+    card.innerHTML = `
+      <div class="project-thumb">
+        <span class="project-year">${p.year}</span>
+        ${imgTag(p.image, P_PROJECT, p.title)}
+      </div>
+      <div class="project-body">
+        <h3 class="project-title">${p.title}</h3>
+        <p class="project-desc">${p.desc}</p>
+        <span class="project-tag">${p.tag}</span>
+      </div>`;
+    projectsGrid.appendChild(card);
+    io.observe(card);
+  });
+
+  /* ── Photo Albums + Lightbox ── */
+  const albumsData = [
+    { title: 'Annual Reunion 2024',   cover: '1_mswmq6',  photos: ['1_mswmq6', '4_vt9yut', '5_rouf6g', '7_lgqmqx', '8_w5kgw0'] },
+    { title: 'Graduation Ceremony',   cover: '4_vt9yut',  photos: ['9_lor6qu', '10_rvfda3', '1_mswmq6', '5_rouf6g'] },
+    { title: 'Community Outreach',    cover: '5_rouf6g',  photos: ['4_vt9yut', '7_lgqmqx', '8_w5kgw0', '10_rvfda3'] },
+    { title: 'Guest Lecture Series',  cover: '7_lgqmqx',  photos: ['1_mswmq6', '9_lor6qu', '5_rouf6g'] },
+    { title: 'Sports & Recreation',   cover: '8_w5kgw0',  photos: ['10_rvfda3', '7_lgqmqx', '4_vt9yut', '1_mswmq6'] },
+    { title: 'Workshops & Training',  cover: '10_rvfda3', photos: ['8_w5kgw0', '5_rouf6g', '9_lor6qu'] }
+  ];
+
+  // Render album cards
+  const albumsGrid = document.getElementById('albumsGrid');
+  albumsData.forEach((album, i) => {
+    const card = document.createElement('div');
+    card.className = 'album-card reveal';
+    card.setAttribute('role', 'button');
+    card.setAttribute('tabindex', '0');
+    card.setAttribute('aria-label', `Open album: ${album.title}, ${album.photos.length} photos`);
+    card.innerHTML = `
+      <span class="album-badge">${album.photos.length} Photos</span>
+      ${imgTag(album.cover, P_COVER, album.title + ' album cover')}
+      <div class="album-meta">
+        <div class="album-title">${album.title}</div>
+        <div class="album-count">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/><path d="M21 15l-5-5L5 21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          View album
+        </div>
+      </div>`;
+    const open = () => openAlbum(i);
+    card.addEventListener('click', open);
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }
+    });
+    albumsGrid.appendChild(card);
+    io.observe(card);
+  });
+
+  // Lightbox controls
+  const lightbox  = document.getElementById('lightbox');
+  const lbImg     = document.getElementById('lbImg');
+  const lbCaption = document.getElementById('lbCaption');
+  let curAlbum = 0, curPhoto = 0;
+
+  function showPhoto() {
+    const album = albumsData[curAlbum];
+    lbImg.src = imgURL(album.photos[curPhoto], P_FULL, 1);
+    lbImg.alt = `${album.title} — photo ${curPhoto + 1}`;
+    lbCaption.textContent = `${album.title} · ${curPhoto + 1} / ${album.photos.length}`;
+  }
+  function openAlbum(i) {
+    curAlbum = i; curPhoto = 0;
+    showPhoto();
+    lightbox.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeLightbox() {
+    lightbox.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  function step(dir) {
+    const total = albumsData[curAlbum].photos.length;
+    curPhoto = (curPhoto + dir + total) % total;
+    showPhoto();
+  }
+
+  document.getElementById('lbClose').addEventListener('click', closeLightbox);
+  document.getElementById('lbPrev').addEventListener('click', () => step(-1));
+  document.getElementById('lbNext').addEventListener('click', () => step(1));
+  lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
+  document.addEventListener('keydown', (e) => {
+    if (!lightbox.classList.contains('open')) return;
+    if (e.key === 'Escape') closeLightbox();
+    else if (e.key === 'ArrowLeft') step(-1);
+    else if (e.key === 'ArrowRight') step(1);
+  });
+
+  /* ── Gallery Slideshow ── */
+  // Images shown in the slideshow (same source rules as Projects/Albums: Cloudinary
+  // public ID, 'gd:FILE_ID', or a full URL). Edit this list to curate the slideshow.
+  const galleryImages = ['1_mswmq6', '4_vt9yut', '5_rouf6g', '7_lgqmqx', '8_w5kgw0', '9_lor6qu', '10_rvfda3'];
+  const P_SLIDE = { w: 1280, h: 720, crop: 'c_fill' };   // 16:9 slide
+
+  const slidesWrap = document.getElementById('slidesTrack');
+  if (slidesWrap && galleryImages.length) {
+    const dotsWrap = document.getElementById('slideDots');
+    const slideEls = [], dotEls = [];
+    let slideIdx = 0, slideTimer = null;
+    const INTERVAL = 5000;
+
+    galleryImages.forEach((ref, i) => {
+      const slide = document.createElement('div');
+      slide.className = 'slide' + (i === 0 ? ' is-active' : '');
+      // Slideshow sits near the hero, so eager-load the first image; lazy-load the rest.
+      slide.innerHTML = imgTag(ref, P_SLIDE, `Gallery photo ${i + 1} of ${galleryImages.length}`)
+        .replace('loading="lazy"', i === 0 ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"');
+      slidesWrap.appendChild(slide);
+      slideEls.push(slide);
+
+      const dot = document.createElement('button');
+      dot.className = 'slide-dot' + (i === 0 ? ' active' : '');
+      dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
+      dot.addEventListener('click', () => { goSlide(i); restart(); });
+      dotsWrap.appendChild(dot);
+      dotEls.push(dot);
+    });
+
+    function goSlide(i) {
+      const n = galleryImages.length;
+      const nextIdx = (i + n) % n;
+      if (nextIdx === slideIdx) return;
+      slideEls[slideIdx].classList.remove('is-active');
+      dotEls[slideIdx].classList.remove('active');
+      slideIdx = nextIdx;
+      slideEls[slideIdx].classList.add('is-active');
+      dotEls[slideIdx].classList.add('active');
+    }
+    function start()   { if (!slideTimer && galleryImages.length > 1) slideTimer = setInterval(() => goSlide(slideIdx + 1), INTERVAL); }
+    function stop()    { clearInterval(slideTimer); slideTimer = null; }
+    function restart() { stop(); start(); }
+
+    document.getElementById('slidePrev').addEventListener('click', () => { goSlide(slideIdx - 1); restart(); });
+    document.getElementById('slideNext').addEventListener('click', () => { goSlide(slideIdx + 1); restart(); });
+
+    const shell = document.getElementById('slideshow');
+    shell.addEventListener('mouseenter', stop);
+    shell.addEventListener('mouseleave', start);
+    document.addEventListener('visibilitychange', () => { document.hidden ? stop() : start(); });
+
+    start();
+  }
 </script>
 
 </body>
