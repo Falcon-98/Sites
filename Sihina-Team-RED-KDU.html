@@ -445,10 +445,10 @@ footer p{margin:.3rem 0}
     </div>
     <div class="bank reveal" style="--d:2" aria-label="Bank details">
       <dl>
-        <div><dt>Account number</dt><dd class="acct"><span id="acctNo">0096324106</span><button class="copy" id="copyBtn" type="button">Copy</button></dd></div>
-        <div><dt>Bank</dt><dd>Bank of Ceylon</dd></div>
-        <div><dt>Branch</dt><dd>Boralesgamuwa Branch (646)</dd></div>
-        <div><dt>Account holder</dt><dd>MR P G L S MADUSANKA</dd></div>
+        <div data-label="Account Number"><dt>Account number</dt><dd class="acct"><span data-val>0096324106</span><button class="copy" id="copyBtn" type="button" aria-label="Copy all bank details">Copy</button></dd></div>
+        <div data-label="Bank Name"><dt>Bank</dt><dd data-val>Bank of Ceylon</dd></div>
+        <div data-label="Branch Name"><dt>Branch</dt><dd data-val>Boralesgamuwa Branch (646)</dd></div>
+        <div data-label="Account Holder's Name"><dt>Account holder</dt><dd data-val>MR P G L S MADUSANKA</dd></div>
       </dl>
     </div>
   </div>
@@ -682,10 +682,19 @@ lb.addEventListener("touchend", e => {
 /* ---------- Copy + toast ---------- */
 const toast = $("#toast"); let tt;
 function say(msg){ toast.textContent = msg; toast.classList.add("show"); clearTimeout(tt); tt = setTimeout(() => toast.classList.remove("show"), 2200); }
+async function copyText(t){
+  if(navigator.clipboard && window.isSecureContext){ try { return await navigator.clipboard.writeText(t); } catch {} }
+  // Fallback for in-app browsers without the async clipboard API
+  const ta = document.createElement("textarea"); ta.value = t; ta.setAttribute("readonly", "");
+  ta.style.cssText = "position:fixed;top:0;left:0;opacity:0"; document.body.appendChild(ta); ta.select();
+  const ok = document.execCommand("copy"); ta.remove(); if(!ok) throw new Error("copy failed");
+}
 $("#copyBtn").onclick = async (e) => {
-  const btn = e.currentTarget, t = $("#acctNo").textContent;
-  try { await navigator.clipboard.writeText(t); btn.textContent = "✓ Copied"; btn.classList.add("ok"); say("Account number copied"); if(navigator.vibrate) navigator.vibrate(30); }
-  catch { say("Couldn't copy. Long-press the number instead."); }
+  const btn = e.currentTarget;
+  const t = [...document.querySelectorAll(".bank [data-label]")]
+    .map(r => `${r.dataset.label}: ${r.querySelector("[data-val]").textContent.trim()}`).join("\n");
+  try { await copyText(t); btn.textContent = "✓ Copied"; btn.classList.add("ok"); say("Bank details copied"); if(navigator.vibrate) navigator.vibrate(30); }
+  catch { say("Couldn't copy. Long-press the details instead."); }
   setTimeout(() => { btn.textContent = "Copy"; btn.classList.remove("ok"); }, 2200);
 };
 
