@@ -94,19 +94,22 @@ nav a{text-decoration:none;display:block;position:relative}
 @keyframes kenburns{from{transform:scale(1.1)}to{transform:scale(1)}}
 /* Blue tint keeps the white text readable over any photo */
 .hero::before{content:"";position:absolute;inset:0;z-index:-2;background:
-  linear-gradient(100deg,rgba(22,111,229,.95) 0%,rgba(22,111,229,.82) 50%,rgba(24,119,242,.4) 100%),
-  linear-gradient(transparent 60%,rgba(22,111,229,.6))}
+  linear-gradient(100deg,rgba(22,111,229,.62) 0%,rgba(22,111,229,.38) 50%,rgba(24,119,242,.08) 100%),
+  linear-gradient(transparent 65%,rgba(22,111,229,.35))}
+/* Soft shadow keeps the white hero text readable over lighter photo areas */
+.hero .wrap{text-shadow:0 1px 3px rgba(0,0,0,.45),0 0 20px rgba(0,0,0,.25)}
+.hero .btn{text-shadow:none}
 .slide-dots{position:absolute;right:var(--pad);bottom:1.1rem;display:flex;gap:.45rem;z-index:1}
 .slide-dots button{width:10px;height:10px;padding:0;border-radius:999px;border:0;background:rgba(255,255,255,.5);cursor:pointer;transition:width .3s var(--ease),background .3s}
 .slide-dots button[aria-current="true"]{width:24px;background:#fff}
 #dust{position:absolute;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none}
-.hero small{display:block;font-size:.95rem;opacity:.85;margin-bottom:.8rem}
-.hero h1{font-size:clamp(4.4rem,23vw,10.5rem);font-weight:800;letter-spacing:-.04em;line-height:.9;text-shadow:0 2px 18px rgba(0,0,0,.18)}
+.hero small{display:block;font-size:.95rem;font-weight:700;margin-bottom:.8rem}
+.hero h1{font-size:clamp(4.4rem,23vw,10.5rem);font-weight:800;letter-spacing:-.04em;line-height:.9;text-shadow:0 2px 6px rgba(0,0,0,.35),0 4px 28px rgba(0,0,0,.3)}
 .hero h1 .l{display:inline-block}
 .tagline{position:relative;display:inline-block;font-family:var(--display);font-weight:500;font-size:clamp(1.3rem,5vw,2rem);margin:.7rem 0 1.3rem;color:var(--on-board)}
 .tagline svg{position:absolute;left:-2%;bottom:-.55em;width:104%;height:.7em;overflow:visible}
 .tagline path{fill:none;stroke:var(--lacquer);stroke-width:3;stroke-linecap:round;opacity:.75}
-.hero p{max-width:52ch;opacity:.92}
+.hero p{max-width:52ch}
 .ctas{display:flex;flex-wrap:wrap;gap:.75rem;margin-top:1.6rem}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:.45rem;min-height:48px;padding:.75rem 1.35rem;border-radius:999px;font-weight:700;text-decoration:none;border:2px solid transparent;transition:transform .25s var(--ease),box-shadow .25s,background .2s,border-color .2s;cursor:pointer}
 .btn:hover{transform:translateY(-2px)}
