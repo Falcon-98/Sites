@@ -776,6 +776,11 @@
     }
     .wall-item:hover::after { opacity: 1; }
     .wall-item:focus-visible { outline: 2px solid var(--gold-400); outline-offset: 2px; }
+    /* Collapsed preview: show only the first 9 photos until expanded */
+    .gallery-wall.collapsed .wall-item:nth-child(n+10) { display: none; }
+    .gallery-more { text-align: center; margin-top: 28px; }
+    #galleryToggle .gm-chevron { transition: transform .3s var(--ease-out); }
+    #galleryToggle[aria-expanded="true"] .gm-chevron { transform: rotate(180deg); }
 
     /* Lightbox */
     .lightbox {
@@ -1330,8 +1335,15 @@
       <!-- Featured cover injected by JavaScript -->
     </div>
 
-    <div class="gallery-wall" id="galleryWall">
+    <div class="gallery-wall collapsed" id="galleryWall">
       <!-- Image wall injected by JavaScript -->
+    </div>
+
+    <div class="gallery-more reveal">
+      <button class="btn-ghost" id="galleryToggle" type="button" aria-expanded="false" aria-controls="galleryWall">
+        <span id="galleryToggleText">Show all photos</span>
+        <svg class="gm-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
     </div>
   </div>
 </section>
@@ -1741,6 +1753,25 @@
       item.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLightbox(i); } });
       galleryWall.appendChild(item);
     });
+  }
+
+  // "Show all / fewer" toggle — preview a few photos, expand to the whole album
+  const galleryToggle = document.getElementById('galleryToggle');
+  const galleryToggleText = document.getElementById('galleryToggleText');
+  const PREVIEW_COUNT = 9; // keep in sync with the .gallery-wall.collapsed nth-child rule
+  if (galleryToggle && galleryWall) {
+    if (gallery.photos.length <= PREVIEW_COUNT) {
+      galleryToggle.closest('.gallery-more').style.display = 'none';
+      galleryWall.classList.remove('collapsed');
+    } else {
+      galleryToggleText.textContent = `Show all ${gallery.photos.length} photos`;
+      galleryToggle.addEventListener('click', () => {
+        const collapsed = galleryWall.classList.toggle('collapsed');
+        galleryToggle.setAttribute('aria-expanded', String(!collapsed));
+        galleryToggleText.textContent = collapsed ? `Show all ${gallery.photos.length} photos` : 'Show fewer';
+        if (collapsed) document.getElementById('albums').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
   }
 
   // Lightbox controls
