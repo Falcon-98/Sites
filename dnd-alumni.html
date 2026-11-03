@@ -737,11 +737,9 @@
     }
 
     .albums-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px;
-      margin-top: 56px;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 320px));
+      gap: 22px; margin-top: 56px; justify-content: center;
     }
-    @media (max-width: 900px) { .albums-grid { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 560px) { .albums-grid { grid-template-columns: 1fr; } }
 
     .album-card {
       position: relative; aspect-ratio: 4 / 3; overflow: hidden; cursor: pointer;
@@ -962,7 +960,7 @@
     <a href="#benefits" class="nav-link">Benefits</a>
     <!-- <a href="#projects" class="nav-link">Projects</a> -->
     <a href="#gallery"  class="nav-link">Gallery</a>
-    <!-- <a href="#albums"   class="nav-link">Gallery</a> -->
+    <a href="#albums"   class="nav-link">Albums</a>
     <a href="#support"  class="nav-link">Support Students</a>
     <a href="#join"     class="nav-link">How to Join</a>
     <a href="#contact"  class="nav-link">Contact</a>
@@ -981,7 +979,7 @@
       <a href="#benefits" class="mobile-link" onclick="closeMobile()">Benefits</a>
       <!-- <a href="#projects" class="mobile-link" onclick="closeMobile()">Projects</a> -->
       <a href="#gallery"  class="mobile-link" onclick="closeMobile()">Gallery</a>
-      <!-- <a href="#albums"   class="mobile-link" onclick="closeMobile()">Gallery</a> -->
+      <a href="#albums"   class="mobile-link" onclick="closeMobile()">Albums</a>
       <a href="#support"  class="mobile-link" onclick="closeMobile()">Support Students</a>
       <a href="#join"     class="mobile-link" onclick="closeMobile()">How to Join</a>
       <a href="#contact"  class="mobile-link" onclick="closeMobile()">Contact</a>
@@ -1307,14 +1305,13 @@
 <!-- Images are served from the Cloudinary CDN. Album covers and photos come from
      `albumsData` in the script below — set each `cover`/`photos` entry to your
      Cloudinary public ID (a full http(s) URL is also accepted and passed through). -->
-<!-- TEMPORARILY HIDDEN: remove the inline `display:none` below to show the Photo Albums section again. -->
-<section id="albums" class="section" aria-label="Photo Albums" style="display:none;">
+<section id="albums" class="section" aria-label="Photo Albums">
   <div class="container">
     <div class="reveal" style="text-align:center;">
       <div class="section-eyebrow" style="justify-content:center;">Gallery</div>
       <h2 class="section-title" style="text-align:center;">Photo <em>Albums</em></h2>
       <p class="section-subtitle" style="margin: 0 auto; text-align:center; max-width:560px;">
-        Moments captured across our events, projects, and gatherings. Select an album to browse the photos.
+        Moments captured across our events and community programmes. Select an album to browse the photos.
       </p>
       <div class="rule center"></div>
     </div>
@@ -1497,7 +1494,7 @@
             <li><a href="#benefits">Alumni Benefits</a></li>
             <!-- <li><a href="#projects">Previous Projects</a></li> -->
             <li><a href="#gallery">Photo Gallery</a></li>
-            <!-- <li><a href="#albums">Photo Albums</a></li> -->
+            <li><a href="#albums">Photo Albums</a></li>
             <li><a href="#support">Support Students</a></li>
             <li><a href="#join">Membership Application</a></li>
             <li><a href="https://www.wyb.ac.lk" target="_blank" rel="noopener">Wayamba University</a></li>
@@ -1683,12 +1680,18 @@
 
   /* ── Photo Albums + Lightbox ── */
   const albumsData = [
-    { title: 'Annual Reunion 2024',   cover: '1_mswmq6',  photos: ['1_mswmq6', '4_vt9yut', '5_rouf6g', '7_lgqmqx', '8_w5kgw0'] },
-    { title: 'Graduation Ceremony',   cover: '4_vt9yut',  photos: ['9_lor6qu', '10_rvfda3', '1_mswmq6', '5_rouf6g'] },
-    { title: 'Community Outreach',    cover: '5_rouf6g',  photos: ['4_vt9yut', '7_lgqmqx', '8_w5kgw0', '10_rvfda3'] },
-    { title: 'Guest Lecture Series',  cover: '7_lgqmqx',  photos: ['1_mswmq6', '9_lor6qu', '5_rouf6g'] },
-    { title: 'Sports & Recreation',   cover: '8_w5kgw0',  photos: ['10_rvfda3', '7_lgqmqx', '4_vt9yut', '1_mswmq6'] },
-    { title: 'Workshops & Training',  cover: '10_rvfda3', photos: ['8_w5kgw0', '5_rouf6g', '9_lor6qu'] }
+    {
+      title: 'Kaluthara NHS',
+      cover: 'knhs_01',
+      photos: [
+        'knhs_01','knhs_02','knhs_03','knhs_04','knhs_05','knhs_06','knhs_07','knhs_08','knhs_09','knhs_10',
+        'knhs_11','knhs_12','knhs_13','knhs_14','knhs_15','knhs_16','knhs_17','knhs_18','knhs_19','knhs_20',
+        'knhs_21','knhs_22','knhs_23','knhs_24','knhs_25','knhs_26','knhs_27','knhs_28','knhs_29','knhs_30',
+        'knhs_31','knhs_32','knhs_33','knhs_34','knhs_35','knhs_36','knhs_37','knhs_38','knhs_39','knhs_40',
+        'knhs_41','knhs_42','knhs_43','knhs_44','knhs_45','knhs_46','knhs_47','knhs_48','knhs_49','knhs_50',
+        'knhs_51','knhs_52','knhs_53','knhs_54','knhs_55'
+      ]
+    }
   ];
 
   // Render album cards
